@@ -3,7 +3,7 @@
 #	Project utility to install client/server, deploy, etc.
 #
 # USAGE
-#	curl -L http://git.edouard-lopez.com:81/root/mast.git/raw/master/makefile | make -f -
+#	make SRV_REMOTE=255.255.255.255 deploy-key
 #
 # AUTHOR
 #	Édouard Lopez <dev+mast@edouard-lopez.com>
