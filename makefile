@@ -23,6 +23,9 @@ REMOTE_USER:=coaxis
 # default remote hostname
 REMOTE_SRV:=Srv-SSH_RN
 
+default: usage
+
+
 
 
 # Copy client public key on remote server (defined by REMOTE_SRV)
