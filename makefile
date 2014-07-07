@@ -3,7 +3,7 @@
 #	Project utility to install client/server, deploy, etc.
 #
 # USAGE
-#	make SRV_REMOTE=255.255.255.255 deploy-key
+#	make REMOTE_SRV=255.255.255.255 deploy-key
 #
 # AUTHOR
 #	Édouard Lopez <dev+mast@edouard-lopez.com>
