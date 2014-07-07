@@ -16,6 +16,12 @@ endif
 SHELL := /bin/bash
 
 
+
+# Install packages required on the CLIENT
+install-client:
+	@printf "Installing…\n"
+	apt-get install autossh openssh-client ssh-client
+
 # Install packages required on the SERVER
 install-server:
 	@printf "Installing…\n"
