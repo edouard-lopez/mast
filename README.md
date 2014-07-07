@@ -33,6 +33,46 @@ For administrator unfamiliar with `makefile` syntax, you need to be aware of the
 * multilines commands should end with a `\` (backslash). In a similar fashion than `bash` ;
 * the `@` (at sign) is use to prevent a command to be printed prior to execution. If you want to see what commands the task really executed, with variables expanded, simply remote the `@`-sign from the beginning of the line :).
 
+### Installing on Client
+
+Install required packages (`autossh`, `openssh-client`, `ssh-client`).
+
+```bash
+make install-client
+```
+
+### Installing on Server
+
+Install required packages (`openssh-server`, `ssh-server`, `trickle`).
+
+```bash
+make install-server
+```
+
+### Creating SSH Key
+
+Create SSH keys pair on client to allow friction-less connection to the server.
+
+```bash
+make create-ssh-key
+```
+
+### Deploying SSH Key
+
+Once the ssh keys are created we need to copy the public key on the remote server, in order to leverage authentication mechanism.
+
+```bash
+make deploy-key
+```
+
+If the remote server address differ from the default value (see `REMOTE_SRV` in the _makefile_), the new value must be passed **as an argument**
+
+```bash
+make REMOTE_SRV=1.2.3.4 deploy-key
+```
+
+**Note:** This task require `create-ssh-key` to be done, this mean you can directly call the `deploy-key` task and it will trigger the `create-ssh-key` if needed
+
 ## Service
 
 ### Don't kill I have kids!
