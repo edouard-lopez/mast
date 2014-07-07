@@ -16,6 +16,17 @@ endif
 SHELL := /bin/bash
 # Path to the SSH keys pair (public key is suffixed by .pub). This follow the native d
 SSH_KEYFILE:=$$HOME/.ssh/id_rsa.mast.coaxis
+# default remote user
+REMOTE_USER:=coaxis
+# default remote hostname
+REMOTE_SRV:=Srv-SSH_RN
+
+
+
+# Copy client public key on remote server (defined by REMOTE_SRV)
+deploy-key: create-ssh-key
+	@printf "Deploying…\tSSH Keys to remote server\n"
+	ssh-copy-id -i ${SSH_KEYFILE} ${REMOTE_USER}@${REMOTE_SRV}
 
 
 # Create keys pair on client
