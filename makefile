@@ -24,6 +24,8 @@ REMOTE_USER:=coaxis
 REMOTE_SRV:=Srv-SSH_RN
 
 default: usage
+setup-client: install-client
+setup-server: install-server
 
 
 
