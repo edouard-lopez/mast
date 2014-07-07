@@ -35,7 +35,7 @@ For administrator unfamiliar with `makefile` syntax, you need to be aware of the
 
 ### Installing on Client
 
-Install required packages (`autossh`, `openssh-client`, `ssh-client`).
+Install required packages (`autossh`, `openssh-client`, `ssh-client`, `trickle`).
 
 ```bash
 make install-client
@@ -43,7 +43,7 @@ make install-client
 
 ### Installing on Server
 
-Install required packages (`openssh-server`, `ssh-server`, `trickle`).
+Install required packages (`openssh-server`, `ssh-server`, `useradd`).
 
 ```bash
 make install-server
