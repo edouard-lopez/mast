@@ -14,6 +14,8 @@ endif
 
 # force use of Bash
 SHELL := /bin/bash
+# Passphrase MUST be empty to allow automation (no passphrase prompt)
+EMPTY:=
 # Path to the SSH keys pair (public key is suffixed by .pub). This follow the native d
 SSH_KEYFILE:=$$HOME/.ssh/id_rsa.mast.coaxis
 # default remote user
