@@ -27,3 +27,8 @@ install-server:
 	@printf "Installing…\n"
 	# ssh  = virtual-package
 	apt-get install openssh-server ssh-server trickle
+
+usage:
+	@printf "Usage…\n"
+	@printf "On client:\n\tmake setup-client\n"
+	@printf "On server:\n\tmake setup-server\n"
