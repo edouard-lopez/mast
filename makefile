@@ -45,12 +45,13 @@ ${SSH_KEYFILE}:
 
 # Install packages required on the CLIENT
 install-client:
-	@printf "Installing…\n"
+	@printf "Installing…\tclient\n"
 	apt-get install autossh openssh-client ssh-client
+
 
 # Install packages required on the SERVER
 install-server:
-	@printf "Installing…\n"
+	@printf "Installing…\tserver\n"
 	# ssh  = virtual-package
 	apt-get install openssh-server ssh-server trickle
 
