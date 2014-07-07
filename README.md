@@ -11,3 +11,8 @@
 * **trickle**: user-space bandwidth shaper ;
 * GNU **Make**: task manager used to install client/server, deploy add others stuff.
 
+## Service
+
+### Don't kill I have kids!
+
+Check if tunnels are children of the service. If this is the case, that means that killing the service will kill **all** tunnels.
