@@ -15,3 +15,9 @@ endif
 # force use of Bash
 SHELL := /bin/bash
 
+
+# Install packages required on the SERVER
+install-server:
+	@printf "Installing…\n"
+	# ssh  = virtual-package
+	apt-get install openssh-server ssh-server trickle
