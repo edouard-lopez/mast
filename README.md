@@ -20,6 +20,19 @@
 * **trickle**: user-space bandwidth shaper ;
 * GNU **Make**: task manager used to install client/server, deploy add others stuff.
 
+## Tasks management with `make` and the `makefile`
+
+Makefile define so-called _tasks_, that allow user to easily run a complex sequence of command with a single call (e.g. `make install`).
+
+### Tips and tricks
+
+For administrator unfamiliar with `makefile` syntax, you need to be aware of the following:
+
+* variables can be pass to the makefile script as follow: `make MY_VAR=123 taskname` ;
+* the `$` (dollar sign) **must be escaped** if you want to have access to bash variable (e.g. ~~$HOME~~ → `$$HOME`) ;
+* multilines commands should end with a `\` (backslash). In a similar fashion than `bash` ;
+* the `@` (at sign) is use to prevent a command to be printed prior to execution. If you want to see what commands the task really executed, with variables expanded, simply remote the `@`-sign from the beginning of the line :).
+
 ## Service
 
 ### Don't kill I have kids!
