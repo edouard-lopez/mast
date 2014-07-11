@@ -58,17 +58,20 @@ install-client:
 	apt-get install autossh openssh-client ssh-client
 
 
-# Install packages required on the SERVER
-install-server:
-	@printf "Installing…\tserver\n"
-	# ssh  = virtual-package
-	apt-get install openssh-server ssh-server trickle
+install-systemd:
+	apt-get install openssh-server ssh-server useradd
 	add-apt-repository ppa:pitti/systemd
 	apt-get update && apt-get dist-upgrade
 	printf "You MUST update GRUB config\n"
 	printf "\treading: http://linuxg.net/how-to-install-and-test-systemd-on-ubuntu-14-04-trusty-tahr-and-ubuntu-12-04-precise-pangolin/\n"
 	printf "\tby editing GRUB_CMDLINE_LINUX_DEFAULT to \"init=/lib/systemd/systemd\"\n"
 
+# Install packages required on the SERVER
+install-server:
+	@printf "Installing…\tserver\n"
+	# ssh  = virtual-package
+
+# Display basic help. For further information refer to the docs http://github.com/edouard-lopez/mast/README.md
 usage:
 	@printf "Usage…\n"
 	@printf "On client:\n\tmake setup-client\n"
