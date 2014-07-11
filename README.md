@@ -42,6 +42,13 @@ Install required packages (`openssh-server`, `ssh-server`, `trickle`).
 make install-server
 ```
 
+#### Deploying service and daemon
+
+This task copy project file to their adequate location (_i.e._ `/etc/init.d/`, `/usr/sbin/`, `/etc/systemd/system/`)
+```bash
+make deploy-service
+```
+
 ### Creating SSH Key
 
 Create SSH keys pair on client to allow friction-less connection to the server.

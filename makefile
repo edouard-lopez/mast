@@ -27,6 +27,10 @@ default: usage
 setup-client: install-client
 setup-server: install-server
 
+deploy-service:
+	cp mastd.service /etc/systemd/system/
+	cp mastd {/usr/sbin/,/etc/init.d/}
+	printf "Check deployment with:\n\tsystemctl daemon-reload\n"
 
 
 
