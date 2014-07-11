@@ -68,6 +68,12 @@ make REMOTE_SRV=1.2.3.4 deploy-key
 
 ## Service
 
-### Don't kill I have kids!
+### Service file[^service-file]
+
+* The `[Unit]` section contains generic information about the service. `systemd` not only manages system services, but also devices, mount points, timer, and other components of the system.
+* `[Service]` section encodes information about the service itself. It contains all those settings that apply only to services, and not the other kinds of units `systemd` maintains (mount points, devices, timers, ...)
+* [Install]` section encodes information about how the suggested installation should look like, _i.e._ under which circumstances and by which triggers the service shall be started. In this case we simply say that this service shall be started when the multi-user.target unit is activated
+
+### Don't kill me, I have kids!
 
 Check if tunnels are children of the service. If this is the case, that means that killing the service will kill **all** tunnels.

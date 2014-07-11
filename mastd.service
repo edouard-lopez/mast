@@ -1,0 +1,10 @@
+[Unit]
+Description=Daemon to manage multiple auto-ssh tunnels
+After=syslog.target
+
+[Service]
+ExecStart=/usr/sbin/mastd
+Type=forking
+
+[Install]
+Wants=network-online.target
