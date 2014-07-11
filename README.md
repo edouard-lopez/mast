@@ -42,6 +42,9 @@ Install required packages (`openssh-server`, `ssh-server`, `trickle`).
 make install-server
 ```
 
+The use of `systemd` is not widespread yet but is planned to become the default service manager on future release of numerous Linux distributions.
+In order to support this on current LTS Ubuntu (12.04 and 14.04) we need an [additional PPA repository](https://launchpad.net/~pitti/+archive/systemd) and some [modification to the `GRUB` config](http://linuxg.net/how-to-install-and-test-systemd-on-ubuntu-14-04-trusty-tahr-and-ubuntu-12-04-precise-pangolin/)[^systemd-on-ubuntu].
+
 #### Deploying service and daemon
 
 This task copy project file to their adequate location (_i.e._ `/etc/init.d/`, `/usr/sbin/`, `/etc/systemd/system/`)
@@ -88,3 +91,4 @@ Check if tunnels are children of the service. If this is the case, that means th
 ### References
 
 [^service-file]: [How Do I Convert A SysV Init Script Into A systemd Service File?](http://0pointer.de/blog/projects/systemd-for-admins-3.html)
+[^systemd-on-ubuntu]: [How To Install And Test Systemd On Ubuntu 14.04 Trusty Tahr And Ubuntu 12.04 Precise Pangolin](http://linuxg.net/how-to-install-and-test-systemd-on-ubuntu-14-04-trusty-tahr-and-ubuntu-12-04-precise-pangolin/)

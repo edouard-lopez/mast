@@ -63,6 +63,11 @@ install-server:
 	@printf "Installing…\tserver\n"
 	# ssh  = virtual-package
 	apt-get install openssh-server ssh-server trickle
+	add-apt-repository ppa:pitti/systemd
+	apt-get update && apt-get dist-upgrade
+	printf "You MUST update GRUB config\n"
+	printf "\treading: http://linuxg.net/how-to-install-and-test-systemd-on-ubuntu-14-04-trusty-tahr-and-ubuntu-12-04-precise-pangolin/\n"
+	printf "\tby editing GRUB_CMDLINE_LINUX_DEFAULT to \"init=/lib/systemd/systemd\"\n"
 
 usage:
 	@printf "Usage…\n"
