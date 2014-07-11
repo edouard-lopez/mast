@@ -28,7 +28,7 @@ For administrator unfamiliar with `makefile` syntax, you need to be aware of the
 
 ### Installing on Client
 
-Install required packages (`autossh`, `openssh-client`, `ssh-client`).
+Install required packages (`autossh`, `openssh-client`, `ssh-client`, `trickle`).
 
 ```bash
 make install-client
@@ -36,7 +36,7 @@ make install-client
 
 ### Installing on Server
 
-Install required packages (`openssh-server`, `ssh-server`, `trickle`).
+Install required packages (`openssh-server`, `ssh-server`, `useradd`).
 
 ```bash
 make install-server
@@ -85,7 +85,6 @@ make REMOTE_SRV=1.2.3.4 deploy-key
 * [Install]` section encodes information about how the suggested installation should look like, _i.e._ under which circumstances and by which triggers the service shall be started. In this case we simply say that this service shall be started when the multi-user.target unit is activated
 
 ### Don't kill me, I have kids!
-
 Check if tunnels are children of the service. If this is the case, that means that killing the service will kill **all** tunnels.
 
 ### References
