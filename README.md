@@ -77,3 +77,7 @@ make REMOTE_SRV=1.2.3.4 deploy-key
 ### Don't kill me, I have kids!
 
 Check if tunnels are children of the service. If this is the case, that means that killing the service will kill **all** tunnels.
+
+### References
+
+[^service-file]: [How Do I Convert A SysV Init Script Into A systemd Service File?](http://0pointer.de/blog/projects/systemd-for-admins-3.html)
