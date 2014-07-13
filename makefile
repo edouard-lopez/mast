@@ -55,11 +55,11 @@ ${SSH_KEYFILE}:
 # Install packages required on the CLIENT
 install-client:
 	@printf "Installing…\tclient\n"
-	apt-get install autossh openssh-client ssh-client
+	apt-get install autossh openssh-client trickle
 
-
+# Add PPA for Ubuntu 12.04, 14.04 and higher to leverage systemd
 install-systemd:
-	apt-get install openssh-server ssh-server useradd
+	apt-get install openssh-server useradd
 	add-apt-repository ppa:pitti/systemd
 	apt-get update && apt-get dist-upgrade
 	printf "You MUST update GRUB config\n"
