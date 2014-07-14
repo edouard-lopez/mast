@@ -71,6 +71,24 @@ install-server:
 	@printf "Installing…\tserver\n"
 	# ssh  = virtual-package
 
+# Check system status for dependencies
+check-system:
+	@printf "Checking system…\n"
+	@executables=( "autossh" "openssh-client" "openssh-server" "trickle" "useradd"); \
+	if ! type dpkg-query &> /dev/null; then \
+		printf "You *MUST* $(tput setaf 1)install 'dpkg'$(tput sgr0)\n"; \
+		printf "\t→ $(tput setaf 7)apt-get install %s$(tput sgr0)\n" "dpkg"; \
+		exit; \
+	fi; \
+	for e in $${executables[@]}; do \
+		if ! $(dpkg-query -s "$$e") &> /dev/null; then \
+			printf "\t%s\t$(tput setaf 1)Missing!$(tput sgr0)\n" "$$e"; \
+			printf "\t\t→ $(tput setaf 7)apt-get install %s$(tput sgr0)\n" "$$e"; \
+		else \
+			printf "\t%s\t$(tput setaf 2)Installed$(tput sgr0)\n" "$$e"; \
+		fi \
+	done
+
 # Display basic help. For further information refer to the docs http://github.com/edouard-lopez/mast/README.md
 usage:
 	@printf "Usage…\n"

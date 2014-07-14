@@ -26,6 +26,23 @@ For administrator unfamiliar with `makefile` syntax, you need to be aware of the
 * multilines commands should end with a `\` (backslash). In a similar fashion than `bash` ;
 * the `@` (at sign) is use to prevent a command to be printed prior to execution. If you want to see what commands the task really executed, with variables expanded, simply remote the `@`-sign from the beginning of the line :).
 
+### Checking your system
+
+After getting the project source code, you can check your system status for requirements using :
+
+```bash
+make check-system
+```
+Once the system is ready for the service, you should get the following output:
+```text
+Checking system…
+	autossh Installed
+	openssh-client  Installed
+	openssh-server  Installed
+	trickle Installed
+	useradd Installed
+```
+
 ### Installing on Client
 
 Install required packages (`autossh`, `openssh-client`, `ssh-client`, `trickle`).
