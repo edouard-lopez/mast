@@ -26,10 +26,10 @@
 # see: http://www.davidpashley.com/articles/writing-robust-shell-scripts/
 # Exit script if you try to use an uninitialised variable.
 # @alias: set -u
-set -o nounset 
+set -o nounset
 # Exit script if any statement returns a non-true return value.
 # @alias: set -e
-set -o errexit 
+set -o errexit
 
 
 # /etc/init.d/ssh: start and stop the OpenBSD "secure shell(tm)" daemon
