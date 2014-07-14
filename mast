@@ -31,20 +31,22 @@ set -o nounset
 # @alias: set -e
 set -o errexit
 
-
-# /etc/init.d/ssh: start and stop the OpenBSD "secure shell(tm)" daemon
-
+# Quit if SSH daemon not executable
 [[ -x /usr/sbin/sshd ]] || exit 0
+# Quit if using something else than OpenSSH
 ( /usr/sbin/sshd -\? 2>&1 | grep -q OpenSSH ) 2>/dev/null || exit 0
 
 umask 022
 
+# include config from SSH
 if [[ -f /etc/default/ssh ]]; then
     source /etc/default/ssh
 fi
 
+# include some helpers functions
 source /lib/lsb/init-functions
 
+# check for non-nul options
 if [[ -n "$2" ]]; then
     SSHD_OPTS="$SSHD_OPTS $2"
 fi
@@ -54,12 +56,16 @@ run_by_init() {
     ([ "$previous" ] && [ "$runlevel" ]) || [ "$runlevel" = S ]
 }
 
+# @todo
+# $1	exit code
 check_for_upstart() {
     if init_is_upstart; then
 	exit $1
     fi
 }
 
+
+# $1	exit code
 check_for_no_start() {
     # forget it if we're trying to start, and /etc/ssh/sshd_not_to_be_run exists
     if [[ -e /etc/ssh/sshd_not_to_be_run ]]; then
@@ -73,6 +79,8 @@ check_for_no_start() {
     fi
 }
 
+# Exit if /dev/null is missing
+# $1	exit code
 check_dev_null() {
     if [[ ! -c /dev/null ]]; then
 	if [[ "$1" = log_end_msg ]]; then
@@ -85,6 +93,7 @@ check_dev_null() {
     fi
 }
 
+# Create the PrivSep empty dir if necessary
 check_privsep_dir() {
     if [[ ! -d /var/run/sshd ]]; then
 	mkdir /var/run/sshd
@@ -92,6 +101,7 @@ check_privsep_dir() {
     fi
 }
 
+# Only check the validity of the configuration file and sanity of the keys
 check_config() {
     if [[ ! -e /etc/ssh/sshd_not_to_be_run ]]; then
 	/usr/sbin/sshd $SSHD_OPTS -t || exit 1
@@ -99,6 +109,8 @@ check_config() {
 }
 
 export PATH="${PATH:+$PATH:}/usr/sbin:/sbin"
+
+
 
 case "$1" in
   "start")
