@@ -193,6 +193,13 @@ case "$1" in
 		check_for_upstart 1
 		status_of_proc -p /var/run/sshd.pid /usr/sbin/sshd sshd && exit 0 || exit $?
 	;;
+	"list")
+		cd /etc/mast/;
+		for h in *; do
+			[[ ! -f "$h" || -d "$h" || $h == "template" ]] && continue
+			printf "%s\n" $h
+		done
+	;;
 	*)
 		log_action_msg "Usage: /etc/init.d/ssh {start|stop|reload|force-reload|restart|try-restart|status}" || true
 		exit 1
