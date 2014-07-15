@@ -28,9 +28,10 @@ setup-customer: install-customer
 setup-infra: install-infra
 
 deploy-service:
-	cp mastd.service /etc/systemd/system/
-	cp mastd {/usr/sbin/,/etc/init.d/}
-	printf "Check deployment with:\n\tsystemctl daemon-reload\n"
+	@printf "Deploying… service\n"
+	@cp mastd.service /etc/systemd/system/
+	@cp mast /etc/init.d/
+	@cp mastd /usr/sbin/
 
 
 
