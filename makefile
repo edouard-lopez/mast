@@ -50,6 +50,7 @@ deploy-service:
 	@rm -f /usr/sbin/mastd && cp mastd /usr/sbin/
 	@printf "\tconfig directory: %s\n" "${CONFIG_DIR}"
 	@[[ ! -d ${CONFIG_DIR} ]] && mkdir ${CONFIG_DIR} || printf "\t\talready exists.\n"
+	@rm -f ${CONFIG_DIR}/template && cp {.,${CONFIG_DIR}}/template
 
 
 
