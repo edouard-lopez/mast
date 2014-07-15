@@ -46,8 +46,8 @@ add-host:
 deploy-service:
 	@printf "Deploying… service\n"
 	@cp mastd.service /etc/systemd/system/
-	@cp mast /etc/init.d/
-	@cp mastd /usr/sbin/
+	@rm -f /etc/init.d/mast && cp mast /etc/init.d/
+	@rm -f /usr/sbin/mastd && cp mastd /usr/sbin/
 	@printf "\tconfig directory: %s\n" "${CONFIG_DIR}"
 	@[[ ! -d ${CONFIG_DIR} ]] && mkdir ${CONFIG_DIR} || printf "\t\talready exists.\n"
 
