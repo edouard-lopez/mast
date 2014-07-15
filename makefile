@@ -55,7 +55,7 @@ ${SSH_KEYFILE}:
 # Install packages required on the Coaxis' INFRAstructure
 install-infra:
 	@printf "Installing…\tinfrastructure's node\n"
-	apt-get install autossh openssh-client trickle
+	apt-get install autossh openssh-client trickle bmon iftop htop
 
 # Add PPA for Ubuntu 12.04, 14.04 and higher to leverage systemd
 install-systemd:
