@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# This value will be automatically replaced if you use 'make add-host'
+RemoteHost="CUSTOMER_HOST"
+# This should not be changed without confirmation from upper authority
+RemoteUser="coaxis"
+RemotePort=22
+
+# Check connection every 10 seconds, and after 3 tries (30 seconds), drop and
+# let autossh re-connect.
+ServerAliveInterval=10
+ServerAliveCountMax=3
+StrictHostKeyChecking="no"
+
+LocalUser="root"
+# @see SSH_KEYFILE in 'makefile'
+IdentityFile="~/.ssh/id_rsa.mast.coaxis"
+
+
+# Array of ports to be forwarded. Example:
+# 	Forward port 3307, listening on 127.0.0.1 on the remote side, to
+# 	127.0.0.1 port 3306 on the local side. Forward port 8081, listening on
+# 	127.0.0.1 on the local side, to 10.100.1.60 port 80 on the remote side.
+#
+ForwardPort=(
+	# "R 127.0.0.1:3307:127.0.0.1:3306"
+	# "L 127.0.0.1:8081:10.100.1.60:80"
+	"L *:9100:imp1:9100"
+	"L *:9101:imp2:9100"
+)

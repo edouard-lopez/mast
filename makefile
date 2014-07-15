@@ -25,9 +25,23 @@ REMOTE_SRV:=Srv-SSH_RN
 
 # Contains a file-per-host SSH's config
 CONFIG_DIR:=/etc/mast/
+# Current customer's name config and host/ip to work with (add/delete)
+CUSTOMER_NAME:=none
+CUSTOMER_HOST:=none
 default: usage
 setup-customer: install-customer
 setup-infra: install-infra
+# Adding a new host/customer require a
+add-host:
+	if [[ ${CUSTOMER_NAME} != "none" ]]; then \
+		cp ${CONFIG_DIR}/{template,${CUSTOMER_NAME}}; \
+		sed -i 's/CUSTOMER_HOST/${CUSTOMER_HOST}/g' ${CONFIG_DIR}/${CUSTOMER_NAME}; \
+	fi
+	printf "Editing…\t${CONFIG_DIR}/${CUSTOMER_NAME}\n"
+	sleep 3s;
+	editor ${CONFIG_DIR}/${CUSTOMER_NAME}
+	printf "You *must* start the tunnel manually:\n\tsudo /etc/init.d/mast start %s\n" "${CUSTOMER_NAME}"
+
 
 deploy-service:
 	@printf "Deploying… service\n"
