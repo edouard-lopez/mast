@@ -26,6 +26,18 @@ For administrator unfamiliar with `makefile` syntax, you need to be aware of the
 * multilines commands should end with a `\` (backslash). In a similar fashion than `bash` ;
 * the `@` (at sign) is use to prevent a command to be printed prior to execution. If you want to see what commands the task really executed, with variables expanded, simply remote the `@`-sign from the beginning of the line :).
 
+## Installation
+
+You must get the project on both the customer's node and your infrastructure:
+
+```bash
+git clone --depth 1 https://github.com/edouard-lopez/mast.git && cd mast
+```
+Then you can type:
+```bash
+make
+```
+
 ### Checking your system
 
 After getting the project source code, you can check your system status for requirements using :
