@@ -43,12 +43,12 @@ Checking system…
 	useradd Installed
 ```
 
-### Installing on Client
+### Installing on Customer device
 
 Install required packages (`autossh`, `openssh-client`, `ssh-client`, `trickle`).
 
 ```bash
-make install-client
+make install-customer
 ```
 
 ### Installing on Server
@@ -77,7 +77,7 @@ make deploy-service
 
 ### Creating SSH Key
 
-Create SSH keys pair on client to allow friction-less connection to the server.
+Create SSH keys pair on infrastructure to allow friction-less connection to the customer's node.
 
 ```bash
 make create-ssh-key
@@ -85,16 +85,16 @@ make create-ssh-key
 
 ### Deploying SSH Key
 
-Once the ssh keys are created we need to copy the public key on the remote server, in order to leverage authentication mechanism.
+Once the ssh keys are created we need to copy the public key on the (remote) customer's node, in order to leverage authentication mechanism.
 
 ```bash
 make deploy-key
 ```
 
-If the remote server address differ from the default value (see `REMOTE_SRV` in the _makefile_), the new value must be passed **as an argument**
+If the customer's node address differ from the default value (see `REMOTE_SRV` in the _makefile_), the new value must be passed **as an argument**
 
 ```bash
-make REMOTE_SRV=1.2.3.4 deploy-key
+make REMOTE_SRV=11.22.33.44 deploy-key
 ```
 
 **Note:** This task require `create-ssh-key` to be done, this mean you can directly call the `deploy-key` task and it will trigger the `create-ssh-key` if needed
