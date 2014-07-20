@@ -138,7 +138,7 @@ make REMOTE_SRV=11.22.33.44 deploy-key
 
 ## Service
 
-### Service file[^service-file]
+### Service file^[service-file]
 
 * The `[Unit]` section contains generic information about the service. `systemd` not only manages system services, but also devices, mount points, timer, and other components of the system.
 * `[Service]` section encodes information about the service itself. It contains all those settings that apply only to services, and not the other kinds of units `systemd` maintains (mount points, devices, timers, ...)
