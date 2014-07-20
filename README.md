@@ -4,6 +4,31 @@
 
 [TOC]
 
+## Goals
+
+### Unix Service
+
+* monter les tunnel par `autossh` limité individuellement en bande passante par `trickle` ;
+* l'ensemble des tunnels `SSH` présent dans les fichiers de conf doivent tous monter au démarrage de la machine sans intervention humaine. ;
+* chaque tunnel sera indépendamment, maintenu et logué par le service ;
+* chaque tunnel doit pouvoir être monté ou arrêté manuellement ;
+* une liste et l'état des tunnel doit être consultable a la demande (service status) ;
+* les logs seront séparé par tunnel ;
+* le code sera ouvert et documenté. ;
+* l'ensemble devra être packagé pour une mise en place facile.
+
+### Web Interface
+
+Dans un second temps il nous faudrait une interface web en 4 pages web:
+
+* liste des sites (basé sur les fichiers de conf) et leur état (en couleur) ;
+* ajout / suppression de site-tunnel ;
+* liste des imps par site (basé sur les fichiers de conf) ;
+* ajout / suppression d'imprimante par site-tunnel ;
+* la mise en forme et le style graphique pour ces pages sera réduite au minimum ;
+* le code sera ouvert et documenté. ;
+* l'ensemble devra être packagé pour une mise en place facile.
+
 ## Requirements
 
 * **Debian-based** OS: we are expecting a Debian `6.0+` or Ubuntu-server `12.04+` ;
