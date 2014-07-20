@@ -23,7 +23,7 @@
 # FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 # details at http://www.gnu.org/licenses/.
 
-# see: http://www.davidpashley.com/articles/writing-robust-shell-scripts/
+# see: http://surniaulula.com/2012/12/10/autossh-startup-script-for-multiple-tunnels/
 # Exit script if you try to use an uninitialised variable.
 # @alias: set -u
 set -o nounset
