@@ -26,183 +26,213 @@
 # see: http://surniaulula.com/2012/12/10/autossh-startup-script-for-multiple-tunnels/
 # Exit script if you try to use an uninitialised variable.
 # @alias: set -u
-set -o nounset
+# set -o nounset
 # Exit script if any statement returns a non-true return value.
 # @alias: set -e
 set -o errexit
 
-# Quit if SSH daemon not executable
-[[ -x /usr/sbin/sshd ]] || exit 0
-# Quit if using something else than OpenSSH
-( /usr/sbin/sshd -\? 2>&1 | grep -q OpenSSH ) 2>/dev/null || exit 0
+# Import function library
+. /etc/init.d/functions
 
-umask 022
+RETVAL=0 # default return value
+NAME=autossh
+autossh=/usr/bin/autossh
 
-# include config from SSH
-if [[ -f /etc/default/ssh ]]; then
-	source /etc/default/ssh
-fi
+# Create PID directory missing
+[[ ! -d /var/run/$NAME ]] && mkdir -p /var/run/$NAME
 
-# include some helpers functions
-source /lib/lsb/init-functions
 
-# check for non-nul options
-if [[ -n "$2" ]]; then
-	SSHD_OPTS="$SSHD_OPTS $2"
-fi
+start() {
+	config="$1"
+	cfname=`basename $config`
+	forward_list=""
 
-# Are we running from init?
-run_by_init() {
-	([ "$previous" ] && [ "$runlevel" ]) || [ "$runlevel" = S ]
-}
-
-# @todo
-# $1	exit code
-check_for_upstart() {
-	if init_is_upstart; then
-		exit $1
+	# make sure we have a config file
+	if [ ! -f "$config" ]
+	then
+		failure
+		echo "$NAME $cfname: $config missing"
+		return 1
 	fi
-}
 
+	. $config
 
-# $1	exit code
-check_for_no_start() {
-	# forget it if we're trying to start, and /etc/ssh/sshd_not_to_be_run exists
-	if [[ -e /etc/ssh/sshd_not_to_be_run ]]; then
-		if [[ "$1" = log_end_msg ]]; then
-			log_end_msg 0 || true
+	# make sure all variables have been defined in config
+	for var in \
+		ServerAliveInterval ServerAliveCountMax StrictHostKeyChecking \
+		LocalUser IdentityFile RemoteUser RemoteHost RemotePort
+	do eval "
+		if [ -z \$$var ]
+		then
+			failure
+			echo \"$NAME $cfname: $var variable empty\"
+			return 1
 		fi
-		if ! run_by_init; then
-			log_action_msg "OpenBSD Secure Shell server not in use (/etc/ssh/sshd_not_to_be_run)" || true
-		fi
-		exit 0
+		"
+	done
+
+	if [ ${#ForwardPort[*]} -eq 0 ]
+	then
+		failure
+		echo "$NAME $cfname: ForwardPort array empty"
+		return 1
 	fi
-}
 
-# Exit if /dev/null is missing
-# $1	exit code
-check_dev_null() {
-	if [[ ! -c /dev/null ]]; then
-		if [[ "$1" = log_end_msg ]]; then
-			log_end_msg 1 || true
-		fi
-		if ! run_by_init; then
-			log_action_msg "/dev/null is not a character device!" || true
-		fi
-		exit 1
-	fi
-}
-
-# Create the PrivSep empty dir if necessary
-check_privsep_dir() {
-	if [[ ! -d /var/run/sshd ]]; then
-		mkdir /var/run/sshd
-		chmod u=rwx,g=rx,o=rx /var/run/sshd
-	fi
-}
-
-# Only check the validity of the configuration file and sanity of the keys
-check_config() {
-	if [[ ! -e /etc/ssh/sshd_not_to_be_run ]]; then
-		/usr/sbin/sshd $SSHD_OPTS -t || exit 1
-	fi
-}
-
-export PATH="${PATH:+$PATH:}/usr/sbin:/sbin"
-
-
-
-case "$1" in
-	"start")
-		check_for_upstart 1
-		check_privsep_dir
-		check_for_no_start
-		check_dev_null
-		log_daemon_msg "Starting OpenBSD Secure Shell server" "sshd" || true
-		if start-stop-daemon --start --quiet --oknodo --pidfile /var/run/sshd.pid --exec /usr/sbin/sshd -- $SSHD_OPTS; then
-			log_end_msg 0 || true
-		else
-			log_end_msg 1 || true
-		fi
-	;;
-	"stop")
-		check_for_upstart 0
-		log_daemon_msg "Stopping OpenBSD Secure Shell server" "sshd" || true
-		if start-stop-daemon --stop --quiet --oknodo --pidfile /var/run/sshd.pid; then
-			log_end_msg 0 || true
-		else
-			log_end_msg 1 || true
-		fi
-	;;
-	"reload"|"force-reload")
-		check_for_upstart 1
-		check_for_no_start
-		check_config
-		log_daemon_msg "Reloading OpenBSD Secure Shell server's configuration" "sshd" || true
-		if start-stop-daemon --stop --signal 1 --quiet --oknodo --pidfile /var/run/sshd.pid --exec /usr/sbin/sshd; then
-			log_end_msg 0 || true
-		else
-			log_end_msg 1 || true
-		fi
-	;;
-	"restart")
-		check_for_upstart 1
-		check_privsep_dir
-		check_config
-		log_daemon_msg "Restarting OpenBSD Secure Shell server" "sshd" || true
-		start-stop-daemon --stop --quiet --oknodo --retry 30 --pidfile /var/run/sshd.pid
-		check_for_no_start log_end_msg
-		check_dev_null log_end_msg
-		if start-stop-daemon --start --quiet --oknodo --pidfile /var/run/sshd.pid --exec /usr/sbin/sshd -- $SSHD_OPTS; then
-			log_end_msg 0 || true
-		else
-			log_end_msg 1 || true
-		fi
-	;;
-	"try-restart")
-		check_for_upstart 1
-		check_privsep_dir
-		check_config
-		log_daemon_msg "Restarting OpenBSD Secure Shell server" "sshd" || true
-		RET=0
-		start-stop-daemon --stop --quiet --retry 30 --pidfile /var/run/sshd.pid || RET="$?"
-		case $RET in
-			0)
-				# old daemon stopped
-				check_for_no_start log_end_msg
-				check_dev_null log_end_msg
-				if start-stop-daemon --start --quiet --oknodo --pidfile /var/run/sshd.pid --exec /usr/sbin/sshd -- $SSHD_OPTS; then
-						log_end_msg 0 || true
-				else
-						log_end_msg 1 || true
-				fi
-			;;
-			1)
-				# daemon not running
-				log_progress_msg "(not running)" || true
-				log_end_msg 0 || true
-			;;
-			*)
-				# failed to stop
-				log_progress_msg "(failed to stop)" || true
-				log_end_msg 1 || true
+	for fwd in "${ForwardPort[@]}"
+	do
+		case "$fwd" in
+		D\ *:*|R\ *:*:*:*|L\ *:*:*:*) forward_list+="-$fwd " ;;
+		*)	failure
+			echo "$NAME $cfname: $fwd format unknown"
+			return 1
 			;;
 		esac
-	;;
-	"status")
-		check_for_upstart 1
-		status_of_proc -p /var/run/sshd.pid /usr/sbin/sshd sshd && exit 0 || exit $?
-	;;
-	"list")
-		cd /etc/mast/;
-		for h in *; do
-			[[ ! -f "$h" || -d "$h" || $h == "template" ]] && continue
-			printf "%s\n" $h
-		done
-	;;
-	*)
-		log_action_msg "Usage: /etc/init.d/ssh {start|stop|reload|force-reload|restart|try-restart|status}" || true
-		exit 1
-esac
+	done
 
-exit 0
+	# define the pidfile variable for autossh (created by autossh)
+	# check if pidfile already exists -- don't start another instance if pidfile exists
+	AUTOSSH_PIDFILE="/var/run/$NAME/$cfname.pid"
+	if [ -e $AUTOSSH_PIDFILE ]
+	then
+		failure
+		echo "$NAME $cfname: $AUTOSSH_PIDFILE already exists"
+		return 1
+	fi
+
+	echo -n "Starting $NAME $cfname: "
+
+	# before switching-users, make sure pidfile is created and user has write permission
+	touch $AUTOSSH_PIDFILE
+	chown $LocalUser $AUTOSSH_PIDFILE
+
+	# start autossh as the user defined in the config file
+	# the pidfile must be re-defined in the new environment
+	su - $LocalUser -c "
+		AUTOSSH_PIDFILE=$AUTOSSH_PIDFILE;
+		AUTOSSH_PORT=0;
+		export AUTOSSH_PIDFILE AUTOSSH_PORT;
+		$autossh -q -N -p $RemotePort \
+		-i $IdentityFile \
+		-o ServerAliveInterval=$ServerAliveInterval \
+		-o ServerAliveCountMax=$ServerAliveCountMax \
+		-o StrictHostKeyChecking=$StrictHostKeyChecking \
+		$forward_list $RemoteUser@$RemoteHost -f;"
+
+	# check to make sure pidfile was created
+	if [ ! -f $AUTOSSH_PIDFILE ]
+	then
+		failure
+		echo "`basename $AUTOSSH_PIDFILE` not created"
+		return 1
+	fi
+
+	success
+	echo
+	touch /var/lock/subsys/$NAME
+}
+
+stop() {
+	config="$1"
+	# if no config names (on the command-line), stop all autossh processes
+	if [ -z "$config" ]
+	then
+		echo -n "Stopping all $NAME: "
+		killproc $autossh
+		RETVAL=$?
+		echo
+		if [ $RETVAL -eq 0 ]
+		then
+			rm -f /var/lock/subsys/$NAME
+			rm -f /var/run/$NAME/*.pid
+		fi
+	else
+		cfname="`basename $config`"
+		pidfile="/var/run/$NAME/$cfname.pid"
+		if [ ! -f $pidfile ]
+		then
+			failure
+			echo "$NAME $cfname: $pidfile missing"
+			return 1
+		else
+			echo -n $"Stopping $NAME $cfname: "
+			killproc -p "/var/run/$NAME/$cfname.pid" "$NAME $cfname"
+			RETVAL=$?
+			echo
+			[ $RETVAL -eq 0 ] && rm -f /var/run/$NAME/$cfname.pid
+		fi
+	fi
+	return $RETVAL
+}
+
+# save the action name, and shift the command-line array
+# all remaining command-line arguments could be config names
+action="$1"
+shift
+
+case "$action" in
+start)
+	if [ -z "$1" ]
+	then
+		# if no config names on the command-line, start all /etc/autossh/ configs found
+		for config in `echo /etc/$NAME/${cfname:='*'}`
+		do $action $config; done
+	else
+		# start only the config files specified on the command-line
+		for cfname in "$@"
+		do $action /etc/$NAME/$cfname; done
+	fi
+	;;
+stop)
+	if [ -z "$1" ]
+	then
+		# if no config names on the command-line, stop all autossh processes
+		$action
+	else
+		# stop only the config files specified on the command-line
+		for cfname in "$@"
+		do $action /etc/$NAME/$cfname; done
+	fi
+	;;
+restart)
+	# re-execute this script, with the stop and start action names instead
+	$0 stop "$@"
+	$0 start "$@"
+	;;
+status)
+	if [ -z "$1" ]
+	then
+		# if no config names on the command-line, show all autossh pids
+		status $autossh
+		RETVAL=$?
+	else
+		# only show the status of config files specified on the command-line
+		for cfname in "$@"
+		do
+			config="/etc/$NAME/$cfname"
+			# if the config file is missing, echo an error message
+			if [ -f $config ]
+			then
+				cfname="`basename $config`"
+				pidfile="/var/run/$NAME/$cfname.pid"
+				# if the pidfile is missing, echo an error message
+				if [ -f $pidfile ]
+				then
+					status -p "$pidfile" "$NAME $cfname"
+					RETVAL=$?
+				else
+					echo "$pidfile missing"
+					RETVAL=1
+				fi
+			else
+				echo "$config missing"
+				RETVAL=1
+			fi
+		done
+	fi
+	;;
+*)
+	echo "Usage: $0 {start|stop|restart|status} {config names...}"
+	RETVAL=1
+	;;
+esac
+exit $RETVAL
