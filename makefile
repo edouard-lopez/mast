@@ -134,6 +134,7 @@ install-systemd:
 # Install packages required on the CUSTOMER's node
 install-customer:
 	@printf "Installing…\t%s\n" $$'$(call _VALUE_, customer\'s node)'
+	apt-get install openssh-server bmon iftop htop useradd
 
 # Check system status for dependencies
 check-system:
