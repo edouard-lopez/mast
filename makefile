@@ -32,6 +32,9 @@ CUSTOMER_HOST:=none
 default: usage
 setup-customer: install-customer
 setup-infra: install-infra
+create-ssh-key: ${SSH_KEYFILE}
+
+
 # Adding a new host/customer require a
 add-host:
 	if [[ ${CUSTOMER_NAME} != "none" ]]; then \
