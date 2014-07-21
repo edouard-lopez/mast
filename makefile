@@ -23,11 +23,14 @@ REMOTE_USER:=coaxis
 # default remote hostname
 REMOTE_SRV:=Srv-SSH_RN
 
-# Contains a file-per-host SSH's config
-CONFIG_DIR:=/etc/mast/
+# Contains a file-per-host SSH's config.
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Do NOT edit this section
+CONFIG_DIR:=/etc/mast
 # Current customer's name config and host/ip to work with (add/delete)
 CUSTOMER_NAME:=none
 CUSTOMER_HOST:=none
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 default: usage
 setup-customer: install-customer
