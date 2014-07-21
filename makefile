@@ -29,32 +29,6 @@ CONFIG_DIR:=/etc/mast/
 CUSTOMER_NAME:=none
 CUSTOMER_HOST:=none
 
-NO_COLOR=\x1b[0m
-OK_COLOR=\x1b[32;01m
-ERROR_COLOR=\x1b[31;01m
-WARN_COLOR=\x1b[33;01m
-
-# Reset
-__RESET__=\e[0m
-# valid/green
-__SUCCESS__=\e[0;32m
-# blue/information
-__INFO__=\e[0;36m
-# red/error
-__ERROR__=\e[1;31m
-# yellow/warning
-__WARNING__=\e[0;33m
-# value/purple
-__VALUE__=\e[0;35m
-
-# Colours function helpers
-_SUCCESS_=$(__SUCCESS__)$(1)$(__RESET__)\n
-_INFO_=$(__INFO__)$(1)$(__RESET__)\n
-_ERROR_=$(__ERROR__)$(1)$(__RESET__)\n
-_WARNING_=$(__WARNING__)$(1)$(__RESET__)\n
-_VALUE_=$(__VALUE__)$(1)$(__RESET__)\n
-# messages helper
-_OK_=$(call _SUCCESS_, ok)
 default: usage
 setup-customer: install-customer
 setup-infra: install-infra
@@ -153,3 +127,34 @@ usage:
 	@printf "Usage…\n"
 	@printf "On infra:\n\t%s\n" $$'$(call _VALUE_, make setup-infra)'
 	@printf "On customer:\n\t%s\n" $$'$(call _VALUE_, make setup-customer)'
+
+
+# Coloring constants
+NO_COLOR=\x1b[0m
+OK_COLOR=\x1b[32;01m
+ERROR_COLOR=\x1b[31;01m
+WARN_COLOR=\x1b[33;01m
+
+# Reset
+__RESET__=\e[0m
+# valid/green
+__SUCCESS__=\e[0;32m
+# blue/information
+__INFO__=\e[0;36m
+# red/error
+__ERROR__=\e[1;31m
+# yellow/warning
+__WARNING__=\e[0;33m
+# value/purple
+__VALUE__=\e[0;35m
+
+# Colours function helpers
+_SUCCESS_=$(__SUCCESS__)$(1)$(__RESET__)\n
+_INFO_=$(__INFO__)$(1)$(__RESET__)\n
+_ERROR_=$(__ERROR__)$(1)$(__RESET__)\n
+_WARNING_=$(__WARNING__)$(1)$(__RESET__)\n
+_VALUE_=$(__VALUE__)$(1)$(__RESET__)\n
+# messages helper
+_OK_=$(call _SUCCESS_, ok)
+
+
