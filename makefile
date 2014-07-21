@@ -62,8 +62,7 @@ add-host:
 	@printf "Editing…\t%s\n" "$(call _VALUE_, ${CONFIG_DIR}/${CUSTOMER_NAME})"
 	sleep 3s;
 	editor ${CONFIG_DIR}/${CUSTOMER_NAME}
-	printf "You *must* start the tunnel manually:\n\tsudo /etc/init.d/mast start %s\n" "${CUSTOMER_NAME}"
-
+	@printf "You *must* start the tunnel manually:\n\tsudo /etc/init.d/mast start %s\n" "${CUSTOMER_NAME}"
 
 
 
@@ -123,7 +122,6 @@ install-systemd:
 # Install packages required on the CUSTOMER's node
 install-customer:
 	@printf "Installing…\t%s\n" $$'$(call _VALUE_, customer\'s node)'
-	# ssh  = virtual-package
 
 # Check system status for dependencies
 check-system:
