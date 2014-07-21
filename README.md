@@ -149,7 +149,7 @@ Check if tunnels are children of the service. If this is the case, that means th
 
 ## Configuration File
 
-The configuration files used by `mast` are located in the `$CONFIG_DIR` directory as defined in the _makefile_ (default: _/etc/mast_). 
+The configuration files used by `mast` are located in the `$CONFIG_DIR` directory as defined in the _makefile_ (default path is `/etc/mast/`). 
 Those files are dynamically generated using the `make add-host` and use the _template_ file as skeleton. Each configuration describe parameters for a given host and most configuration should not be tampered with.
 
 Below is a list of available parameters and their roles:
