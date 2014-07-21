@@ -35,6 +35,21 @@ setup-infra: install-infra
 create-ssh-key: ${SSH_KEYFILE}
 
 
+.PHONY: deploy-key \
+install-customer \
+remove-host \
+usage \
+add-host \
+config-ssh \
+install-infra \
+setup-customer \
+check-system \
+create-ssh-key \
+default \
+install-systemd \
+setup-infra
+
+
 # Adding a new host/customer require a
 add-host:
 	if [[ ${CUSTOMER_NAME} != "none" ]]; then \
