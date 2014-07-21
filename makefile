@@ -191,8 +191,8 @@ check-system:
 # Display basic help. For further information refer to the docs http://github.com/edouard-lopez/mast/README.md
 usage:
 	@printf "Usage…\n"
-	@printf "On infra:\n\t%s\n" $$'$(call _VALUE_, make setup-infra)'
-	@printf "On customer:\n\t%s\n" $$'$(call _VALUE_, make setup-customer)'
+	@printf "\t* on infra:\n\t\t%s\n" $$'$(call _VALUE_, make setup-infra)'
+	@printf "\t* on customer:\n\t\t%s\n" $$'$(call _VALUE_, make setup-customer)'
 
 
 # Coloring constants
