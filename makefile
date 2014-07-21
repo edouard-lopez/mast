@@ -63,6 +63,15 @@ install-systemd \
 setup-infra
 
 
+list-host:
+	@printf "Listing hosts…\n"
+	@for fn in ${CONFIG_DIR}/*; do \
+		h=$$(basename "$$fn"); \
+		[[ "$$h" == "template" ]] && continue; \
+		rhost="$$(grep RemoteHost "$$fn" | tr -d '\"' | cut -d '=' -f 2 )"; \
+		printf "\t* $(call _VALUE_,$$h) ($(call _INFO_,$$rhost))\n"; \
+	done
+
 # Adding a new host/customer require a
 add-host:
 	@if [[ "${NAME}" != "none" ]]; then \
