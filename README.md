@@ -147,7 +147,32 @@ make REMOTE_SRV=11.22.33.44 deploy-key
 ### Don't kill me, I have kids!
 Check if tunnels are children of the service. If this is the case, that means that killing the service will kill **all** tunnels.
 
+## Configuration File
+
+The configuration files used by `mast` are located in the `$CONFIG_DIR` directory as defined in the _makefile_ (default: _/etc/mast_). 
+Those files are dynamically generated using the `make add-host` and use the _template_ file as skeleton. Each configuration describe parameters for a given host and most configuration should not be tampered with.
+
+Below is a list of available parameters and their roles:
+
+| Parameter  | Default | Description |
+| ------------- | ------------- | ------------- |
+| `RemoteHost` | _CUSTOMER_HOST_ | **_string_**.<br> [FQDN](https://en.wikipedia.org/wiki/FQDN) or IP address of the customer's node. |
+| `RemoteUser` | _coaxis_ | **_string_**.<br> Unix' username on the customer's node. |
+| `RemotePort` | `22` | **_integer_**.<br> SSH port on the customer's node. |
+| `ServerAliveInterval` | `10` | **_integer_**.<br> Sets a timeout interval in seconds[^manpage-ssh-config] after which if no data has been received from the server, `ssh` will send a message through the encrypted channel to request a response from the server. |
+| `ServerAliveCountMax` | `3` | **_integer_**.<br> Sets the number of server alive messages which may be sent without `ssh` receiving any messages back from the server.[^manpage-ssh-config] |
+| `StrictHostKeyChecking` | _no_ | **_string_**.<br> If this flag is set to _no_, `ssh` will automatically add new host keys to the user known hosts files.[^manpage-ssh-config] |
+| `LocalUser` | _root_ | **_string_**.<br> The user on the local machine that will be used to create the tunnel.[^js-morisset] |
+| `IdentityFile` | _~/.ssh/id_rsa.mast.coaxis_ | **_string_**.<br> Path to local SSH public key, so we can connect automatically to customer's node. |
+| `ForwardPort` | `"L *:9100:imp1:9100"`<br>`"L *:9101:imp2:9100"` | **_array_**.<br>`L [bind_address:]port:host:hostport` Specifies that the given port on the local (client) host is to be forwarded to the given host and port on the remote side.<br>`R [bind_address:]port:host:hostport` Specifies that the given port on the remote (server) host is to be forwarded to the given host and port on the local side. |
+| `BandwidthLimitation` | `true` | **_boolean_**.<br> Flag to toggle  traffic limitation.<br>`true`: enable limitation or <br>`false`: disable. |
+| `UploadLimit` | `1000` | **_integer_**.<br> Upper limit for _upload_ traffic (customer's node is the source of traffic). |
+| `DownloadLimit` |`100` | **_integer_**.<br> Upper limit for _download_ traffic. |
+
 ### References
 
 [^service-file]: [How Do I Convert A SysV Init Script Into A systemd Service File?](http://0pointer.de/blog/projects/systemd-for-admins-3.html)
-[^systemd-on-ubuntu]: [How To Install And Test Systemd On Ubuntu 14.04 Trusty Tahr And Ubuntu 12.04 Precise Pangolin](http://linuxg.net/how-to-install-and-test-systemd-on-ubuntu-14-04-trusty-tahr-and-ubuntu-12-04-precise-pangolin/)
+[^systemd-on-ubuntu]: [How To Install And Test Systemd On Ubuntu 14.04 Trusty Tahr And Ubuntu 12.04 Precise Pangolin.](http://linuxg.net/how-to-install-and-test-systemd-on-ubuntu-14-04-trusty-tahr-and-ubuntu-12-04-precise-pangolin/)
+[^manpage-ssh-config]: [Manual for OpenSSH SSH **client configuration files**.](http://manpages.ubuntu.com/manpages/precise/en/man5/ssh_config.5.html)
+[^js-morisset]: [Autossh Startup Script for Multiple Tunnels.](http://surniaulula.com/2012/12/10/autossh-startup-script-for-multiple-tunnels/)
+[^manpage-ssh-client]: [Manual for OpenSSH SSH **client**.](http://manpages.ubuntu.com/manpages/precise/en/man1/ssh.1.html)
