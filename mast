@@ -174,7 +174,8 @@ start)
 	if [ -z "$1" ]
 	then
 		# if no config names on the command-line, start all /etc/autossh/ configs found
-		for config in `echo /etc/$NAME/${cfname:='*'}`
+		# for config in $(echo /etc/$NAME/${cfname:='*'})
+		for config in /etc/$NAME/${cfname:='*'}
 		do $action $config; done
 	else
 		# start only the config files specified on the command-line
