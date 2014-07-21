@@ -99,6 +99,17 @@ add-host:
 		printf "Missing customer name…\t%s\n" "${NAME}"; \
 	fi
 
+remove-host:
+	@printf "Removing host…\n\t%s\t\t" $$'$(call _VALUE_, ${NAME})'
+	@if [[ "${NAME}" == "none" || -z "${NAME}" ]]; then \
+		printf "%s host\'s NAME.\n" $$'$(call _WARNING_, invalid)'; \
+	elif [[ ! -e "${CONFIG_DIR}/${NAME}" ]]; then \
+		printf "does %s.\n" $$'$(call _WARNING_,not exist)'; \
+	elif [[ ! -f "${CONFIG_DIR}/${NAME}" ]]; then \
+		printf "%s host\'s file.\n" $$'$(call _WARNING_, invalid)'; \
+	else \
+		rm -f "${CONFIG_DIR}/${NAME}" && printf "$(call _SUCCESS_, done)" || printf "$(call _ERROR_, error)"; \
+	fi
 
 
 deploy-service:
