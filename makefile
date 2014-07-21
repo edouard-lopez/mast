@@ -12,25 +12,35 @@ ifneq (,)
 This makefile requires GNU Make.
 endif
 
-# force use of Bash
-SHELL := /bin/bash
-# Passphrase MUST be empty to allow automation (no passphrase prompt)
-EMPTY:=
-# Path to the SSH keys pair (public key is suffixed by .pub). This follow the native d
-SSH_KEYFILE:=$$HOME/.ssh/id_rsa.mast.coaxis
+
 # default remote user
 REMOTE_USER:=coaxis
-# default remote hostname
-REMOTE_SRV:=Srv-SSH_RN
 
-# Contains a file-per-host SSH's config.
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Do NOT edit this section
-CONFIG_DIR:=/etc/mast
+
+# DO NOT EDIT.
+# Below are CRITICAL SETTINGS for the application.
+# Seriously, otherwise you VOID THE SUPPORT AND WARRANTY contract.
+
+# force use of Bash
+SHELL := /bin/bash
+
+# default remote hostname
+REMOTE_SRV:=none
 # Current customer's name config and host/ip to work with (add/delete)
 CUSTOMER_NAME:=none
 CUSTOMER_HOST:=none
+
+# Contains a file-per-host SSH's config.
+CONFIG_DIR:=/etc/mast
+
+# Passphrase MUST be empty to allow automation (no passphrase prompt)
+EMPTY:=
+# Path to the SSH keys pair (public key is suffixed by .pub).
+SSH_KEYFILE:=$$HOME/.ssh/id_rsa.mast.coaxis
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 
 default: usage
 setup-customer: install-customer
