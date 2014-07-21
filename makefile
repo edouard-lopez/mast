@@ -147,6 +147,7 @@ ${SSH_KEYFILE}:
 	@printf "Creating…\tSSH Keys\n"
 	@ssh-keygen \
 		-t rsa \
+		-b 4096 \
 		-f "${SSH_KEYFILE}" \
 		-N "${EMPTY}" \
 		-O permit-port-forwarding \
