@@ -76,7 +76,7 @@ list-host:
 add-host:
 	@printf "Adding host…\n"
 	@if [[ "${NAME}" == "none" || -z "${NAME}" ]]; then \
-		printf "\tWarning %s\'s NAME.\n" $$'$(call _WARNING_,invalid host)'; \
+		printf "\t%s or %s.\n" $$'$(call _ERROR_,missing HOST)' $$'$(call _ERROR_,NAME)'; \
 		exit 0; \
 	elif [[ "${NAME}" != "none" ]]; then \
 		cp ${CONFIG_DIR}/{template,${NAME}}; \
@@ -89,7 +89,7 @@ add-host:
 					printf "\nYou must %s the tunnel with:\n\t%s %s\n" $$'$(call _WARNING_,start –manually–)' $$'$(call _INFO_,sudo /etc/init.d/mast start ${NAME})'; \
 					break;; \
 				[Nn]* ) \
-					printf "\t%s\n" $$'$(call _INFO_,Aborting)'; \
+					printf "\t%s\n" $$'$(call _INFO_,Skipping)'; \
 					exit;; \
 				* ) \
 					printf "\t\tAnswer by %s or %s.\n" $$'$(call _VALUE_,yes)' $$'$(call _VALUE_,no)';; \
