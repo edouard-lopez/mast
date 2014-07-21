@@ -58,6 +58,8 @@ add-host:
 	if [[ ${CUSTOMER_NAME} != "none" ]]; then \
 		cp ${CONFIG_DIR}/{template,${CUSTOMER_NAME}}; \
 		sed -i 's/CUSTOMER_HOST/${CUSTOMER_HOST}/g' ${CONFIG_DIR}/${CUSTOMER_NAME}; \
+	else \
+		printf "Missing customer name…\t%s\n" "${CUSTOMER_NAME}" \
 	fi
 	@printf "Editing…\t%s\n" "$(call _VALUE_, ${CONFIG_DIR}/${CUSTOMER_NAME})"
 	sleep 3s;
