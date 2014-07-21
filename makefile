@@ -116,18 +116,18 @@ deploy-service:
 	@printf "Deploying… \n"
 	@printf "\tSystemd service…\t"
 		@cp mastd.service /etc/systemd/system/ \
-		&& printf "$(call _SUCCESS_, installed)" || printf "$(call _ERROR_, error)"
+		&& printf "$(call _SUCCESS_, installed)\n" || printf "$(call _ERROR_, error)\n"
 	@printf "\tInitd service…\t\t"
 		@rm -f /etc/init.d/mast \
 		&& cp mast /etc/init.d/ \
-		&& printf "$(call _SUCCESS_, installed)" || printf "$(call _ERROR_, error)"
+		&& printf "$(call _SUCCESS_, installed)\n" || printf "$(call _ERROR_, error)\n"
 	@printf "\tDaemon…\t\t\t"
 		@rm -f /usr/sbin/mastd \
 		&& cp mastd /usr/sbin/ \
-		&& printf "$(call _SUCCESS_, installed)" || printf "$(call _ERROR_, error)"
+		&& printf "$(call _SUCCESS_, installed)\n" || printf "$(call _ERROR_, error)\n"
 	@printf "\tConfig directory… \t%s" $$'$(call _VALUE_, ${CONFIG_DIR})'
-		@[[ ! -d ${CONFIG_DIR} ]] && mkdir ${CONFIG_DIR} || printf "";
-	@printf "\tTemplate… \t\t%s" $$'$(call _VALUE_, ${CONFIG_DIR}/template)'
+		@[[ ! -d "${CONFIG_DIR}" ]] && mkdir "${CONFIG_DIR}" || printf "\n";
+	@printf "\tTemplate… \t\t%s\n" $$'$(call _VALUE_, ${CONFIG_DIR}/template)'
 		@rm -f ${CONFIG_DIR}/template && cp {.,${CONFIG_DIR}}/template
 
 config-ssh: create-ssh-key deploy-key
