@@ -75,7 +75,7 @@ list-host:
 # Adding a new host/customer require a
 add-host:
 	@printf "Adding host…\n"
-	@if [[ "${NAME}" == "none" || -z "${NAME}" ]]; then \
+	@if [[ "${NAME}" == "none" || -z "${NAME}" || "${HOST}" == "none" || -z "${HOST}" ]]; then \
 		printf "\t%s or %s.\n" $$'$(call _ERROR_,missing HOST)' $$'$(call _ERROR_,NAME)'; \
 		exit 0; \
 	elif [[ "${NAME}" != "none" ]]; then \
