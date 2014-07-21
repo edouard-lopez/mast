@@ -156,7 +156,7 @@ Below is a list of available parameters and their roles:
 
 | Parameter  | Default | Description |
 | ------------- | ------------- | ------------- |
-| `RemoteHost` | _CUSTOMER_HOST_ | **_string_**.<br> [FQDN](https://en.wikipedia.org/wiki/FQDN) or IP address of the customer's node. |
+| `RemoteHost` | _HOST_ | **_string_**.<br> [FQDN](https://en.wikipedia.org/wiki/FQDN) or IP address of the customer's node. |
 | `RemoteUser` | _coaxis_ | **_string_**.<br> Unix' username on the customer's node. |
 | `RemotePort` | `22` | **_integer_**.<br> SSH port on the customer's node. |
 | `ServerAliveInterval` | `10` | **_integer_**.<br> Sets a timeout interval in seconds[^manpage-ssh-config] after which if no data has been received from the server, `ssh` will send a message through the encrypted channel to request a response from the server. |

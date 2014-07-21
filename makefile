@@ -28,8 +28,8 @@ SHELL := /bin/bash
 # default remote hostname
 REMOTE_SRV:=none
 # Current customer's name config and host/ip to work with (add/delete)
-CUSTOMER_NAME:=none
-CUSTOMER_HOST:=none
+NAME:=none
+HOST:=none
 
 # Contains a file-per-host SSH's config.
 CONFIG_DIR:=/etc/mast
@@ -65,17 +65,17 @@ setup-infra
 
 # Adding a new host/customer require a
 add-host:
-	if [[ ${CUSTOMER_NAME} != "none" ]]; then \
-		cp ${CONFIG_DIR}/{template,${CUSTOMER_NAME}}; \
-		sed -i 's/CUSTOMER_HOST/${CUSTOMER_HOST}/g' ${CONFIG_DIR}/${CUSTOMER_NAME}; \
+	@if [[ "${NAME}" != "none" ]]; then \
+		cp ${CONFIG_DIR}/{template,${NAME}}; \
+		sed -i 's/HOST/${HOST}/g' ${CONFIG_DIR}/${NAME}; \
 	else \
-		printf "Missing customer name…\t%s\n" "${CUSTOMER_NAME}" \
+		printf "Missing customer name…\t%s\n" "${NAME}"; \
 	fi
-	@printf "Editing…\t%s\n" "$(call _VALUE_, ${CONFIG_DIR}/${CUSTOMER_NAME})"
+	@printf "Editing…\t%s\n" $$'$(call _VALUE_, ${CONFIG_DIR}/${NAME})'
 	sleep 3s;
-	editor ${CONFIG_DIR}/${CUSTOMER_NAME}
-	@printf "You *must* start the tunnel manually:\n\tsudo /etc/init.d/mast start %s\n" "${CUSTOMER_NAME}"
 
+	@editor ${CONFIG_DIR}/${NAME}
+	@printf "You *must* start the tunnel manually:\n\tsudo /etc/init.d/mast start %s\n" $$'${NAME}'
 
 
 deploy-service:
