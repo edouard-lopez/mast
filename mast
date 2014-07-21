@@ -55,7 +55,7 @@ start() {
 		return 1
 	fi
 
-	. $config
+	source "$config"
 
 	# make sure all variables have been defined in config
 	for var in \
