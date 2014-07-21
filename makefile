@@ -178,15 +178,15 @@ check-system:
 	@executables=( autossh openssh-client openssh-server trickle useradd add-apt-repository); \
 	if ! type dpkg-query &> /dev/null; then \
 		printf "You *MUST* install 'dpkg'\n"; \
-		printf "\t→ %s %s\n" $$'$(call _VALUE_, apt-get install dpkg)"; '
+		printf "\t→ %s %s\n" $$'$(call _VALUE_, apt-get install dpkg)'; \
 		exit; \
 	fi; \
 	for e in $${executables[@]}; do \
 		if ! $(dpkg-query -s "$$e") &> /dev/null; then \
-			printf "\t%s\t%s\n" "$$e" $$'$(call _ERROR_, Missing!)"; '
-			printf "\t\t→ %s %s\n" $$'$(call _VALUE_, apt-get install $$e)"; '
+			printf "\t%s\t%s\n" "$$e" $$'$(call _ERROR_, Missing!)'; \
+			printf "\t\t→ %s %s\n" $$'$(call _VALUE_, apt-get install $$e)'; \
 		else \
-			printf "\t%s\t%s\n" "$$e" $$'$(call _SUCCESS_, installed)"; '
+			printf "\t%s\t\t\t%s\n" "$$e" $$'$(call _SUCCESS_, installed)'; \
 		fi \
 	done
 
