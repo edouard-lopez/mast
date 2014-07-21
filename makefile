@@ -180,11 +180,11 @@ __WARNING__=\e[0;33m
 __VALUE__=\e[0;35m
 
 # Colours function helpers
-_SUCCESS_=$(__SUCCESS__)$(1)$(__RESET__)\n
-_INFO_=$(__INFO__)$(1)$(__RESET__)\n
-_ERROR_=$(__ERROR__)$(1)$(__RESET__)\n
-_WARNING_=$(__WARNING__)$(1)$(__RESET__)\n
-_VALUE_=$(__VALUE__)$(1)$(__RESET__)\n
+_SUCCESS_=$(__SUCCESS__)$(1)$(__RESET__)
+_INFO_=$(__INFO__)$(1)$(__RESET__)
+_ERROR_=$(__ERROR__)$(1)$(__RESET__)
+_WARNING_=$(__WARNING__)$(1)$(__RESET__)
+_VALUE_=$(__VALUE__)$(1)$(__RESET__)
 # messages helper
 _OK_=$(call _SUCCESS_, ok)
 
