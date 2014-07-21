@@ -72,7 +72,9 @@ list-host:
 		printf "\t* $(call _VALUE_,$$h) ($(call _INFO_,$$rhost))\n"; \
 	done
 
-# Adding a new host/customer require a
+# Adding a new host config require to provide it's NAME and HOST
+# @require: NAME
+# @require: HOST
 add-host:
 	@printf "Adding host…\n"
 	@if [[ "${NAME}" == "none" || -z "${NAME}" || "${HOST}" == "none" || -z "${HOST}" ]]; then \
