@@ -74,17 +74,31 @@ list-host:
 
 # Adding a new host/customer require a
 add-host:
-	@if [[ "${NAME}" != "none" ]]; then \
+	@printf "Adding host…\n"
+	@if [[ "${NAME}" == "none" || -z "${NAME}" ]]; then \
+		printf "\tWarning %s\'s NAME.\n" $$'$(call _WARNING_,invalid host)'; \
+		exit 0; \
+	elif [[ "${NAME}" != "none" ]]; then \
 		cp ${CONFIG_DIR}/{template,${NAME}}; \
 		sed -i 's/HOST/${HOST}/g' ${CONFIG_DIR}/${NAME}; \
+		while true; do \
+			read -p "$(shell printf "\tEditing…\t%s? [y/n]\n" $$'$(call _VALUE_, ${CONFIG_DIR}/${NAME})')" yn; \
+			case $$yn in \
+				[Yy]* ) \
+					editor ${CONFIG_DIR}/${NAME}; \
+					printf "\nYou must %s the tunnel with:\n\t%s %s\n" $$'$(call _WARNING_,start –manually–)' $$'$(call _INFO_,sudo /etc/init.d/mast start ${NAME})'; \
+					break;; \
+				[Nn]* ) \
+					printf "\t%s\n" $$'$(call _INFO_,Aborting)'; \
+					exit;; \
+				* ) \
+					printf "\t\tAnswer by %s or %s.\n" $$'$(call _VALUE_,yes)' $$'$(call _VALUE_,no)';; \
+			esac; \
+		done; \
 	else \
 		printf "Missing customer name…\t%s\n" "${NAME}"; \
 	fi
-	@printf "Editing…\t%s\n" $$'$(call _VALUE_, ${CONFIG_DIR}/${NAME})'
-	sleep 3s;
 
-	@editor ${CONFIG_DIR}/${NAME}
-	@printf "You *must* start the tunnel manually:\n\tsudo /etc/init.d/mast start %s\n" $$'${NAME}'
 
 
 deploy-service:
