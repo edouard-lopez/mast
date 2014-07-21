@@ -231,6 +231,13 @@ status)
 		done
 	fi
 	;;
+	"list")
+		cd /etc/mast/;
+		for h in *; do
+			[[ ! -f "$h" || -d "$h" || $h == "template" ]] && continue
+			printf "%s\n" $h
+		done
+	;;
 *)
 	printf "Usage: %s {start|stop|restart|status} {config names...}\n" "$0"
 	RETVAL=1
