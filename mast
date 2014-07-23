@@ -151,13 +151,14 @@ start() {
 	touch /var/lock/subsys/"$NAME"
 }
 
+
 stop() {
 	config="$1"
 	# if no config names (on the command-line), stop all autossh processes
-	if [ -z "$config" ]
+	if [[ -z "$config" ]]
 	then
 		printf "Stopping all %s: " "$NAME"
-		killproc $autossh
+		killproc "$autossh"
 		RETVAL=$?
 		echo
 		if [ $RETVAL -eq 0 ]
@@ -168,17 +169,16 @@ stop() {
 	else
 		cfname="$(basename "$config")"
 		pidfile="/var/run/$NAME/$cfname.pid"
-		if [ ! -f $pidfile ]
+		if [[ ! -f "$pidfile" ]]
 		then
-			failure
-			printf "%s %s: %s missing\n" "$NAME" "$cfname" "$pidfile"
+			printf "%s %s: %s missing\n" "$NAME" "$cfname" "$pidfile" | tee -a "$(logConfig "$cfname")"
 			return 1
 		else
 			printf "Stopping %s %s: " "$NAME" "$cfname"
 			killproc -p "/var/run/$NAME/$cfname.pid" "$NAME $cfname"
 			RETVAL=$?
 			echo
-			[ $RETVAL -eq 0 ] && rm -f /var/run/$NAME/$cfname.pid
+			[ $RETVAL -eq 0 ] && rm -f "/var/run/$NAME/$cfname.pid"
 		fi
 	fi
 	return $RETVAL
