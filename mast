@@ -37,6 +37,8 @@ set -o errexit
 RETVAL=0 # default return value
 NAME=autossh
 autossh=/usr/bin/autossh
+# template name for log file
+LOG=/var/log/mast-_cfg_.log
 
 # Create PID directory missing
 [[ ! -d /var/run/$NAME ]] && mkdir -p /var/run/$NAME
@@ -162,6 +164,15 @@ stop() {
 		fi
 	fi
 	return $RETVAL
+}
+
+logConfig() {
+	if [[ -z "$1" ]]; then
+		printf "Missing log file: %s\n"
+		exit 1
+	else
+		echo "${LOG/_cfg_/$1}"
+	fi
 }
 
 list() {
