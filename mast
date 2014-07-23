@@ -44,6 +44,29 @@ LOG=/var/log/mast-_cfg_.log
 [[ ! -d /var/run/$NAME ]] && mkdir -p /var/run/$NAME
 
 
+
+# Styling function
+# formatting
+# _underline_="$(tput sgr 0 1)"	# Underline
+# _bold_="$(tput bold)"			# Bold
+# _reset_="$(tput sgr0)"			# Reset
+# # coloring
+# _info_="$(tput setaf 6)"		# blue/information
+# _warning_="$(tput setaf 3)"	# yellow/warning
+# _error_="$(tput setaf 1)"		# red/error
+# _value_="$(tput setaf 7)"		# value/white
+# _value_="$(tput setaf 5)"		# value/purple
+# _valid_="$(tput setaf 2)"		# valid/green
+# # helpers
+# _underline()	{ printf "${_underline_}%s${_reset_}" "$*" } 			# style text as underline
+# _bold()			{ printf "${_bold_}%s${_reset_}" "$*" } 				# style text as bold
+# _info()			{ printf "${_info_}%s${_reset_}" "$*" } 				# style text as info
+# _warning()		{ printf "${_warning_}%s${_reset_}" "$*" } 			# style text as warning
+# _error()			{ printf "${_bold_}${_error_}%s${_reset_}" "$*" } 	# style text as error
+# _value()		{ printf "${_value_}%s${_reset_}" "$*" } 				# style text as value
+# _valid()			{ printf "${_valid_}%s${_reset_}" "$*" } 				# style text as valid
+
+
 start() {
 	config="$1"
 	cfname="$(basename "$config")"
