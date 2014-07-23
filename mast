@@ -36,7 +36,7 @@ set -o errexit
 
 RETVAL=0 # default return value
 NAME=autossh
-autossh=/usr/bin/autossh
+autossh="$(which autossh)"
 # template name for log file
 LOG=/var/log/mast-_cfg_.log
 
@@ -73,43 +73,42 @@ start() {
 	forward_list=""
 
 	# make sure we have a config file
-	if [ ! -f "$config" ]
-	then
-		failure
-		printf "%s %s: %s missing\n" "$NAME" "$cfname" "$config"
+	if [[ ! -f "$config" ]]; then
+		printf "%s %s: %s missing\n" "$NAME" "$cfname" "$config" | tee -a "$(logConfig "$cfname")"
 		return 1
 	fi
 
 	source "$config"
 
-	# make sure all variables have been defined in config
-	for var in \
-		ServerAliveInterval ServerAliveCountMax StrictHostKeyChecking \
+	# make sure all arguments/variables have been defined in config
+	sshArguments=(
+		ServerAliveInterval ServerAliveCountMax StrictHostKeyChecking
 		LocalUser IdentityFile RemoteUser RemoteHost RemotePort
-	do eval "
-		if [ -z \$$var ]
+		BandwidthLimitation UploadLimit DownloadLimit
+	)
+	for var in "${sshArguments[@]}"; do
+	eval "
+		if [[ -z \$$var ]]
 		then
-			failure
-			printf \"%s %s: %s variable empty\\n\" \"$NAME\" \"$cfname\" \"$var\"
+			printf \"%s %s: %s variable empty\\n\" \"$NAME\" \"$cfname\" \"$var\" | tee -a \"$(logConfig \"$cfname\")\"
 			return 1
 		fi
 		"
 	done
 
-	if [ ${#ForwardPort[*]} -eq 0 ]
-	then
-		failure
-		printf "%s %s: ForwardPort array empty\n" "$NAME" "$cfname"
+	if (( ${#ForwardPort[*]} == 0 )); then
+		printf "%s %s: ForwardPort array empty\n" "$NAME" "$cfname" | tee -a "$(logConfig "$cfname")"
 		return 1
 	fi
 
-	for fwd in "${ForwardPort[@]}"
-	do
+	for fwd in "${ForwardPort[@]}"; do
 		case "$fwd" in
-		D\ *:*|R\ *:*:*:*|L\ *:*:*:*) forward_list+="-$fwd " ;;
-		*)	failure
-			printf "%s %s: %s format unknown\n" "$NAME" "$cfname" "$fwd"
-			return 1
+			D\ *:*|R\ *:*:*:*|L\ *:*:*:*)
+				forward_list+="-$fwd "
+			;;
+			*)
+				printf "%s %s: %s format unknown\n" "$NAME" "$cfname" "$fwd" | tee -a "$(logConfig "$cfname")"
+				return 1
 			;;
 		esac
 	done
@@ -117,22 +116,20 @@ start() {
 	# define the pidfile variable for autossh (created by autossh)
 	# check if pidfile already exists -- don't start another instance if pidfile exists
 	AUTOSSH_PIDFILE="/var/run/$NAME/$cfname.pid"
-	if [ -e $AUTOSSH_PIDFILE ]
-	then
-		failure
-		printf "%s %s: %s already exists\n" "$NAME" "$cfname" "$AUTOSSH_PIDFILE"
+	if [[ -e $AUTOSSH_PIDFILE ]]; then
+		printf "%s %s: %s already exists\n" "$NAME" "$cfname" "$AUTOSSH_PIDFILE" | tee -a "$(logConfig "$cfname")"
 		return 1
 	fi
 
 	printf "Starting %s %s: " "$NAME" "$cfname"
 
 	# before switching-users, make sure pidfile is created and user has write permission
-	touch $AUTOSSH_PIDFILE
-	chown $LocalUser $AUTOSSH_PIDFILE
+	touch "$AUTOSSH_PIDFILE"
+	chown "$LocalUser $AUTOSSH_PIDFILE"
 
 	# start autossh as the user defined in the config file
 	# the pidfile must be re-defined in the new environment
-	su - $LocalUser -c "
+	su - "$LocalUser" -c "
 		AUTOSSH_PIDFILE=$AUTOSSH_PIDFILE;
 		AUTOSSH_PORT=0;
 		export AUTOSSH_PIDFILE AUTOSSH_PORT;
@@ -144,16 +141,14 @@ start() {
 		$forward_list $RemoteUser@$RemoteHost -f;"
 
 	# check to make sure pidfile was created
-	if [ ! -f $AUTOSSH_PIDFILE ]
-	then
-		failure
-		printf "%s not created\n" "$(basename "$AUTOSSH_PIDFILE")"
+	if [[ ! -f $AUTOSSH_PIDFILE ]]; then
+		printf "%s not created\n" "$(basename "$AUTOSSH_PIDFILE")" | tee -a "$(logConfig "$cfname")"
 		return 1
 	fi
 
 	success
 	echo
-	touch /var/lock/subsys/$NAME
+	touch /var/lock/subsys/"$NAME"
 }
 
 stop() {
