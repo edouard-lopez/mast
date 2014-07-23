@@ -164,6 +164,13 @@ stop() {
 	return $RETVAL
 }
 
+list() {
+	for h in *; do
+		[[ ! -f "$h" || -d "$h" || $h == "template" ]] && continue
+		printf "* %s\t%s\n" "$(_value "$h")" "$(_info "$(logConfig "$h")")"  | tee -a "$(logConfig "$h")"
+	done
+}
+
 # save the action name, and shift the command-line array
 # all remaining command-line arguments could be config names
 action="$1"
@@ -231,12 +238,8 @@ status)
 		done
 	fi
 	;;
-	"list")
-		cd /etc/mast/;
-		for h in *; do
-			[[ ! -f "$h" || -d "$h" || $h == "template" ]] && continue
-			printf "%s\n" $h
-		done
+list)
+	cd /etc/mast/ && list
 	;;
 *)
 	printf "Usage: %s {start|stop|restart|status} {config names...}\n" "$0"
