@@ -114,6 +114,14 @@ remove-host:
 	fi
 
 
+uninstall:
+	rm -f \
+		/etc/systemd/system/mastd.service \
+		/etc/init.d/mast \
+		/usr/sbin/mastd \
+		"${CONFIG_DIR}"/* \
+		"${CONFIG_DIR}"
+
 deploy-service:
 	@printf "Deploying… \n"
 	@printf "\tSystemd service…\t"
