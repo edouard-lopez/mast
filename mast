@@ -207,52 +207,54 @@ shift
 
 case "$action" in
 start)
-	if [ -z "$1" ]
+	if [[ -z "$1" ]]
 	then
 		# if no config names on the command-line, start all /etc/autossh/ configs found
 		# for config in $(echo /etc/$NAME/${cfname:='*'})
-		for config in /etc/$NAME/${cfname:='*'}
-		do $action $config; done
+		for config in /etc/$NAME/${cfname:='*'}; do
+			"$action" "$config";
+		done
 	else
 		# start only the config files specified on the command-line
-		for cfname in "$@"
-		do $action /etc/$NAME/$cfname; done
+		for cfname in "$@"; do
+			"$action" "/etc/$NAME/$cfname";
+		done
 	fi
 	;;
 stop)
-	if [ -z "$1" ]
-	then
+	if [[ -z "$1" ]]; then
 		# if no config names on the command-line, stop all autossh processes
-		$action
+		"$action"
 	else
 		# stop only the config files specified on the command-line
-		for cfname in "$@"
-		do $action /etc/$NAME/$cfname; done
+		for cfname in "$@"; do
+			"$action" "/etc/$NAME/$cfname";
+		done
 	fi
 	;;
 restart)
 	# re-execute this script, with the stop and start action names instead
-	$0 stop "$@"
-	$0 start "$@"
+	"$0" stop "$@"
+	"$0" start "$@"
 	;;
 status)
-	if [ -z "$1" ]
+	if [[ -z "$1" ]]
 	then
 		# if no config names on the command-line, show all autossh pids
-		status $autossh
+		status "$autossh"
 		RETVAL=$?
 	else
 		# only show the status of config files specified on the command-line
-		for cfname in "$@"
+		for cfname in "$@";
 		do
 			config="/etc/$NAME/$cfname"
 			# if the config file is missing, printf an error message
-			if [ -f $config ]
+			if [[ -f $config ]]
 			then
-				cfname="`basename $config`"
+				cfname="$(basename "$config")"
 				pidfile="/var/run/$NAME/$cfname.pid"
 				# if the pidfile is missing, printf an error message
-				if [ -f $pidfile ]
+				if [[ -f $pidfile ]]
 				then
 					status -p "$pidfile" "$NAME $cfname"
 					RETVAL=$?
