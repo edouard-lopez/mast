@@ -1,36 +1,51 @@
-#! /bin/sh
+#!/usr/bin/env bash
 ### BEGIN INIT INFO
-# Provides:          skeleton
-# Required-Start:    $remote_fs $syslog
-# Required-Stop:     $remote_fs $syslog
+# Provides:          mast
+# Required-Start:    $network $remote_fs $syslog
+# Required-Stop:     $network $remote_fs $syslog
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: Example initscript
-# Description:       This file should be used to construct scripts to be
-#                    placed in /etc/init.d.
+# Short-Description: Daemon to manage multiple auto-ssh tunnels
+# Description:       Daemon to manage multiple auto-ssh tunnels
 ### END INIT INFO
 
-# Author: Foo Bar <foobar@baz.org>
+# Author: Édouard Lopez <srv+mast@edouard-lopez.com>
+
+# Copyright 2014 - Édouard Lopez - http://edouard-lopez.com/
 #
-# Please remove the "Author" lines above and replace them
-# with your own name if you copy and modify this script.
+# This script is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This script is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details at http://www.gnu.org/licenses/.
+
+# Changelog:
+# v0.0.1: skeleton
+# v0.0.2: add meta information
 
 # Do NOT "set -e"
+# see: http://www.davidpashley.com/articles/writing-robust-shell-scripts/
+set -o nounset # set -u: exit script if you try to use an uninitialised variable.
+ set -o errexit # set -e: exit script if any statement returns a non-true return value.
 
 # PATH should only include /usr/* if it runs after the mountnfs.sh script
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
-DESC="Description of the service"
-NAME=daemonexecutablename
+DESC="Daemon to manage multiple auto-ssh tunnels"
+NAME=mastd
 DAEMON=/usr/sbin/$NAME
 DAEMON_ARGS="--options args"
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
 
 # Exit if the package is not installed
-[ -x "$DAEMON" ] || exit 0
+[[ -x "$DAEMON" ]] || exit 0
 
 # Read configuration variable file if it is present
-[ -r /etc/default/$NAME ] && . /etc/default/$NAME
+[[ -r /etc/default/$NAME ]] && . /etc/default/$NAME
 
 # Load the VERBOSE setting and other rcS variables
 . /lib/init/vars.sh
