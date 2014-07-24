@@ -236,8 +236,7 @@ shift
 
 case "$action" in
 start)
-	if [[ -z "$1" ]]
-	then
+	if [[ -z "$1" ]]; then
 		# if no config names on the command-line, start all /etc/autossh/ configs found
 		# for config in $(echo /etc/$NAME/${cfname:='*'})
 		for config in /etc/$NAME/${cfname:='*'}; do
@@ -267,8 +266,7 @@ restart)
 	"$0" start "$@"
 	;;
 status)
-	if [[ -z "$1" ]]
-	then
+	if [[ -z "$1" ]]; then
 		# if no config names on the command-line, show all autossh pids
 		status "$autossh"
 		RETVAL=$?
@@ -299,7 +297,7 @@ status)
 	fi
 	;;
 list)
-	;;
+	list ;;
 *)
 	printf "Usage: %s {start|stop|restart|status} {config names...}\n" "$0"
 	RETVAL=1
