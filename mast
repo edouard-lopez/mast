@@ -229,6 +229,15 @@ list() {
 	done
 }
 
+# List all log files
+list-log() {
+	for f in "$LOG_DIR/$NAME"-*.log; do
+		fn="$(basename "$f")"
+		[[ ! -f "$f" || -d "$f" || $fn == "template" ]] && continue
+		printf "* %s\t\t%s\n" "$(_value "$fn")" "$(_info "$f")" | _log-to "$fn"
+	done
+}
+
 # save the action name, and shift the command-line array
 # all remaining command-line arguments could be config names
 action="$1"
@@ -298,8 +307,10 @@ status)
 	;;
 list)
 	list ;;
+list-log)
+	list-log ;;
 *)
-	printf "Usage: %s {start|stop|restart|status} {config names...}\n" "$0"
+	printf "Usage: %s {start|stop|restart|status|list|list-log} {config names...}\n" "$0"
 	RETVAL=1
 	;;
 esac
