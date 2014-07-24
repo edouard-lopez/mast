@@ -39,6 +39,8 @@ NAME=mast
 autossh="$(which autossh)"
 # template name for log file
 LOG_DIR="/var/log/$NAME"
+# SSH tunnel configuration directory (a file per host)
+CONFIG_DIR="/etc/$NAME"
 
 # Create PID directory missing
 [[ ! -d /var/run/$NAME ]] && mkdir -p /var/run/$NAME
@@ -217,10 +219,13 @@ stop() {
 }
 
 
+# List available config files
+# @param: none
 list() {
-	for h in *; do
-		[[ ! -f "$h" || -d "$h" || $h == "template" ]] && continue
-		printf "* %s\t%s\n" "$(_value "$h")" "$(_info "$(logConfig "$h")")"  | tee -a "$(logConfig "$h")"
+	for f in "$CONFIG_DIR"/*; do
+		fn="$(basename "$f")"
+		[[ ! -f "$f" || -d "$f" || $fn == "template" ]] && continue
+		printf "* %s\n" "$(_value "$fn")"  | _log-to "$fn"
 	done
 }
 
@@ -294,7 +299,6 @@ status)
 	fi
 	;;
 list)
-	cd /etc/mast/ && list
 	;;
 *)
 	printf "Usage: %s {start|stop|restart|status} {config names...}\n" "$0"
