@@ -35,7 +35,7 @@ set -o errexit
 source /lib/lsb/init-functions
 
 RETVAL=0 # default return value
-NAME=autossh
+NAME=mast
 autossh="$(which autossh)"
 # template name for log file
 LOG=/var/log/mast-_cfg_.log
