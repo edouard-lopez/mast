@@ -137,7 +137,7 @@ deploy-service:
 		@rm -f /usr/sbin/mastd \
 		&& cp mastd /usr/sbin/ \
 		&& printf "$(call _SUCCESS_, installed)\n" || printf "$(call _ERROR_, error)\n"
-	@printf "\tConfig directory… \t%s" $$'$(call _VALUE_, ${CONFIG_DIR})'
+	@printf "\tConfig directory… \t%s" $$'$(call _VALUE_, ${CONFIG_DIR}/)'
 		@[[ ! -d "${CONFIG_DIR}" ]] && mkdir "${CONFIG_DIR}" || printf "\n";
 	@printf "\tTemplate… \t\t%s\n" $$'$(call _VALUE_, ${CONFIG_DIR}/template)'
 		@rm -f ${CONFIG_DIR}/template && cp {.,${CONFIG_DIR}}/template
