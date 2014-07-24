@@ -163,7 +163,7 @@ start() {
 
 	# start autossh as the user defined in the config file
 	# the pidfile must be re-defined in the new environment
-	su - "$LocalUser" -c "
+	su - "$LocalUser" bash -c "
 		AUTOSSH_PIDFILE=$AUTOSSH_PIDFILE;
 		AUTOSSH_PORT=0;
 		export AUTOSSH_PIDFILE AUTOSSH_PORT;
