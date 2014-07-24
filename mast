@@ -159,7 +159,7 @@ start() {
 
 	# before switching-users, make sure pidfile is created and user has write permission
 	touch "$AUTOSSH_PIDFILE"
-	chown "$LocalUser $AUTOSSH_PIDFILE"
+	chown "$LocalUser" "$AUTOSSH_PIDFILE"
 
 	# start autossh as the user defined in the config file
 	# the pidfile must be re-defined in the new environment
