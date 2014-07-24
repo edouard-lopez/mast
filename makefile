@@ -33,6 +33,8 @@ HOST:=none
 
 # Contains a file-per-host SSH's config.
 CONFIG_DIR:=/etc/mast
+# Log files directory
+LOG_DIR:=/var/log/mast
 
 # Passphrase MUST be empty to allow automation (no passphrase prompt)
 EMPTY:=
@@ -139,6 +141,8 @@ deploy-service:
 		@[[ ! -d "${CONFIG_DIR}" ]] && mkdir "${CONFIG_DIR}" || printf "\n";
 	@printf "\tTemplate… \t\t%s\n" $$'$(call _VALUE_, ${CONFIG_DIR}/template)'
 		@rm -f ${CONFIG_DIR}/template && cp {.,${CONFIG_DIR}}/template
+	@printf "\tLog directory…\t\t%s\n" $$'$(call _VALUE_, ${LOG_DIR}/)'
+		@[[ ! -d "${LOG_DIR}" ]] && mkdir "${LOG_DIR}" || printf "\n";
 
 config-ssh: create-ssh-key deploy-key
 	@printf "Configuring…\t%s\n" $$'$(call _SUCCESS_, installed)'
