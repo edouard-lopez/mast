@@ -31,7 +31,7 @@ REMOTE_SRV:=none
 NAME:=none
 HOST:=none
 
-# Contains a file-per-host SSH's config.
+# SSH tunnel configuration directory (a file per host)
 CONFIG_DIR:=/etc/mast
 # Log files directory
 LOG_DIR:=/var/log/mast
