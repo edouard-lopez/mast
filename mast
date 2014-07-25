@@ -225,7 +225,7 @@ list() {
 	for f in "$CONFIG_DIR"/*; do
 		fn="$(basename "$f")"
 		[[ ! -f "$f" || -d "$f" || $fn == "template" ]] && continue
-		printf "* %s\n" "$(_value "$fn")"  | _log-to "$fn"
+		printf "* %s\n" "$(_value "$fn")"  | _log-to "all"
 	done
 }
 
@@ -234,7 +234,7 @@ list-log() {
 	for f in "$LOG_DIR/$NAME"-*.log; do
 		fn="$(basename "$f")"
 		[[ ! -f "$f" || -d "$f" || $fn == "template" ]] && continue
-		printf "* %s\t\t%s\n" "$(_value "$fn")" "$(_info "$f")" | _log-to "$fn"
+		printf "* %s\t\t%s\n" "$(_value "$fn")" "$(_info "$f")" | _log-to "all"
 	done
 }
 
