@@ -63,6 +63,7 @@ _valid_="$(tput setaf 2)"		# valid/green
 _underline()	{ printf "${_underline_}%s${_reset_}" "$*"; } 			# style text as underline
 _bold()			{ printf "${_bold_}%s${_reset_}" "$*"; } 				# style text as bold
 _info()			{ printf "${_info_}%s${_reset_}" "$*"; } 				# style text as info
+_log()			{ printf "${_log_}%s${_reset_}" "$*"; } 				# style text as info
 _warning()		{ printf "${_warning_}%s${_reset_}" "$*"; } 			# style text as warning
 _error()			{ printf "${_bold_}${_error_}%s${_reset_}" "$*"; } 	# style text as error
 _value()		{ printf "${_value_}%s${_reset_}" "$*"; } 				# style text as value
