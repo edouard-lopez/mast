@@ -109,7 +109,7 @@ start() {
 
 	# make sure we have a config file
 	if [[ ! -f "$config" ]]; then
-		printf "%s %s: %s missing\n" "$NAME" "$cfname" "$config" | _log-to "$cfname"
+		printf "%s %s\n" "$cfname" "$(_error "doesn't exists")" | _log-to "$cfname"
 		return 1
 	fi
 
@@ -125,14 +125,14 @@ start() {
 	eval "
 		if [[ -z \$$var ]]
 		then
-			printf \"%s %s: %s variable empty\\n\" \"$NAME\" \"$cfname\" \"$var\" | _log-to \"$cfname\"
+			printf \"%s: %s variable empty\\n\" \"$cfname\" \"$var\" | _log-to \"$cfname\"
 			return 1
 		fi
 		"
 	done
 
 	if (( ${#ForwardPort[*]} == 0 )); then
-		printf "%s %s: ForwardPort array empty\n" "$NAME" "$cfname" | _log-to "$cfname"
+		printf "%s: ForwardPort array empty\n" "$cfname" | _log-to "$cfname"
 		return 1
 	fi
 
@@ -142,7 +142,7 @@ start() {
 				forward_list+="-$fwd "
 			;;
 			*)
-				printf "%s %s: %s format unknown\n" "$NAME" "$cfname" "$fwd" | _log-to "$cfname"
+				printf "%s: %s format unknown\n" "$cfname" "$fwd" | _log-to "$cfname"
 				return 1
 			;;
 		esac
@@ -152,7 +152,7 @@ start() {
 	# check if pidfile already exists -- don't start another instance if pidfile exists
 	AUTOSSH_PIDFILE="/var/run/$NAME/$cfname.pid"
 	if [[ -e $AUTOSSH_PIDFILE ]]; then
-		printf "%s %s: %s already exists\n" "$NAME" "$cfname" "$AUTOSSH_PIDFILE" | _log-to "$cfname"
+		printf "PID for %s %s (%s)\n" "$(_value "$cfname")" "$(_warning "already exists")" "$(_log "$AUTOSSH_PIDFILE")" | _log-to "$cfname"
 		return 1
 	fi
 
