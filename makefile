@@ -198,7 +198,7 @@ deploy-webapp:
 
 
 deploy-service:
-	@printf "Deploying… \n"
+	@printf "Deploying… %s\n" $$'$(call _VALUE_,service)'
 	@printf "\tSystemd service…\t"
 		@cp mastd.service /etc/systemd/system/ \
 		&& printf "$(call _SUCCESS_, installed)\n" || printf "$(call _ERROR_, error)\n"
