@@ -218,6 +218,8 @@ deploy-service:
 		@[[ ! -d "${LOG_DIR}" ]] && mkdir "${LOG_DIR}" || printf "\n";
 	@printf "\n"
 
+deploy: deploy-service deploy-webapp
+
 config-ssh: create-ssh-key deploy-key
 	@printf "Configuring…\t%s\n" $$'$(call _SUCCESS_, installed)'
 	@printf "\n"
