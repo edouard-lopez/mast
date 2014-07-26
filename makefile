@@ -159,6 +159,7 @@ deploy-webapp:
 	@if [[ ! -f ${WEBAPP}/.git ]]; then \
 			git clone --depth 1 --quiet ${WEBAPP_REPO} &> /dev/null \
 			&& git checkout --quiet ${WEBAPP_BRANCH} > /dev/null \
+			&& chmod u=rwx,g=rwx,o= -R ${WEBAPP}/ \
 			&& chown $${USER}:www-data -R ${WEBAPP}/ \
 			&& printf "$(call _SUCCESS_, done)" \
 		else \
@@ -168,7 +169,7 @@ deploy-webapp:
 
 	@# deploying webapp: /var/www/mast
 	@printf "\t%-50s" $$'$(call _INFO_,deploying webapp)'
-		@cp -R ${WEBAPP} ${WEBAPP_DEST_DIR} \
+		@cp -R --preserve=all ${WEBAPP} ${WEBAPP_DEST_DIR} \
 			&& printf "$(call _SUCCESS_, done)" \
 			|| printf "$(call _ERROR_, fail)"
 	@printf "\t%s\n" $$'$(call _DEBUG_,${WEBAPP_DEST_DIR}/${WEBAPP})'
