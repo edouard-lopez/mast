@@ -195,9 +195,9 @@ check-system:
 		exit; \
 	fi; \
 	for e in $${executables[@]}; do \
-		if ! $(dpkg-query -s "$$e") &> /dev/null; then \
 			printf "\t%s\t%s\n" "$$e" $$'$(call _ERROR_, Missing!)'; \
 			printf "\t\t→ %s %s\n" $$'$(call _VALUE_, apt-get install $$e)'; \
+		if ! dpkg-query -s "$$e" &> /dev/null; then \
 		else \
 			printf "\t%s\t\t\t%s\n" "$$e" $$'$(call _SUCCESS_, installed)'; \
 		fi \
