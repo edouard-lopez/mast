@@ -222,6 +222,8 @@ __RESET__=\e[0m
 __SUCCESS__=\e[0;32m
 # blue/information
 __INFO__=\e[0;36m
+# blue/information
+__DEBUG__=\e[0;37m
 # red/error
 __ERROR__=\e[1;31m
 # yellow/warning
@@ -232,6 +234,7 @@ __VALUE__=\e[0;35m
 # Colours function helpers
 _SUCCESS_=$(__SUCCESS__)$(1)$(__RESET__)
 _INFO_=$(__INFO__)$(1)$(__RESET__)
+_DEBUG_=$(__DEBUG__)$(1)$(__RESET__)
 _ERROR_=$(__ERROR__)$(1)$(__RESET__)
 _WARNING_=$(__WARNING__)$(1)$(__RESET__)
 _VALUE_=$(__VALUE__)$(1)$(__RESET__)
