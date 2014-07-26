@@ -134,12 +134,22 @@ remove-host:
 
 
 uninstall:
-	rm -f \
+	@printf "Uninstalling…\n"
+	@filesList=( \
 		/etc/systemd/system/mastd.service \
 		/etc/init.d/mast \
 		/usr/sbin/mastd \
 		"${CONFIG_DIR}"/* \
-		"${CONFIG_DIR}"
+		"${CONFIG_DIR}" \
+		/etc/apache2/sites-enabled/${WEBAPP}.conf \
+		${WEBAPP_DEST_DIR}/mast-web \
+		mast-web \
+	); for fn in "$${filesList[@]}"; do \
+		[[ -f $$fn || -d $$fn ]] || continue; \
+		rm -rf "$$fn" && printf "\t%-50s%s\n" $$'$(call _VALUE_,'$$fn$$')' $$'$(call _SUCCESS_, done)'; \
+	done
+	@printf "\n"
+
 # deploy the webapp, configure apache, /etc/hosts
 deploy-webapp:
 	@printf "Deploying…\t%s\n" $$'$(call _VALUE_,webapp)'
