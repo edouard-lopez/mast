@@ -199,11 +199,12 @@ check-system:
 		exit; \
 	fi; \
 	for e in $${executables[@]}; do \
-			printf "\t%s\t%s\n" "$$e" $$'$(call _ERROR_, Missing!)'; \
-			printf "\t\t→ %s %s\n" $$'$(call _VALUE_, apt-get install $$e)'; \
+		printf "\t%-50s" $$'$(call _VALUE_, '$$e$$')'; \
 		if ! dpkg-query -s "$$e" &> /dev/null; then \
+			printf "%12s\t" $$'$(call _ERROR_, missing)'; \
+			printf "→ %s %s\n" $$'$(call _INFO_, apt-get install '$$e $$')'; \
 		else \
-			printf "\t%s\t\t\t%s\n" "$$e" $$'$(call _SUCCESS_, installed)'; \
+			printf "%-12s\n" $$'$(call _SUCCESS_, installed)'; \
 		fi \
 	done
 
