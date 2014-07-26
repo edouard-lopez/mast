@@ -41,8 +41,25 @@ EMPTY:=
 # Path to the SSH keys pair (public key is suffixed by .pub).
 SSH_KEYFILE:=$$HOME/.ssh/id_rsa.mast.coaxis
 
+# webapp sources directory, cloned during install (deployed to /var/www/mast-web)
+WEBAPP=mast-web
+# location of served web app.
+WEBAPP_DEST_DIR=/var/www/
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+# Code source repository
+WEBAPP_REPO:=https://github.com/edouard-lopez/mast-web.git
+# DEV ONLY
+WEBAPP_REPO:=../mast-web/.git
+# Web app's hostname
+APACHE_HOSTNAME:=mast.dev
+# Path to apache config file
+APACHE_SRC_CONF=${WEBAPP}/resources/server/mast-web.apache.conf
+APACHE_DEST_CONF=/etc/apache2/sites-enabled/${WEBAPP}.conf
+
+# Branch to checkout before deploying webapp
+WEBAPP_BRANCH=dev
 
 default: usage
 setup-customer: install-customer
@@ -123,6 +140,62 @@ uninstall:
 		/usr/sbin/mastd \
 		"${CONFIG_DIR}"/* \
 		"${CONFIG_DIR}"
+# deploy the webapp, configure apache, /etc/hosts
+deploy-webapp:
+	@printf "Deploying…\t%s\n" $$'$(call _VALUE_,webapp)'
+
+	@# cloning repository
+	@printf "\t%-50s" $$'$(call _INFO_,cloning repository)'
+	@if [[ ! -f ${WEBAPP}/.git ]]; then \
+			git clone --depth 1 --quiet ${WEBAPP_REPO} &> /dev/null \
+			&& git checkout --quiet ${WEBAPP_BRANCH} > /dev/null \
+			&& chown $${USER}:www-data -R ${WEBAPP}/ \
+			&& printf "$(call _SUCCESS_, done)" \
+		else \
+			printf "%s (already existing)\n" $$'$(call _WARNING_,skipped)'; \
+		fi
+	@printf "\t%s\n" $$'$(call _DEBUG_,${WEBAPP_REPO})'
+
+	@# deploying webapp: /var/www/mast
+	@printf "\t%-50s" $$'$(call _INFO_,deploying webapp)'
+		@cp -R ${WEBAPP} ${WEBAPP_DEST_DIR} \
+			&& printf "$(call _SUCCESS_, done)" \
+			|| printf "$(call _ERROR_, fail)"
+	@printf "\t%s\n" $$'$(call _DEBUG_,${WEBAPP_DEST_DIR}/${WEBAPP})'
+
+	@# configuring Apache: /etc/apache2/sites-enabled/mast-web.conf
+	@printf "\t%-50s" $$'$(call _INFO_,configuring Apache)'
+		@cp ${APACHE_SRC_CONF} ${APACHE_DEST_CONF} \
+			&& printf "$(call _SUCCESS_, done)" \
+			|| printf "$(call _ERROR_, fail)"
+		@printf "\t%s\n" $$'$(call _DEBUG_,${APACHE_DEST_CONF})'
+
+	@# declaring hostname: /etc/hosts
+	@printf "\t%-50s" $$'$(call _INFO_,declaring hostname)'
+		@if ! grep -iq 'mast' /etc/hosts; then \
+			printf '%s\n' H 1i "127.0.0.1 ${APACHE_HOSTNAME} www.${APACHE_HOSTNAME}" . w | ed -s /etc/hosts; \
+			printf '%s\n' H 1i "# Mast-web" . w | ed -s /etc/hosts; \
+			printf "%s" $$'$(call _SUCCESS_, done)'; \
+			printf "\t%s\n" $$'$(call _DEBUG_,/etc/hosts)'; \
+		else \
+			printf "%s\t%s" $$'$(call _WARNING_, skipped)'; \
+			printf "%s\n" $$'$(call _DEBUG_,/etc/hosts already existing)'; \
+		fi
+
+	@# reloading Apache
+	@printf "\t%-50s" $$'$(call _INFO_,reloading Apache)'
+		@if apache2ctl configtest &> /dev/null; then \
+				apache2ctl graceful; \
+				printf "$(call _SUCCESS_, done)\n"; \
+				printf "\t%-50s%s\n" $$'$(call _SUCCESS_,test installation using)' $$'$(call _VALUE_, http://mast.dev/)'; \
+			else \
+				printf "$(call _ERROR_, failed)"; \
+				printf "\t%s\n" $$'$(call _DEBUG_,${WEBAPP_DEST_DIR}/${WEBAPP})'; \
+				apache2ctl configtest; \
+			fi
+
+	@printf "\n"
+
 
 deploy-service:
 	@printf "Deploying… \n"
