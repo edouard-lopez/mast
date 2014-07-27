@@ -3,7 +3,7 @@
 #	Project utility to install client/server, deploy, etc.
 #
 # USAGE
-#	make REMOTE_SRV=255.255.255.255 deploy-key
+#	sudo make REMOTE_SRV=255.255.255.255 deploy-key
 #
 # AUTHOR
 #	Édouard Lopez <dev+mast@edouard-lopez.com>
@@ -302,6 +302,8 @@ check-system:
 # Display basic help. For further information refer to the docs http://github.com/edouard-lopez/mast/README.md
 usage:
 	@printf "Usage…\n"
+	@printf "\t%s: both commands require %s privilieges.\n" $$'$(call _WARNING_, warning)' $$'$(call _VALUE_,sudo)'
+	@printf "\n"
 	@printf "\t* on infra:\n\t\t%s\n" $$'$(call _VALUE_, make setup-infra)'
 	@printf "\t* on customer:\n\t\t%s\n" $$'$(call _VALUE_, make setup-customer)'
 
