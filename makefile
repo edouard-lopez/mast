@@ -142,6 +142,7 @@ uninstall:
 		"${CONFIG_DIR}"/* \
 		"${CONFIG_DIR}" \
 		/etc/apache2/sites-enabled/${WEBAPP}.conf \
+		${LOG_DIR} \
 		${WEBAPP_DEST_DIR}/mast-web \
 		mast-web \
 	); for fn in "$${filesList[@]}"; do \
