@@ -219,6 +219,7 @@ deploy-service:
 		@rm -f /etc/init.d/mast \
 		&& cp mast /etc/init.d/ \
 		&& printf "$(call _SUCCESS_, done)\n" || printf "$(call _ERROR_, error)\n"
+		chown www-data /etc/init.d/mast
 		update-rc.d mast defaults
 
 	@printf "\t%-50s" $$'$(call _INFO_, daemon…)'
