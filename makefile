@@ -273,11 +273,11 @@ ${SSH_KEYFILE}:
 # Install packages required on the Coaxis' INFRAstructure
 install-infra:
 	@printf "Installing…\t%s\n" $$'$(call _VALUE_, infrastructure\'s node)'
-	apt-get install autossh openssh-client trickle bmon iftop htop useradd add-apt-repository
+	apt-get install autossh openssh-client trickle bmon iftop htop add-apt-repository
 
 # Add PPA for Ubuntu 12.04, 14.04 and higher to leverage systemd
 install-systemd:
-	apt-get install openssh-server useradd
+	apt-get install openssh-server
 	add-apt-repository ppa:pitti/systemd
 	apt-get update && apt-get dist-upgrade
 	printf "You MUST update GRUB config\n"
@@ -287,12 +287,12 @@ install-systemd:
 # Install packages required on the CUSTOMER's node
 install-customer:
 	@printf "Installing…\t%s\n" $$'$(call _VALUE_, customer\'s node)'
-	apt-get install openssh-server bmon iftop htop useradd
+	apt-get install openssh-server bmon iftop htop
 
 # Check system status for dependencies
 check-system:
 	@printf "Checking system…\n"
-	@executables=( autossh openssh-client openssh-server trickle useradd add-apt-repository ); \
+	@executables=( autossh openssh-client openssh-server trickle add-apt-repository ); \
 	if ! type dpkg-query &> /dev/null; then \
 		printf "You *MUST* install 'dpkg'\n"; \
 		printf "\t→ %s %s\n" $$'$(call _VALUE_, apt-get install dpkg)'; \
