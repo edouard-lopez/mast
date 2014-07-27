@@ -304,8 +304,8 @@ usage:
 	@printf "Usage…\n"
 	@printf "\t%s: both commands require %s privilieges.\n" $$'$(call _WARNING_, warning)' $$'$(call _VALUE_,sudo)'
 	@printf "\n"
-	@printf "\t* on infra:\n\t\t%s\n" $$'$(call _VALUE_, make setup-infra)'
-	@printf "\t* on customer:\n\t\t%s\n" $$'$(call _VALUE_, make setup-customer)'
+	@printf "\t * %-50s%s\n" $$'$(call _INFO_,on infrastructure)' $$'$(call _VALUE_, make setup-infra)'
+	@printf "\t * %-50s%s\n" $$'$(call _INFO_,on customer\'s node)' $$'$(call _VALUE_, make setup-customer)'
 
 
 # Coloring constants
