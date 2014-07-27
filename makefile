@@ -239,7 +239,7 @@ deploy-service:
 
 deploy: deploy-service deploy-webapp
 
-config-ssh: create-ssh-key deploy-key
+config-ssh: deploy-key
 
 # Copy infra public key on customer's node (defined by REMOTE_SRV)
 deploy-key: create-ssh-key
