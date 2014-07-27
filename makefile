@@ -237,8 +237,6 @@ deploy-service:
 deploy: deploy-service deploy-webapp
 
 config-ssh: create-ssh-key deploy-key
-	@printf "Configuring…\t%s\n" $$'$(call _SUCCESS_, installed)'
-	@printf "\n"
 
 # Copy infra public key on customer's node (defined by REMOTE_SRV)
 deploy-key: create-ssh-key
