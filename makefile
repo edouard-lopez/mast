@@ -210,27 +210,27 @@ deploy-webapp:
 
 deploy-service:
 	@printf "Deploying… %s\n" $$'$(call _VALUE_,service)'
-	@printf "\tSystemd service…\t"
+	@printf "\t%-50s" $$'$(call _INFO_, systemd service…)'
 		@cp mastd.service /etc/systemd/system/ \
-		&& printf "$(call _SUCCESS_, installed)\n" || printf "$(call _ERROR_, error)\n"
+		&& printf "$(call _SUCCESS_, done)\n" || printf "$(call _ERROR_, error)\n"
 
-	@printf "\tInitd service…\t\t"
+	@printf "\t%-50s" $$'$(call _INFO_, initd service…)'
 		@rm -f /etc/init.d/mast \
 		&& cp mast /etc/init.d/ \
-		&& printf "$(call _SUCCESS_, installed)\n" || printf "$(call _ERROR_, error)\n"
+		&& printf "$(call _SUCCESS_, done)\n" || printf "$(call _ERROR_, error)\n"
 
-	@printf "\tDaemon…\t\t\t"
+	@printf "\t%-50s" $$'$(call _INFO_, daemon…)'
 		@rm -f /usr/sbin/mastd \
 		&& cp mastd /usr/sbin/ \
-		&& printf "$(call _SUCCESS_, installed)\n" || printf "$(call _ERROR_, error)\n"
+		&& printf "$(call _SUCCESS_, done)\n" || printf "$(call _ERROR_, error)\n"
 
-	@printf "\tConfig directory… \t%s" $$'$(call _VALUE_, ${CONFIG_DIR}/)'
-		@[[ ! -d "${CONFIG_DIR}" ]] && mkdir "${CONFIG_DIR}" || printf "\n";
+	@printf "\t%-50s%s\n" $$'$(call _INFO_, config directory…)' $$'$(call _VALUE_, ${CONFIG_DIR}/)'
+		@[[ ! -d "${CONFIG_DIR}" ]] && mkdir "${CONFIG_DIR}" || printf "";
 
-	@printf "\tTemplate… \t\t%s\n" $$'$(call _VALUE_, ${CONFIG_DIR}/template)'
+	@printf "\t%-50s%s\n" $$'$(call _INFO_, template…)' $$'$(call _VALUE_, ${CONFIG_DIR}/template)'
 		@rm -f ${CONFIG_DIR}/template && cp {.,${CONFIG_DIR}}/template
 
-	@printf "\tLog directory…\t\t%s\n" $$'$(call _VALUE_, ${LOG_DIR}/)'
+	@printf "\t%-50s%s\n" $$'$(call _INFO_, log directory…)' $$'$(call _VALUE_, ${LOG_DIR}/)'
 		@[[ ! -d "${LOG_DIR}" ]] && mkdir "${LOG_DIR}" || printf "\n";
 	@printf "\n"
 
