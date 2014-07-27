@@ -236,8 +236,8 @@ deploy-service:
 		@rm -f ${CONFIG_DIR}/template && cp {.,${CONFIG_DIR}}/template
 
 	@printf "\t%-50s%s\n" $$'$(call _INFO_, log directory…)' $$'$(call _VALUE_, ${LOG_DIR}/)'
-		@[[ ! -d "${LOG_DIR}" ]] && mkdir "${LOG_DIR}" || printf "\n";
-	@printf "\n"
+		@[[ ! -d "${LOG_DIR}" ]] && mkdir "${LOG_DIR}" || true
+		@chown www-data -R "${LOG_DIR}" && chmod u=rwx,g=rwx "${LOG_DIR}"
 
 deploy: deploy-service deploy-webapp
 
