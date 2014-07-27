@@ -253,6 +253,10 @@ deploy-key: create-ssh-key
 #@alias: create-ssh-key:
 ${SSH_KEYFILE}:
 	@printf "Creating… %s\n" $$'$(call _VALUE_,SSH keys)'
+	@printf "\t%-50s%s" $$'$(call _INFO_, removing existing key)'
+		@rm -f ${SSH_KEYFILE}{,.pub} \
+			&& printf "%s\n" $$'$(call _SUCCESS_, done)' \
+			|| printf "%s\n" $$'$(call _ERROR_, failed)'
 	@printf "\t%-50s%s" $$'$(call _INFO_, generating key)'
 		@ssh-keygen -q \
 			-t rsa \
