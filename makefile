@@ -148,7 +148,7 @@ uninstall:
 		[[ -f $$fn || -d $$fn ]] || continue; \
 		rm -rf "$$fn" && printf "\t%-50s%s\n" $$'$(call _VALUE_,'$$fn$$')' $$'$(call _SUCCESS_, done)'; \
 	done
-	update-rc.d mast remove
+	@update-rc.d -f mast remove > /dev/null
 	@printf "\n"
 
 # deploy the webapp, configure apache, /etc/hosts
@@ -220,7 +220,7 @@ deploy-service:
 		&& cp mast /etc/init.d/ \
 		&& printf "$(call _SUCCESS_, done)\n" || printf "$(call _ERROR_, error)\n"
 		chown www-data /etc/init.d/mast
-		update-rc.d mast defaults
+		@update-rc.d mast defaults > /dev/null
 
 	@printf "\t%-50s" $$'$(call _INFO_, daemon…)'
 		@rm -f /usr/sbin/mastd \
