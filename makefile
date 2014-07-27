@@ -240,8 +240,9 @@ config-ssh: create-ssh-key deploy-key
 
 # Copy infra public key on customer's node (defined by REMOTE_SRV)
 deploy-key: create-ssh-key
-	@printf "Deploying…\t%s\n" $$'$(call _SUCCESS_, SSH Keys to customer node)'
-	ssh-copy-id -i ${SSH_KEYFILE} ${REMOTE_USER}@${REMOTE_SRV}
+	@printf "Deploying…\t%s\n" $$'$(call _VALUE_, public key)'
+	@printf "\t%-50s%s\n" $$'$(call _INFO_, copy public key to)' $$'$(call _VALUE_, ${REMOTE_USER}@${REMOTE_SRV})'
+	@ssh-copy-id -i ${SSH_KEYFILE} ${REMOTE_USER}@${REMOTE_SRV} > /dev/null
 	@printf "\n"
 
 
