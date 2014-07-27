@@ -148,6 +148,7 @@ uninstall:
 		[[ -f $$fn || -d $$fn ]] || continue; \
 		rm -rf "$$fn" && printf "\t%-50s%s\n" $$'$(call _VALUE_,'$$fn$$')' $$'$(call _SUCCESS_, done)'; \
 	done
+	update-rc.d mast remove
 	@printf "\n"
 
 # deploy the webapp, configure apache, /etc/hosts
@@ -218,6 +219,7 @@ deploy-service:
 		@rm -f /etc/init.d/mast \
 		&& cp mast /etc/init.d/ \
 		&& printf "$(call _SUCCESS_, done)\n" || printf "$(call _ERROR_, error)\n"
+		update-rc.d mast defaults
 
 	@printf "\t%-50s" $$'$(call _INFO_, daemon…)'
 		@rm -f /usr/sbin/mastd \
