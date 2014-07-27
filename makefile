@@ -157,9 +157,11 @@ deploy-webapp:
 
 	@# cloning repository
 	@printf "\t%-50s" $$'$(call _INFO_,cloning repository)'
-	@if [[ ! -f ${WEBAPP}/.git ]]; then \
-			git clone --depth 1 --quiet ${WEBAPP_REPO} &> /dev/null \
-			&& git checkout --quiet ${WEBAPP_BRANCH} > /dev/null \
+	@if [[ ! -f ${WEBAPP}/.git && ! -d ${WEBAPP}/.git ]]; then \
+			git clone --depth 1 --quiet ${WEBAPP_REPO} > /dev/null; \
+		elif [[ -f ${WEBAPP}/.git || -d ${WEBAPP}/.git ]]; then \
+			git pull master; \
+			git checkout --quiet ${WEBAPP_BRANCH} > /dev/null \
 			&& chmod u=rwx,g=rwx,o= -R ${WEBAPP}/ \
 			&& chown $${USER}:www-data -R ${WEBAPP}/ \
 			&& printf "$(call _SUCCESS_, done)" \
