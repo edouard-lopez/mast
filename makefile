@@ -293,7 +293,7 @@ install-customer:
 # Check system status for dependencies
 check-system:
 	@printf "Checking system…\n"
-	@executables=( autossh openssh-client openssh-server trickle add-apt-repository ); \
+	@executables=( autossh openssh-client openssh-server trickle ); \
 	if ! type dpkg-query &> /dev/null; then \
 		printf "You *MUST* install 'dpkg'\n"; \
 		printf "\t→ %s %s\n" $$'$(call _VALUE_, apt-get install dpkg)'; \
