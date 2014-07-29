@@ -274,7 +274,7 @@ ${SSH_KEYFILE}:
 # Install packages required on the Coaxis' INFRAstructure
 install-infra:
 	@printf "Installing…\t%s\n" $$'$(call _VALUE_, infrastructure\'s node)'
-	apt-get install autossh openssh-client trickle bmon iftop htop add-apt-repository
+	apt-get install autossh openssh-client trickle bmon iftop htop
 
 # Add PPA for Ubuntu 12.04, 14.04 and higher to leverage systemd
 install-systemd:
@@ -293,7 +293,7 @@ install-customer:
 # Check system status for dependencies
 check-system:
 	@printf "Checking system…\n"
-	@executables=( autossh openssh-client openssh-server trickle add-apt-repository ); \
+	@executables=( autossh openssh-client openssh-server trickle ); \
 	if ! type dpkg-query &> /dev/null; then \
 		printf "You *MUST* install 'dpkg'\n"; \
 		printf "\t→ %s %s\n" $$'$(call _VALUE_, apt-get install dpkg)'; \
