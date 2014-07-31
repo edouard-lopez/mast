@@ -54,6 +54,7 @@ DEPS_UTILS:=bmon iftop htop
 
 # Code source repository
 WEBAPP_REPO:=https://github.com/edouard-lopez/mast-web.git
+WEBAPP_ARCHIVE:=https://github.com/edouard-lopez/mast/archive/master.zip
 # DEV ONLY
 WEBAPP_REPO:=file://$(shell pwd)/../mast-web/.git
 # Web app's hostname
@@ -161,9 +162,16 @@ deploy-webapp:
 	@printf "Deploying…\t%s\n" $$'$(call _VALUE_,webapp)'
 
 	@# cloning repository
-	@printf "\t%-50s" $$'$(call _INFO_,cloning repository)'
-	@if [[ ! -f ${WEBAPP}/.git && ! -d ${WEBAPP}/.git ]]; then \
-			git clone --depth 1 --quiet ${WEBAPP_REPO} > /dev/null; \
+	@if [[ ! -f ${WEBAPP}/.git && ! -d ${WEBAPP}/.git ]]; \
+		then \
+			if type git > /dev/null; then \
+				printf "\t%-50s" $$'$(call _INFO_,cloning repository)'; \
+				git clone --depth 1 --quiet ${WEBAPP_REPO} > /dev/null; \
+			else \
+				printf "\t%-50s" $$'$(call _INFO_,fetching)'; \
+				wget --output-document="${WEBAPP}.zip" ${WEBAPP_ARCHIVE}; \
+				unzip "${WEBAPP}.zip"; \
+			fi \
 		elif [[ -f ${WEBAPP}/.git || -d ${WEBAPP}/.git ]]; then \
 			git pull master; \
 			git checkout --quiet ${WEBAPP_BRANCH} > /dev/null \
