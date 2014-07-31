@@ -173,11 +173,14 @@ deploy-webapp:
 				unzip "${WEBAPP}.zip"; \
 			fi \
 		elif [[ -f ${WEBAPP}/.git || -d ${WEBAPP}/.git ]]; then \
-			git pull master; \
-			git checkout --quiet ${WEBAPP_BRANCH} > /dev/null \
 			&& chmod u=rwx,g=rwx,o= -R ${WEBAPP}/ \
 			&& chown $${USER}:www-data -R ${WEBAPP}/ \
-			&& printf "$(call _SUCCESS_, done)" \
+			printf "\t%-50s" $$'$(call _INFO_,updating repository)'; \
+			pushd "${WEBAPP}" \
+				&& git pull ${WEBAPP_REPO} > /dev/null; \
+			popd; \
+				git checkout --quiet ${WEBAPP_BRANCH} > /dev/null \
+					&& printf "$(call _SUCCESS_, done)" \
 		else \
 			printf "%s (already existing)\n" $$'$(call _WARNING_,skipped)'; \
 		fi
