@@ -46,6 +46,10 @@ WEBAPP=mast-web
 # location of served web app.
 WEBAPP_DEST_DIR=/var/www/
 
+# Project dependencies
+DEPS_CORE_INFRA:=autossh openssh-client trickle apache2 sudo unzip
+DEPS_CORE_CUSTOMER:=openssh-server
+DEPS_UTILS:=bmon iftop htop
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 # Code source repository
@@ -274,7 +278,7 @@ ${SSH_KEYFILE}:
 # Install packages required on the Coaxis' INFRAstructure
 install-infra:
 	@printf "Installing…\t%s\n" $$'$(call _VALUE_, infrastructure\'s node)'
-	apt-get install autossh openssh-client trickle bmon iftop htop
+	apt-get install ${DEPS_CORE_INFRA} ${DEPS_UTILS}
 
 # Add PPA for Ubuntu 12.04, 14.04 and higher to leverage systemd
 install-systemd:
@@ -288,12 +292,12 @@ install-systemd:
 # Install packages required on the CUSTOMER's node
 install-customer:
 	@printf "Installing…\t%s\n" $$'$(call _VALUE_, customer\'s node)'
-	apt-get install openssh-server bmon iftop htop
+	apt-get install -y ${DEPS_CORE_CUSTOMER} ${DEPS_UTILS}
 
 # Check system status for dependencies
 check-system:
 	@printf "Checking system…\n"
-	@executables=( autossh openssh-client openssh-server trickle ); \
+	@executables=( ${DEPS_CORE_INFRA} ${DEPS_CORE_CUSTOMER} ${DEPS_UTILS} ); \
 	if ! type dpkg-query &> /dev/null; then \
 		printf "You *MUST* install 'dpkg'\n"; \
 		printf "\t→ %s %s\n" $$'$(call _VALUE_, apt-get install dpkg)'; \
