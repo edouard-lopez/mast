@@ -184,6 +184,7 @@ deploy-webapp:
 
 	@# configuring Apache: /etc/apache2/sites-enabled/mast-web.conf
 	@printf "\t%-50s" $$'$(call _INFO_,configuring Apache)'
+		@a2enmod php5 rewrite vhost_alias &> /dev/null  # enable Apache module
 		@cp ${APACHE_SRC_CONF} ${APACHE_DEST_CONF} \
 			&& printf "$(call _SUCCESS_, done)" \
 			|| printf "$(call _ERROR_, fail)"
