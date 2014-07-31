@@ -55,7 +55,7 @@ DEPS_UTILS:=bmon iftop htop
 # Code source repository
 WEBAPP_REPO:=https://github.com/edouard-lopez/mast-web.git
 # DEV ONLY
-WEBAPP_REPO:=../mast-web/.git
+WEBAPP_REPO:=file://$(shell pwd)/../mast-web/.git
 # Web app's hostname
 APACHE_HOSTNAME:=mast.dev
 # Path to apache config file
