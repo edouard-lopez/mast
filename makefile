@@ -173,8 +173,6 @@ deploy-webapp:
 				unzip "${WEBAPP}.zip"; \
 			fi \
 		elif [[ -f ${WEBAPP}/.git || -d ${WEBAPP}/.git ]]; then \
-			&& chmod u=rwx,g=rwx,o= -R ${WEBAPP}/ \
-			&& chown $${USER}:www-data -R ${WEBAPP}/ \
 			printf "\t%-50s" $$'$(call _INFO_,updating repository)'; \
 			pushd "${WEBAPP}" \
 				&& git pull ${WEBAPP_REPO} > /dev/null; \
@@ -183,7 +181,9 @@ deploy-webapp:
 					&& printf "$(call _SUCCESS_, done)" \
 		else \
 			printf "%s (already existing)\n" $$'$(call _WARNING_,skipped)'; \
-		fi
+		fi; \
+		chmod u=rwx,g=rwx,o= -R "${WEBAPP}/"; \
+		chown $${USER}:www-data -R "${WEBAPP}/"
 	@printf "\t%s\n" $$'$(call _DEBUG_,${WEBAPP_REPO})'
 
 	@# deploying webapp: /var/www/mast
