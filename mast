@@ -96,6 +96,10 @@ _log-to() {
 
 	# print to log file
 	printf "[%s] %s\n" "$(_info "${FUNCNAME[1]}")" "$msg" >> "$(_log-file  "$cfname")"
+
+	# open privileges to www-data
+	chown www-data "$(_log-file  "$cfname")"
+	chmod u=rwx,g=rwx "$(_log-file  "$cfname")"
 }
 
 
@@ -240,7 +244,7 @@ list-log() {
 }
 
 # save the action name, and shift the command-line array
-# all remaining command-line arguments could be config names
+# all remaining command-line arguments *should* be config names
 action="$1"
 shift
 

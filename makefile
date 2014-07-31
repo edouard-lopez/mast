@@ -3,7 +3,7 @@
 #	Project utility to install client/server, deploy, etc.
 #
 # USAGE
-#	make REMOTE_SRV=255.255.255.255 deploy-key
+#	sudo make REMOTE_SRV=255.255.255.255 deploy-key
 #
 # AUTHOR
 #	Édouard Lopez <dev+mast@edouard-lopez.com>
@@ -41,8 +41,25 @@ EMPTY:=
 # Path to the SSH keys pair (public key is suffixed by .pub).
 SSH_KEYFILE:=$$HOME/.ssh/id_rsa.mast.coaxis
 
+# webapp sources directory, cloned during install (deployed to /var/www/mast-web)
+WEBAPP=mast-web
+# location of served web app.
+WEBAPP_DEST_DIR=/var/www/
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+# Code source repository
+WEBAPP_REPO:=https://github.com/edouard-lopez/mast-web.git
+# DEV ONLY
+WEBAPP_REPO:=../mast-web/.git
+# Web app's hostname
+APACHE_HOSTNAME:=mast.dev
+# Path to apache config file
+APACHE_SRC_CONF=${WEBAPP}/resources/server/mast-web.apache.conf
+APACHE_DEST_CONF=/etc/apache2/sites-enabled/${WEBAPP}.conf
+
+# Branch to checkout before deploying webapp
+WEBAPP_BRANCH=dev
 
 default: usage
 setup-customer: install-customer
@@ -117,63 +134,151 @@ remove-host:
 
 
 uninstall:
-	rm -f \
+	@printf "Uninstalling…\n"
+	@filesList=( \
 		/etc/systemd/system/mastd.service \
 		/etc/init.d/mast \
 		/usr/sbin/mastd \
 		"${CONFIG_DIR}"/* \
-		"${CONFIG_DIR}"
+		"${CONFIG_DIR}" \
+		/etc/apache2/sites-enabled/${WEBAPP}.conf \
+		${LOG_DIR} \
+		${WEBAPP_DEST_DIR}/mast-web \
+		mast-web \
+	); for fn in "$${filesList[@]}"; do \
+		[[ -f $$fn || -d $$fn ]] || continue; \
+		rm -rf "$$fn" && printf "\t%-50s%s\n" $$'$(call _VALUE_,'$$fn$$')' $$'$(call _SUCCESS_, done)'; \
+	done
+	@update-rc.d -f mast remove > /dev/null
+	@printf "\n"
+
+# deploy the webapp, configure apache, /etc/hosts
+deploy-webapp:
+	@printf "Deploying…\t%s\n" $$'$(call _VALUE_,webapp)'
+
+	@# cloning repository
+	@printf "\t%-50s" $$'$(call _INFO_,cloning repository)'
+	@if [[ ! -f ${WEBAPP}/.git && ! -d ${WEBAPP}/.git ]]; then \
+			git clone --depth 1 --quiet ${WEBAPP_REPO} > /dev/null; \
+		elif [[ -f ${WEBAPP}/.git || -d ${WEBAPP}/.git ]]; then \
+			git pull master; \
+			git checkout --quiet ${WEBAPP_BRANCH} > /dev/null \
+			&& chmod u=rwx,g=rwx,o= -R ${WEBAPP}/ \
+			&& chown $${USER}:www-data -R ${WEBAPP}/ \
+			&& printf "$(call _SUCCESS_, done)" \
+		else \
+			printf "%s (already existing)\n" $$'$(call _WARNING_,skipped)'; \
+		fi
+	@printf "\t%s\n" $$'$(call _DEBUG_,${WEBAPP_REPO})'
+
+	@# deploying webapp: /var/www/mast
+	@printf "\t%-50s" $$'$(call _INFO_,deploying webapp)'
+		@cp -R --preserve=all ${WEBAPP} ${WEBAPP_DEST_DIR} \
+			&& printf "$(call _SUCCESS_, done)" \
+			|| printf "$(call _ERROR_, fail)"
+	@printf "\t%s\n" $$'$(call _DEBUG_,${WEBAPP_DEST_DIR}/${WEBAPP})'
+
+	@# configuring Apache: /etc/apache2/sites-enabled/mast-web.conf
+	@printf "\t%-50s" $$'$(call _INFO_,configuring Apache)'
+		@cp ${APACHE_SRC_CONF} ${APACHE_DEST_CONF} \
+			&& printf "$(call _SUCCESS_, done)" \
+			|| printf "$(call _ERROR_, fail)"
+		@printf "\t%s\n" $$'$(call _DEBUG_,${APACHE_DEST_CONF})'
+
+	@# declaring hostname: /etc/hosts
+	@printf "\t%-50s" $$'$(call _INFO_,declaring hostname)'
+		@if ! grep -iq 'mast' /etc/hosts; then \
+			printf '%s\n' H 1i "127.0.0.1 ${APACHE_HOSTNAME} www.${APACHE_HOSTNAME}" . w | ed -s /etc/hosts; \
+			printf '%s\n' H 1i "# Mast-web" . w | ed -s /etc/hosts; \
+			printf "%s" $$'$(call _SUCCESS_, done)'; \
+			printf "\t%s\n" $$'$(call _DEBUG_,/etc/hosts)'; \
+		else \
+			printf "%s\t%s" $$'$(call _WARNING_, skipped)'; \
+			printf "%s\n" $$'$(call _DEBUG_,/etc/hosts already existing)'; \
+		fi
+
+	@# reloading Apache
+	@printf "\t%-50s" $$'$(call _INFO_,reloading Apache)'
+		@if apache2ctl configtest &> /dev/null; then \
+				apache2ctl graceful; \
+				printf "$(call _SUCCESS_, done)\n"; \
+				printf "\t%-50s%s\n" $$'$(call _SUCCESS_,test installation using)' $$'$(call _VALUE_, http://mast.dev/)'; \
+			else \
+				printf "$(call _ERROR_, failed)"; \
+				printf "\t%s\n" $$'$(call _DEBUG_,${WEBAPP_DEST_DIR}/${WEBAPP})'; \
+				apache2ctl configtest; \
+			fi
+
+	@printf "\n"
+
 
 deploy-service:
-	@printf "Deploying… \n"
-	@printf "\tSystemd service…\t"
+	@printf "Deploying… %s\n" $$'$(call _VALUE_,service)'
+	@printf "\t%-50s" $$'$(call _INFO_, systemd service…)'
 		@cp mastd.service /etc/systemd/system/ \
-		&& printf "$(call _SUCCESS_, installed)\n" || printf "$(call _ERROR_, error)\n"
-	@printf "\tInitd service…\t\t"
+		&& printf "$(call _SUCCESS_, done)\n" || printf "$(call _ERROR_, error)\n"
+
+	@printf "\t%-50s" $$'$(call _INFO_, initd service…)'
 		@rm -f /etc/init.d/mast \
 		&& cp mast /etc/init.d/ \
-		&& printf "$(call _SUCCESS_, installed)\n" || printf "$(call _ERROR_, error)\n"
-	@printf "\tDaemon…\t\t\t"
+		&& printf "$(call _SUCCESS_, done)\n" || printf "$(call _ERROR_, error)\n"
+		@chown www-data /etc/init.d/mast
+		@update-rc.d mast defaults > /dev/null
+
+	@printf "\t%-50s" $$'$(call _INFO_, daemon…)'
 		@rm -f /usr/sbin/mastd \
 		&& cp mastd /usr/sbin/ \
-		&& printf "$(call _SUCCESS_, installed)\n" || printf "$(call _ERROR_, error)\n"
-	@printf "\tConfig directory… \t%s" $$'$(call _VALUE_, ${CONFIG_DIR}/)'
-		@[[ ! -d "${CONFIG_DIR}" ]] && mkdir "${CONFIG_DIR}" || printf "\n";
-	@printf "\tTemplate… \t\t%s\n" $$'$(call _VALUE_, ${CONFIG_DIR}/template)'
-		@rm -f ${CONFIG_DIR}/template && cp {.,${CONFIG_DIR}}/template
-	@printf "\tLog directory…\t\t%s\n" $$'$(call _VALUE_, ${LOG_DIR}/)'
-		@[[ ! -d "${LOG_DIR}" ]] && mkdir "${LOG_DIR}" || printf "\n";
+		&& printf "$(call _SUCCESS_, done)\n" || printf "$(call _ERROR_, error)\n"
 
-config-ssh: create-ssh-key deploy-key
-	@printf "Configuring…\t%s\n" $$'$(call _SUCCESS_, installed)'
+	@printf "\t%-50s%s\n" $$'$(call _INFO_, config directory…)' $$'$(call _VALUE_, ${CONFIG_DIR}/)'
+		@[[ ! -d "${CONFIG_DIR}" ]] && mkdir "${CONFIG_DIR}" || printf "";
+
+	@printf "\t%-50s%s\n" $$'$(call _INFO_, template…)' $$'$(call _VALUE_, ${CONFIG_DIR}/template)'
+		@rm -f ${CONFIG_DIR}/template && cp {.,${CONFIG_DIR}}/template
+
+	@printf "\t%-50s%s\n" $$'$(call _INFO_, log directory…)' $$'$(call _VALUE_, ${LOG_DIR}/)'
+		@[[ ! -d "${LOG_DIR}" ]] && mkdir "${LOG_DIR}" || true
+		@chown www-data -R "${LOG_DIR}" && chmod u=rwx,g=rwx "${LOG_DIR}"
+
+deploy: deploy-service deploy-webapp
+
+config-ssh: deploy-key
 
 # Copy infra public key on customer's node (defined by REMOTE_SRV)
 deploy-key: create-ssh-key
-	@printf "Deploying…\t%s\n" $$'$(call _SUCCESS_, SSH Keys to customer node)'
-	ssh-copy-id -i ${SSH_KEYFILE} ${REMOTE_USER}@${REMOTE_SRV}
+	@printf "Deploying…\t%s\n" $$'$(call _VALUE_, public key)'
+	@printf "\t%-50s%s\n" $$'$(call _INFO_, copy public key to)' $$'$(call _VALUE_, ${REMOTE_USER}@${REMOTE_SRV})'
+	@ssh-copy-id -i ${SSH_KEYFILE} ${REMOTE_USER}@${REMOTE_SRV} > /dev/null
+	@printf "\n"
 
 
 # Create keys pair on infra
 #@alias: create-ssh-key:
 ${SSH_KEYFILE}:
-	@printf "Creating…\tSSH Keys\n"
-	@ssh-keygen \
-		-t rsa \
-		-b 4096 \
-		-f "${SSH_KEYFILE}" \
-		-N "${EMPTY}" \
-		-O permit-port-forwarding \
-		-C "Automatically generated by MAST script"
-
+	@printf "Creating… %s\n" $$'$(call _VALUE_,SSH keys)'
+	@printf "\t%-50s%s" $$'$(call _INFO_, removing existing key)'
+		@rm -f ${SSH_KEYFILE}{,.pub} \
+			&& printf "%s\n" $$'$(call _SUCCESS_, done)' \
+			|| printf "%s\n" $$'$(call _ERROR_, failed)'
+	@printf "\t%-50s%s" $$'$(call _INFO_, generating key)'
+		@ssh-keygen -q \
+			-t rsa \
+			-b 4096 \
+			-f "${SSH_KEYFILE}" \
+			-N "${EMPTY}" \
+			-O permit-port-forwarding \
+			-C "Automatically generated by MAST script" \
+			&& printf "%s\n" $$'$(call _SUCCESS_, done)' \
+			|| printf "%s\n" $$'$(call _ERROR_, failed)'
 
 # Install packages required on the Coaxis' INFRAstructure
 install-infra:
 	@printf "Installing…\t%s\n" $$'$(call _VALUE_, infrastructure\'s node)'
-	apt-get install autossh openssh-client trickle bmon iftop htop useradd add-apt-repository
+	apt-get install autossh openssh-client trickle bmon iftop htop add-apt-repository
 
 # Add PPA for Ubuntu 12.04, 14.04 and higher to leverage systemd
 install-systemd:
-	apt-get install openssh-server useradd
+	apt-get install openssh-server
 	add-apt-repository ppa:pitti/systemd
 	apt-get update && apt-get dist-upgrade
 	printf "You MUST update GRUB config\n"
@@ -183,31 +288,34 @@ install-systemd:
 # Install packages required on the CUSTOMER's node
 install-customer:
 	@printf "Installing…\t%s\n" $$'$(call _VALUE_, customer\'s node)'
-	apt-get install openssh-server bmon iftop htop useradd
+	apt-get install openssh-server bmon iftop htop
 
 # Check system status for dependencies
 check-system:
 	@printf "Checking system…\n"
-	@executables=( autossh openssh-client openssh-server trickle useradd add-apt-repository); \
+	@executables=( autossh openssh-client openssh-server trickle add-apt-repository ); \
 	if ! type dpkg-query &> /dev/null; then \
 		printf "You *MUST* install 'dpkg'\n"; \
 		printf "\t→ %s %s\n" $$'$(call _VALUE_, apt-get install dpkg)'; \
 		exit; \
 	fi; \
 	for e in $${executables[@]}; do \
-		if ! $(dpkg-query -s "$$e") &> /dev/null; then \
-			printf "\t%s\t%s\n" "$$e" $$'$(call _ERROR_, Missing!)'; \
-			printf "\t\t→ %s %s\n" $$'$(call _VALUE_, apt-get install $$e)'; \
+		printf "\t%-50s" $$'$(call _VALUE_, '$$e$$')'; \
+		if ! dpkg-query -s "$$e" &> /dev/null; then \
+			printf "%12s\t" $$'$(call _ERROR_, missing)'; \
+			printf "→ %s %s\n" $$'$(call _INFO_, apt-get install '$$e $$')'; \
 		else \
-			printf "\t%s\t\t\t%s\n" "$$e" $$'$(call _SUCCESS_, installed)'; \
+			printf "%-12s\n" $$'$(call _SUCCESS_, installed)'; \
 		fi \
 	done
 
 # Display basic help. For further information refer to the docs http://github.com/edouard-lopez/mast/README.md
 usage:
 	@printf "Usage…\n"
-	@printf "\t* on infra:\n\t\t%s\n" $$'$(call _VALUE_, make setup-infra)'
-	@printf "\t* on customer:\n\t\t%s\n" $$'$(call _VALUE_, make setup-customer)'
+	@printf "\t%s: both commands require %s privilieges.\n" $$'$(call _WARNING_, warning)' $$'$(call _VALUE_,sudo)'
+	@printf "\n"
+	@printf "\t * %-50s%s\n" $$'$(call _INFO_,on infrastructure)' $$'$(call _VALUE_, make setup-infra)'
+	@printf "\t * %-50s%s\n" $$'$(call _INFO_,on customer\'s node)' $$'$(call _VALUE_, make setup-customer)'
 
 
 # Coloring constants
@@ -222,6 +330,8 @@ __RESET__=\e[0m
 __SUCCESS__=\e[0;32m
 # blue/information
 __INFO__=\e[0;36m
+# blue/information
+__DEBUG__=\e[0;37m
 # red/error
 __ERROR__=\e[1;31m
 # yellow/warning
@@ -232,6 +342,7 @@ __VALUE__=\e[0;35m
 # Colours function helpers
 _SUCCESS_=$(__SUCCESS__)$(1)$(__RESET__)
 _INFO_=$(__INFO__)$(1)$(__RESET__)
+_DEBUG_=$(__DEBUG__)$(1)$(__RESET__)
 _ERROR_=$(__ERROR__)$(1)$(__RESET__)
 _WARNING_=$(__WARNING__)$(1)$(__RESET__)
 _VALUE_=$(__VALUE__)$(1)$(__RESET__)
