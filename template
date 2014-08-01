@@ -29,10 +29,9 @@ IdentityFile="~/.ssh/id_rsa.mast.coaxis"
 # 	127.0.0.1 on the local side, to 10.100.1.60 port 80 on the remote side.
 #
 ForwardPort=(
-	# "R 127.0.0.1:3307:127.0.0.1:3306"
-	# "L 127.0.0.1:8081:10.100.1.60:80"
 	"L *:9100:imp1:9100"
 	"L *:9101:imp2:9100"
+	# {{NEW_FORWARD_PORTS}} # DO NOT REMOVE!
 )
 # Bandwidth limitation flag (using trickle)
 BandwidthLimitation=true

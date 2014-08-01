@@ -234,6 +234,32 @@ list() {
 	done
 }
 
+# @scope: private
+_list-config-port() {
+		source "$1"
+		for fp in "${ForwardPort[@]}"; do 
+			! [[ $fn =~ NEW_FORWARD_PORTS ]] && printf "\t%s\n" "$(_value "$fp")" ;
+		done
+}
+
+# @scope: public
+list-ports() {
+	config="$1"
+	# if no config names (on the command-line), stop all autossh processes
+	if [[ -z "$config" ]]; then
+		config=( "$CONFIG_DIR"/* )
+	else 
+		config=(  "$CONFIG_DIR/$config" )
+	fi
+
+	for c in "${config[@]}"; do
+		cfname="$(basename "$c")"
+		[[ $cfname == "template" ]] && continue
+		printf "* %s\n" "$(_info "$c")"  | _log-to "$cfname"
+		_list-config-port "$c"
+	done
+}
+
 # List all log files
 list-log() {
 	for f in "$LOG_DIR/$NAME"-*.log; do
@@ -312,10 +338,12 @@ status)
 	;;
 list)
 	list ;;
+list-ports)
+	list-ports "$@" ;;
 list-log)
 	list-log ;;
 *)
-	printf "Usage: %s {start|stop|restart|status|list|list-log} {config names...}\n" "$0"
+	printf "Usage: %s {start|stop|restart|status|list|list-ports|list-log} {config names...}\n" "$0"
 	RETVAL=1
 	;;
 esac
