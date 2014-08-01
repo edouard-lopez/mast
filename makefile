@@ -106,7 +106,7 @@ add-host:
 		exit 0; \
 	elif [[ "${NAME}" != "none" ]]; then \
 		cp ${CONFIG_DIR}/{template,${NAME}}; \
-		sed -i 's/HOST/${HOST}/g' ${CONFIG_DIR}/${NAME}; \
+		sed -i 's/{{HOST}}/${HOST}/g' ${CONFIG_DIR}/${NAME}; \
 		while true; do \
 			read -p "$(shell printf "\tEditing…\t%s? [y/n]\n" $$'$(call _VALUE_, ${CONFIG_DIR}/${NAME})')" yn; \
 			case $$yn in \
