@@ -346,7 +346,7 @@ check-system:
 			printf "%12s\t" $$'$(call _ERROR_, missing)'; \
 			printf "→ %s %s\n" $$'$(call _INFO_, apt-get install '$$e $$')'; \
 		else \
-			printf "%-12s\n" $$'$(call _SUCCESS_, installed)'; \
+			printf "%-12s\n" $$'$(call _SUCCESS_,installed)'; \
 		fi \
 	done
 
