@@ -81,6 +81,7 @@ usage \
 add-host \
 list-host \
 list-logs \
+list-channels \
 config-ssh \
 install-infra \
 setup-customer \
@@ -90,6 +91,26 @@ create-ssh-key \
 default \
 install-systemd \
 setup-infra
+
+
+# List channels for given host. If none is given, iterate over all hosts
+# @optional: {string} NAME host's name
+list-channels:
+	@# if no config names (on the command-line), stop all autossh processes
+	@if [[ -e "${CONFIG_DIR}/${NAME}" ]]; then \
+		config=(  "${CONFIG_DIR}/${NAME}" ); \
+	else \
+		config=( "${CONFIG_DIR}"/* ); \
+	fi; \
+	for cfg in "$${config[@]}"; do \
+		fn="$$(basename "$$cfg")"; \
+		[[ $$fn == "template" ]] && continue; \
+		printf "* %s\n" $$'$(call _INFO_,'"$$fn"$$')'; \
+		source "$${cfg}"; \
+		for fp in "$${ForwardPort[@]}"; do \
+			! [[ $$fp =~ NEW_FORWARD_PORTS ]] && printf "\t%s\n" $$'$(call _VALUE_,'"$$fp"$$')' ; \
+		done; \
+	done
 
 
 # List all log files, one for each tunnel
