@@ -106,10 +106,10 @@ list-channels:
 	for cfg in "$${config[@]}"; do \
 		fn="$$(basename "$$cfg")"; \
 		[[ $$fn == "template" ]] && continue; \
-		printf "* %s\n" $$'$(call _INFO_,'"$$fn"$$')'; \
+		printf "* %s\n" $$'$(call INFO,'"$$fn"$$')'; \
 		source "$${cfg}"; \
 		for fp in "$${ForwardPort[@]}"; do \
-			! [[ $$fp =~ NEW_FORWARD_PORTS ]] && printf "\t%s\n" $$'$(call _VALUE_,'"$$fp"$$')' ; \
+			! [[ $$fp =~ NEW_FORWARD_PORTS ]] && printf "\t%s\n" $$'$(call VALUE,'"$$fp"$$')' ; \
 		done; \
 	done
 
@@ -120,7 +120,7 @@ list-logs:
 	@for log in "${LOG_DIR}/${APP}"-*.log; do \
 		fn="$$(basename "$$log")"; \
 		[[ ! -f $$log || -d $$log || $fn == "template" ]] && continue; \
-		printf "\t%-50s%s\n" $$'$(call _VALUE_,'"$$fn"$$')' $$'$(call _INFO_,'"$$log"$$')'; \
+		printf "\t%-50s%s\n" $$'$(call VALUE,'"$$fn"$$')' $$'$(call INFO,'"$$log"$$')'; \
 	done
 
 
@@ -131,7 +131,7 @@ list-host:
 		h=$$(basename "$$fn"); \
 		[[ $$h == "template" ]] && continue; \
 		remoteHost="$$(grep RemoteHost "$$fn" | tr -d ' \"' | cut -d '=' -f 2 )"; \
-		printf "\t%-50s (%s)\n" $$'$(call _VALUE_,'$$h$$')' $$'$(call _INFO_,'"$$remoteHost"$$')'; \
+		printf "\t%-50s (%s)\n" $$'$(call VALUE,'$$h$$')' $$'$(call INFO,'"$$remoteHost"$$')'; \
 	done
 
 
@@ -141,23 +141,23 @@ list-host:
 add-host:
 	@printf "Adding host…\n"
 	@if [[ "${NAME}" == "none" || -z "${NAME}" || "${HOST}" == "none" || -z "${HOST}" ]]; then \
-		printf "\t%s or %s.\n" $$'$(call _ERROR_,missing HOST)' $$'$(call _ERROR_,NAME)' 1>&2; \
+		printf "\t%s or %s.\n" $$'$(call ERROR,missing HOST)' $$'$(call ERROR,NAME)' 1>&2; \
 		exit 0; \
 	elif [[ "${NAME}" != "none" ]]; then \
 		cp ${CONFIG_DIR}/{template,${NAME}}; \
 		sed -i 's/{{HOST}}/${HOST}/g' ${CONFIG_DIR}/${NAME}; \
 		while true; do \
-			read -p "$(shell printf "\tEditing…\t%s? [y/n]\n" $$'$(call _VALUE_, ${CONFIG_DIR}/${NAME})')" yn; \
+			read -p "$(shell printf "\tEditing…\t%s? [y/n]\n" $$'$(call VALUE, ${CONFIG_DIR}/${NAME})')" yn; \
 			case $$yn in \
 				[Yy]* ) \
 					editor ${CONFIG_DIR}/${NAME}; \
-					printf "\nYou must %s the tunnel with:\n\t%s %s\n" $$'$(call _WARNING_,start –manually–)' $$'$(call _INFO_,sudo /etc/init.d/mast start ${NAME})' 1>&2; \
+					printf "\nYou must %s the tunnel with:\n\t%s %s\n" $$'$(call WARNING,start –manually–)' $$'$(call INFO,sudo /etc/init.d/mast start ${NAME})' 1>&2; \
 					break;; \
 				[Nn]* ) \
-					printf "\t%s\n" $$'$(call _INFO_,Skipping)'; \
+					printf "\t%s\n" $$'$(call INFO,Skipping)'; \
 					exit;; \
 				* ) \
-					printf "\t\tAnswer by %s or %s.\n" $$'$(call _VALUE_,yes)' $$'$(call _VALUE_,no)';; \
+					printf "\t\tAnswer by %s or %s.\n" $$'$(call VALUE,yes)' $$'$(call VALUE,no)';; \
 			esac; \
 		done; \
 	else \
@@ -165,15 +165,15 @@ add-host:
 	fi
 
 remove-host:
-	@printf "Removing host…\n\t%s\t\t" $$'$(call _VALUE_, ${NAME})'
+	@printf "Removing host…\n\t%s\t\t" $$'$(call VALUE, ${NAME})'
 	@if [[ "${NAME}" == "none" || -z "${NAME}" ]]; then \
-		printf "%s host\'s NAME.\n" $$'$(call _WARNING_, invalid)' 1>&2; \
+		printf "%s host\'s NAME.\n" $$'$(call WARNING, invalid)' 1>&2; \
 	elif [[ ! -e "${CONFIG_DIR}/${NAME}" ]]; then \
-		printf "does %s.\n" $$'$(call _WARNING_,not exist)' 1>&2; \
+		printf "does %s.\n" $$'$(call WARNING,not exist)' 1>&2; \
 	elif [[ ! -f "${CONFIG_DIR}/${NAME}" ]]; then \
-		printf "%s host\'s file.\n" $$'$(call _WARNING_, invalid)' 1>&2; \
+		printf "%s host\'s file.\n" $$'$(call WARNING, invalid)' 1>&2; \
 	else \
-		rm -f "${CONFIG_DIR}/${NAME}" && printf "$(call _SUCCESS_, done)" || printf "$(call _ERROR_, error)" 1>&2; \
+		rm -f "${CONFIG_DIR}/${NAME}" && printf "$(call SUCCESS, done)" || printf "$(call ERROR, error)" 1>&2; \
 	fi
 
 
@@ -191,76 +191,76 @@ uninstall:
 		mast-web \
 	); for fn in "$${filesList[@]}"; do \
 		[[ -f $$fn || -d $$fn ]] || continue; \
-		rm -rf "$$fn" && printf "\t%-50s%s\n" $$'$(call _VALUE_,'$$fn$$')' $$'$(call _SUCCESS_, done)'; \
+		rm -rf "$$fn" && printf "\t%-50s%s\n" $$'$(call VALUE,'$$fn$$')' $$'$(call SUCCESS, done)'; \
 	done
 	@update-rc.d -f mast remove > /dev/null
 	@printf "\n"
 
 # deploy the webapp, configure apache, /etc/hosts
 deploy-webapp:
-	@printf "Deploying…\t%s\n" $$'$(call _VALUE_,webapp)'
+	@printf "Deploying…\t%s\n" $$'$(call VALUE,webapp)'
 
 	@# cloning repository
 	@if [[ ! -f ${WEBAPP}/.git && ! -d ${WEBAPP}/.git ]]; \
 		then \
 			if type git > /dev/null; then \
-				printf "\t%-50s" $$'$(call _INFO_,cloning repository)'; \
+				printf "\t%-50s" $$'$(call INFO,cloning repository)'; \
 				git clone --depth 1 --quiet ${WEBAPP_REPO} > /dev/null; \
 			else \
-				printf "\t%-50s" $$'$(call _INFO_,fetching)'; \
+				printf "\t%-50s" $$'$(call INFO,fetching)'; \
 				wget --output-document="${WEBAPP}.zip" ${WEBAPP_ARCHIVE}; \
 				unzip "${WEBAPP}.zip"; \
 			fi \
 		elif [[ -f ${WEBAPP}/.git || -d ${WEBAPP}/.git ]]; then \
-			printf "\t%-50s" $$'$(call _INFO_,updating repository)'; \
+			printf "\t%-50s" $$'$(call INFO,updating repository)'; \
 			pushd "${WEBAPP}" \
 				&& git pull ${WEBAPP_REPO} > /dev/null; \
 			popd; \
 				git checkout --quiet ${WEBAPP_BRANCH} > /dev/null \
-					&& printf "$(call _SUCCESS_, done)" \
+					&& printf "$(call SUCCESS, done)" \
 		else \
-			printf "%s (already existing)\n" $$'$(call _WARNING_,skipped)' 1>&2; \
+			printf "%s (already existing)\n" $$'$(call WARNING,skipped)' 1>&2; \
 		fi; \
 		chmod u=rwx,g=rwx,o= -R "${WEBAPP}/"; \
 		chown $${USER}:www-data -R "${WEBAPP}/"
-	@printf "\t%s\n" $$'$(call _DEBUG_,${WEBAPP_REPO})'
+	@printf "\t%s\n" $$'$(call DEBUG,${WEBAPP_REPO})'
 
 	@# deploying webapp: /var/www/mast
-	@printf "\t%-50s" $$'$(call _INFO_,deploying webapp)'
+	@printf "\t%-50s" $$'$(call INFO,deploying webapp)'
 		@cp -R --preserve=all ${WEBAPP} ${WEBAPP_DEST_DIR} \
-			&& printf "$(call _SUCCESS_, done)" \
-			|| printf "$(call _ERROR_, fail)"
-	@printf "\t%s\n" $$'$(call _DEBUG_,${WEBAPP_DEST_DIR}/${WEBAPP})'
+			&& printf "$(call SUCCESS, done)" \
+			|| printf "$(call ERROR, fail)"
+	@printf "\t%s\n" $$'$(call DEBUG,${WEBAPP_DEST_DIR}/${WEBAPP})'
 
 	@# configuring Apache: /etc/apache2/sites-enabled/mast-web.conf
-	@printf "\t%-50s" $$'$(call _INFO_,configuring Apache)'
+	@printf "\t%-50s" $$'$(call INFO,configuring Apache)'
 		@a2enmod php5 rewrite vhost_alias &> /dev/null  # enable Apache module
 		@cp ${APACHE_SRC_CONF} ${APACHE_DEST_CONF} \
-			&& printf "$(call _SUCCESS_, done)" \
-			|| printf "$(call _ERROR_, fail)"
-		@printf "\t%s\n" $$'$(call _DEBUG_,${APACHE_DEST_CONF})'
+			&& printf "$(call SUCCESS, done)" \
+			|| printf "$(call ERROR, fail)"
+		@printf "\t%s\n" $$'$(call DEBUG,${APACHE_DEST_CONF})'
 
 	@# declaring hostname: /etc/hosts
-	@printf "\t%-50s" $$'$(call _INFO_,declaring hostname)'
+	@printf "\t%-50s" $$'$(call INFO,declaring hostname)'
 		@if ! grep -iq 'mast' /etc/hosts; then \
 			printf '%s\n' H 1i "127.0.0.1 ${APACHE_HOSTNAME} www.${APACHE_HOSTNAME}" . w | ed -s /etc/hosts; \
 			printf '%s\n' H 1i "# Mast-web" . w | ed -s /etc/hosts; \
-			printf "%s" $$'$(call _SUCCESS_, done)'; \
-			printf "\t%s\n" $$'$(call _DEBUG_,/etc/hosts)'; \
+			printf "%s" $$'$(call SUCCESS, done)'; \
+			printf "\t%s\n" $$'$(call DEBUG,/etc/hosts)'; \
 		else \
-			printf "%s\t%s" $$'$(call _WARNING_, skipped)' 1>&2; \
-			printf "%s\n" $$'$(call _DEBUG_,/etc/hosts already existing)'; \
+			printf "%s\t%s" $$'$(call WARNING, skipped)' 1>&2; \
+			printf "%s\n" $$'$(call DEBUG,/etc/hosts already existing)'; \
 		fi
 
 	@# reloading Apache
-	@printf "\t%-50s" $$'$(call _INFO_,reloading Apache)'
+	@printf "\t%-50s" $$'$(call INFO,reloading Apache)'
 		@if apache2ctl configtest &> /dev/null; then \
 				apache2ctl graceful; \
-				printf "$(call _SUCCESS_, done)\n"; \
-				printf "\t%-50s%s\n" $$'$(call _SUCCESS_,test installation using)' $$'$(call _VALUE_, http://mast.dev/)'; \
+				printf "$(call SUCCESS, done)\n"; \
+				printf "\t%-50s%s\n" $$'$(call SUCCESS,test installation using)' $$'$(call VALUE, http://mast.dev/)'; \
 			else \
-				printf "$(call _ERROR_, failed)"; \
-				printf "\t%s\n" $$'$(call _DEBUG_,${WEBAPP_DEST_DIR}/${WEBAPP})'; \
+				printf "$(call ERROR, failed)"; \
+				printf "\t%s\n" $$'$(call DEBUG,${WEBAPP_DEST_DIR}/${WEBAPP})'; \
 				apache2ctl configtest; \
 			fi
 
@@ -268,36 +268,35 @@ deploy-webapp:
 
 
 deploy-service:
-	@printf "Deploying… %s\n" $$'$(call _VALUE_,service)'
-	@printf "\t%-50s" $$'$(call _INFO_, systemd service…)'
+	@printf "Deploying… %s\n" $$'$(call VALUE,service)'
+	@printf "\t%-50s" $$'$(call INFO, systemd service…)'
 		@cp mastd.service /etc/systemd/system/ \
-		&& printf "$(call _SUCCESS_, done)\n" || printf "$(call _ERROR_, error)\n" 1>&2
+		&& printf "$(call SUCCESS, done)\n" || printf "$(call ERROR, error)\n" 1>&2
 
-	@printf "\t%-50s" $$'$(call _INFO_, initd service…)'
+	@printf "\t%-50s" $$'$(call INFO, initd service…)'
 		@rm -f /etc/init.d/mast \
 		&& ln -nfs $$PWD/mast /etc/init.d/ \
-		&& printf "$(call _SUCCESS_, done)\n" || printf "$(call _ERROR_, error)\n" 1>&2
+		&& printf "$(call SUCCESS, done)\n" || printf "$(call ERROR, error)\n" 1>&2
 		@chown www-data /etc/init.d/mast
 		@update-rc.d mast defaults > /dev/null
 
-	@printf "\t%-50s" $$'$(call _INFO_, daemon…)'
+	@printf "\t%-50s" $$'$(call INFO, daemon…)'
 		@rm -f /usr/sbin/mastd \
 		&& cp mastd /usr/sbin/ \
-		&& printf "$(call _SUCCESS_, done)\n" || printf "$(call _ERROR_, error)\n" 1>&2
+		&& printf "$(call SUCCESS, done)\n" || printf "$(call ERROR, error)\n" 1>&2
 
-	@printf "\t%-50s" $$'$(call _INFO_, toolbox…)'
+	@printf "\t%-50s" $$'$(call INFO, utils…)'
 		@rm -f /usr/sbin/mast-utils \
 		&& cp makefile /usr/sbin/mast-utils \
-		&& printf "$(call _SUCCESS_, done)\n" || printf "$(call _ERROR_, error)\n" 1>&2
+		&& printf "$(call SUCCESS, done)\n" || printf "$(call ERROR, error)\n" 1>&2
 
-
-	@printf "\t%-50s%s\n" $$'$(call _INFO_, config directory…)' $$'$(call _VALUE_, ${CONFIG_DIR}/)'
+	@printf "\t%-50s%s" $$'$(call INFO, config directory…)'
 		@[[ ! -d "${CONFIG_DIR}" ]] && mkdir "${CONFIG_DIR}" || printf "";
 
 	@printf "\t%-50s%s\n" $$'$(call _INFO_, template…)' $$'$(call _VALUE_, ${CONFIG_DIR}/template)'
 		@rm -f ${CONFIG_DIR}/template && cp {.,${CONFIG_DIR}}/template
 
-	@printf "\t%-50s%s\n" $$'$(call _INFO_, log directory…)' $$'$(call _VALUE_, ${LOG_DIR}/)'
+	@printf "\t%-50s%s" $$'$(call INFO, template…)'
 		@[[ ! -d "${LOG_DIR}" ]] && mkdir "${LOG_DIR}" || true
 		@chown www-data -R "${LOG_DIR}" && chmod u=rwx,g=rwx "${LOG_DIR}"
 
@@ -308,8 +307,8 @@ config-ssh: deploy-key
 
 # Copy infra public key on customer's node (defined by REMOTE_SRV)
 deploy-key: create-ssh-key
-	@printf "Deploying…\t%s\n" $$'$(call _VALUE_, public key)'
-	@printf "\t%-50s%s\n" $$'$(call _INFO_, copy public key to)' $$'$(call _VALUE_, ${REMOTE_USER}@${REMOTE_SRV})'
+	@printf "Deploying…\t%s\n" $$'$(call VALUE, public key)'
+	@printf "\t%-50s%s\n" $$'$(call INFO, copy public key to)' $$'$(call VALUE, ${REMOTE_USER}@${REMOTE_SRV})'
 	@ssh-copy-id -i ${SSH_KEYFILE} ${REMOTE_USER}@${REMOTE_SRV} > /dev/null
 	@printf "\n"
 
@@ -317,12 +316,12 @@ deploy-key: create-ssh-key
 # Create keys pair on infra
 #@alias: create-ssh-key:
 ${SSH_KEYFILE}:
-	@printf "Creating… %s\n" $$'$(call _VALUE_,SSH keys)'
-	@printf "\t%-50s%s" $$'$(call _INFO_, removing existing key)'
+	@printf "Creating… %s\n" $$'$(call VALUE,SSH keys)'
+	@printf "\t%-50s%s" $$'$(call INFO, removing existing key)'
 		@rm -f ${SSH_KEYFILE}{,.pub} \
-			&& printf "%s\n" $$'$(call _SUCCESS_, done)' \
-			|| printf "%s\n" $$'$(call _ERROR_, failed)'
-	@printf "\t%-50s%s" $$'$(call _INFO_, generating key)'
+			&& printf "%s\n" $$'$(call SUCCESS, done)' \
+			|| printf "%s\n" $$'$(call ERROR, failed)'
+	@printf "\t%-50s%s" $$'$(call INFO, generating key)'
 		@ssh-keygen -q \
 			-t rsa \
 			-b 4096 \
@@ -330,12 +329,12 @@ ${SSH_KEYFILE}:
 			-N "${EMPTY}" \
 			-O permit-port-forwarding \
 			-C "Automatically generated by MAST script" \
-			&& printf "%s\n" $$'$(call _SUCCESS_, done)' \
-			|| printf "%s\n" $$'$(call _ERROR_, failed)'
+			&& printf "%s\n" $$'$(call SUCCESS, done)' \
+			|| printf "%s\n" $$'$(call ERROR, failed)'
 
 # Install packages required on the Coaxis' INFRAstructure
 install-infra:
-	@printf "Installing…\t%s\n" $$'$(call _VALUE_, infrastructure\'s node)'
+	@printf "Installing…\t%s\n" $$'$(call VALUE, infrastructure\'s node)'
 	apt-get install ${DEPS_CORE_INFRA} ${DEPS_UTILS}
 
 # Add PPA for Ubuntu 12.04, 14.04 and higher to leverage systemd
@@ -349,7 +348,7 @@ install-systemd:
 
 # Install packages required on the CUSTOMER's node
 install-customer:
-	@printf "Installing…\t%s\n" $$'$(call _VALUE_, customer\'s node)'
+	@printf "Installing…\t%s\n" $$'$(call VALUE, customer\'s node)'
 	apt-get install -y ${DEPS_CORE_CUSTOMER} ${DEPS_UTILS}
 
 
@@ -369,26 +368,26 @@ check-system:
 	@executables=( ${DEPS_CORE_INFRA} ${DEPS_CORE_CUSTOMER} ${DEPS_UTILS} ); \
 	if ! type dpkg-query &> /dev/null; then \
 		printf "You *MUST* install 'dpkg'\n"; \
-		printf "\t→ %s %s\n" $$'$(call _VALUE_, apt-get install dpkg)'; \
+		printf "\t→ %s %s\n" $$'$(call VALUE, apt-get install dpkg)'; \
 		exit; \
 	fi; \
 	for e in $${executables[@]}; do \
-		printf "\t%-50s" $$'$(call _VALUE_, '$$e$$')'; \
+		printf "\t%-50s" $$'$(call VALUE, '$$e$$')'; \
 		if ! dpkg-query -s "$$e" &> /dev/null; then \
-			printf "%12s\t" $$'$(call _ERROR_, missing)'; \
-			printf "→ %s %s\n" $$'$(call _INFO_, apt-get install '$$e $$')'; \
+			printf "%12s\t" $$'$(call ERROR, missing)'; \
+			printf "→ %s %s\n" $$'$(call INFO, apt-get install '$$e $$')'; \
 		else \
-			printf "%-12s\n" $$'$(call _SUCCESS_,installed)'; \
+			printf "%-12s\n" $$'$(call SUCCESS,installed)'; \
 		fi \
 	done
 
 # Display basic help. For further information refer to the docs http://github.com/edouard-lopez/mast/README.md
 usage:
 	@printf "Usage…\n"
-	@printf "\t%s: both commands require %s privilieges.\n" $$'$(call _WARNING_, warning)' $$'$(call _VALUE_,sudo)' 1>&2
+	@printf "\t%s: both commands require %s privilieges.\n" $$'$(call WARNING, warning)' $$'$(call VALUE,sudo)' 1>&2
 	@printf "\n"
-	@printf "\t * %-50s%s\n" $$'$(call _INFO_,on infrastructure)' $$'$(call _VALUE_, make setup-infra)'
-	@printf "\t * %-50s%s\n" $$'$(call _INFO_,on customer\'s node)' $$'$(call _VALUE_, make setup-customer)'
+	@printf "\t * %-50s%s\n" $$'$(call INFO,on infrastructure)' $$'$(call VALUE, make setup-infra)'
+	@printf "\t * %-50s%s\n" $$'$(call INFO,on customer\'s node)' $$'$(call VALUE, make setup-customer)'
 
 
 # Coloring constants
@@ -398,28 +397,28 @@ ERROR_COLOR=\x1b[31;01m
 WARN_COLOR=\x1b[33;01m
 
 # Reset
-__RESET__=\e[0m
+_RESET_=\e[0m
 # valid/green
-__SUCCESS__=\e[0;32m
+_SUCCESS_=\e[0;32m
 # blue/information
-__INFO__=\e[0;36m
+_INFO_=\e[0;36m
 # blue/information
-__DEBUG__=\e[0;37m
+_DEBUG_=\e[0;37m
 # red/error
-__ERROR__=\e[1;31m
+_ERROR_=\e[1;31m
 # yellow/warning
-__WARNING__=\e[0;33m
+_WARNING_=\e[0;33m
 # value/purple
-__VALUE__=\e[0;35m
+_VALUE_=\e[0;35m
 
 # Colours function helpers
-_SUCCESS_=$(__SUCCESS__)$(1)$(__RESET__)
-_INFO_=$(__INFO__)$(1)$(__RESET__)
-_DEBUG_=$(__DEBUG__)$(1)$(__RESET__)
-_ERROR_=$(__ERROR__)$(1)$(__RESET__)
-_WARNING_=$(__WARNING__)$(1)$(__RESET__)
-_VALUE_=$(__VALUE__)$(1)$(__RESET__)
+SUCCESS=$(_SUCCESS_)$(1)$(_RESET_)
+INFO=$(_INFO_)$(1)$(_RESET_)
+DEBUG=$(_DEBUG_)$(1)$(_RESET_)
+ERROR=$(_ERROR_)$(1)$(_RESET_)
+WARNING=$(_WARNING_)$(1)$(_RESET_)
+VALUE=$(_VALUE_)$(1)$(_RESET_)
 # messages helper
-_OK_=$(call _SUCCESS_, ok)
+OK=$(call SUCCESS, ok)
 
 
