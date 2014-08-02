@@ -50,7 +50,6 @@ WEBAPP_DEST_DIR=/var/www/
 
 # Project dependencies
 DEPS_CORE_INFRA:=autossh openssh-client trickle apache2 libapache2-mod-php5 sudo aha
-DEPS_CORE_CUSTOMER:=openssh-server
 DEPS_UTILS:=bmon iftop htop
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -69,12 +68,6 @@ APACHE_DEST_CONF=/etc/apache2/sites-enabled/${WEBAPP}.conf
 # Branch to checkout before deploying webapp
 WEBAPP_BRANCH=dev
 
-default: usage
-setup-customer: install-customer
-setup-infra: install-infra
-create-ssh-key: ${SSH_KEYFILE}
-
-
 .PHONY: deploy-key \
 install-customer \
 remove-host \
@@ -92,6 +85,10 @@ create-ssh-key \
 default \
 install-systemd \
 setup-infra
+
+default: usage
+setup-infra: install-infra
+create-ssh-key: ${SSH_KEYFILE}
 
 
 # List channels for given host. If none is given, iterate over all hosts
@@ -363,11 +360,6 @@ install-systemd:
 	printf "\treading: http://linuxg.net/how-to-install-and-test-systemd-on-ubuntu-14-04-trusty-tahr-and-ubuntu-12-04-precise-pangolin/\n"
 	printf "\tby editing GRUB_CMDLINE_LINUX_DEFAULT to \"init=/lib/systemd/systemd\"\n"
 
-# Install packages required on the CUSTOMER's node
-install-customer:
-	@printf "Installing…\t%s\n" $$'$(call VALUE, customer\'s node)'
-	apt-get install ${DEPS_CORE_CUSTOMER} ${DEPS_UTILS}
-
 
 # Check files permission
 check-privileges:
@@ -404,7 +396,6 @@ usage:
 	@printf "\t%s: both commands require %s privilieges.\n" $$'$(call WARNING, warning)' $$'$(call VALUE,sudo)' 1>&2
 	@printf "\n"
 	@printf "\t * %-50s%s\n" $$'$(call INFO,on infrastructure)' $$'$(call VALUE, make setup-infra)'
-	@printf "\t * %-50s%s\n" $$'$(call INFO,on customer\'s node)' $$'$(call VALUE, make setup-customer)'
 
 
 # Coloring constants
