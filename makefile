@@ -211,6 +211,7 @@ deploy-webapp:
 				git clone --depth 1 --quiet ${WEBAPP_REPO} > /dev/null; \
 			else \
 				printf "\t%-50s" $$'$(call INFO,fetching)'; \
+				if [[ ! -d "${WEBAPP}" ]] && rm -rf ${WEBAPP} || true; \
 				wget --quiet --output-document="${WEBAPP}.tar.gz" ${WEBAPP_ARCHIVE}; \
 				tar xzf "${WEBAPP}.tar.gz"; \
 				mv ${WEBAPP}{-${BRANCH},}; \
