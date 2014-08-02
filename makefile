@@ -291,13 +291,29 @@ deploy-service:
 		&& printf "$(call SUCCESS, done)\n" || printf "$(call ERROR, error)\n" 1>&2
 
 	@printf "\t%-50s%s" $$'$(call INFO, config directory…)'
-		@[[ ! -d "${CONFIG_DIR}" ]] && mkdir "${CONFIG_DIR}" || printf "";
-
-	@printf "\t%-50s%s\n" $$'$(call _INFO_, template…)' $$'$(call _VALUE_, ${CONFIG_DIR}/template)'
-		@rm -f ${CONFIG_DIR}/template && cp {.,${CONFIG_DIR}}/template
+		@if [[ ! -d "${CONFIG_DIR}" ]]; then \
+			mkdir "${CONFIG_DIR}" \
+				&& printf "%s\t%s\n" "$(call SUCCESS, done)" $$'$(call VALUE, ${CONFIG_DIR}/)' \
+				|| printf "$(call ERROR, error)\n" 1>&2; \
+		elif [[ -d "${CONFIG_DIR}" ]]; then \
+			printf "%s\t%s\n" $$'$(call WARNING, skipped)' $$'$(call VALUE, ${CONFIG_DIR}/)'; \
+		fi
 
 	@printf "\t%-50s%s" $$'$(call INFO, template…)'
-		@[[ ! -d "${LOG_DIR}" ]] && mkdir "${LOG_DIR}" || true
+		@rm -f ${CONFIG_DIR}/template \
+			&& cp {.,${CONFIG_DIR}}/template \
+			&& chmod u=rw,go= template \
+			&& printf "%s\t%s\n" $$'$(call WARNING, skipped)' $$'$(call VALUE, ${CONFIG_DIR}/template)' \
+			|| printf "$(call ERROR, error)\n" 1>&2
+
+	@printf "\t%-50s%s" $$'$(call INFO, log directory…)'
+		@if [[ ! -d "${LOG_DIR}" ]]; then \
+			mkdir "${LOG_DIR}" \
+				&& printf "%s\t%s\n" "$(call SUCCESS, done)" $$'$(call VALUE, ${LOG_DIR}/)' \
+				|| printf "$(call ERROR, error)\n" 1>&2; \
+		elif [[ -d "${LOG_DIR}" ]]; then \
+			printf "%s\t%s\n" $$'$(call WARNING, skipped)' $$'$(call VALUE, ${LOG_DIR}/)'; \
+		fi
 		@chown www-data -R "${LOG_DIR}" && chmod u=rwx,g=rwx "${LOG_DIR}"
 
 
