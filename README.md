@@ -33,9 +33,9 @@ Dans un second temps il nous faudrait une interface web en 4 pages web:
 
 * **Debian-based** OS: we are expecting a Debian `6.0+` or Ubuntu-server `12.04+` ;
 * **bash** `4.x+`: the shell interpreter used for the service ;
-* **autoSSH**: to start and monitor ssh tunnels ;
-	* **openssh-client**: this is an obvious dependency ;
-* **trickle**: user-space bandwidth shaper ;
+* **wget**: to download project on repository ;
+* **openssh**: this is an obvious dependency ;
+* **gunzip**: to uncompress the downloaded package ;
 * GNU **Make**: task manager used to install client/server, deploy add others stuff.
 
 ## Tasks management with `make` and the `makefile`
