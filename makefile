@@ -69,23 +69,26 @@ APACHE_DEST_CONF=/etc/apache2/sites-enabled/${WEBAPP}.conf
 # Branch to checkout before deploying webapp
 WEBAPP_BRANCH=dev
 
-.PHONY: deploy-key \
-install-customer \
-remove-host \
-add-host \
-list-host \
-list-logs \
-list-channels \
-usage \
-config-ssh \
-install-infra \
-setup-customer \
-check-system \
-check-privileges \
-create-ssh-key \
-default \
-install-systemd \
-setup-infra
+.PHONY:  default \
+	setup-infra  \
+	create-ssh-key  \
+	list-channels  \
+	list-logs  \
+	list-host  \
+	add-host  \
+	remove-host  \
+	install  \
+	uninstall  \
+	deploy-webapp  \
+	deploy-service  \
+	deploy  \
+	config-ssh  \
+	deploy-key  \
+	install-infra  \
+	check-privileges  \
+	check-system  \
+	usage
+
 
 default: usage
 setup-infra: install-infra
