@@ -89,9 +89,9 @@ deploy-webapp:
 	(( test >= assert )) && printf "$(call PASS)" || printf "$(call FAIL)" 1>&2;
 
 deploy-service:
-	@assert=1; \
-	test=$$(make deploy-service | grep -c '') &> /dev/null; \
 	$(call self,$@)
+	@assert=7; \
+	test=$$(make deploy-service | grep -cE 'done|skipped') &> /dev/null; \
 	(( test >= assert )) && printf "$(call PASS)" || printf "$(call FAIL)" 1>&2;
 
 deploy:
