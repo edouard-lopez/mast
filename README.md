@@ -113,11 +113,13 @@ make check-system
 Once the system is ready for the service, you should get the following output:
 ```text
 Checking system…
-	autossh Installed
-	openssh-client  Installed
-	openssh-server  Installed
-	trickle Installed
-	useradd Installed
+	autossh                               installed
+	openssh-client                        installed
+	trickle                               installed
+	apache2                               installed
+	libapache2-mod-php5                   installed
+	sudo                                  installed
+	aha                                   installed
 ```
 
 ### Installing on Customer device
