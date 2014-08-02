@@ -29,6 +29,14 @@ Dans un second temps il nous faudrait une interface web en 4 pages web:
 * le code sera ouvert et documenté. ;
 * l'ensemble devra être packagé pour une mise en place facile.
 
+## Glossary
+
+* **infrastructure**: a machine that manage the customer's tunnels. Can manage multiple customers ;
+* **customer**: company that require our service. Can have one or more _hosts_ ;
+* **host**: a machine accessible through Internet by its IP address or FQDN. Can have one or more _tunnels_ ;
+* **tunnel**: an SSH's tunnel between our infrastructure and the host's machine. Can have one or more channels (each for a different printer);
+* **channel**: a port forwarding configuration from _infrastructure_ to _host_ through a _tunnel_.
+
 ## Requirements
 
 * **Debian-based** OS: we are expecting a Debian `6.0+` or Ubuntu-server `12.04+` ;
