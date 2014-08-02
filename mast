@@ -74,7 +74,7 @@ _valid()			{ printf "${_valid_}%s${_reset_}" "$*"; } 				# style text as valid
 # @param {string} config name
 _log-file() {
 	if [[ -z "$1" ]]; then
-		printf "You must give a %s!\n" "$(_warning "config name")"
+		printf "You must give a %s!\n" "$(_warning "config name")" 1>&2
 		exit 1
 	else
 		echo "$LOG_DIR/$NAME-$1.log"
@@ -85,7 +85,7 @@ _log-file() {
 # @param {string} config name
 _log-to() {
 	if [[ -z "$1" ]]; then
-		printf "You must give a %s!\n" "$(_warning "config name")"
+		printf "You must give a %s!\n" "$(_warning "config name")" 1>&2
 		exit 1
 	fi
 	cfname="$1"
@@ -113,7 +113,7 @@ start() {
 
 	# make sure we have a config file
 	if [[ ! -f "$config" ]]; then
-		printf "%s %s\n" "$cfname" "$(_error "doesn't exists")" | _log-to "$cfname"
+		printf "%s %s\n" "$cfname" "$(_error "doesn't exists")" 1>&2 | _log-to "$cfname"
 		return 1
 	fi
 
@@ -129,14 +129,14 @@ start() {
 	eval "
 		if [[ -z \$$var ]]
 		then
-			printf \"%s: %s variable empty\\n\" \"$cfname\" \"$var\" | _log-to \"$cfname\"
+			printf \"%s: %s variable empty\\n\" \"$cfname\" \"$var\" 1>&2 | _log-to \"$cfname\"
 			return 1
 		fi
 		"
 	done
 
 	if (( ${#ForwardPort[*]} == 0 )); then
-		printf "%s: ForwardPort array empty\n" "$cfname" | _log-to "$cfname"
+		printf "%s: ForwardPort array empty\n" "$cfname" 1>&2 | _log-to "$cfname"
 		return 1
 	fi
 
@@ -146,7 +146,7 @@ start() {
 				forward_list+="-$fwd "
 			;;
 			*)
-				printf "%s: %s format unknown\n" "$cfname" "$fwd" | _log-to "$cfname"
+				printf "%s: %s format unknown\n" "$cfname" "$fwd" 1>&2 | _log-to "$cfname"
 				return 1
 			;;
 		esac
@@ -156,7 +156,7 @@ start() {
 	# check if pidfile already exists -- don't start another instance if pidfile exists
 	AUTOSSH_PIDFILE="/var/run/$NAME/$cfname.pid"
 	if [[ -e $AUTOSSH_PIDFILE ]]; then
-		printf "PID for %s %s (%s)\n" "$(_value "$cfname")" "$(_warning "already exists")" "$(_log "$AUTOSSH_PIDFILE")" | _log-to "$cfname"
+		printf "PID for %s %s (%s)\n" "$(_value "$cfname")" "$(_warning "already exists")" "$(_log "$AUTOSSH_PIDFILE")" 1>&2 | _log-to "$cfname"
 		return 1
 	fi
 
@@ -181,7 +181,7 @@ start() {
 
 	# check to make sure pidfile was created
 	if [[ ! -f $AUTOSSH_PIDFILE ]]; then
-		printf "%s not created\n" "$(basename "$AUTOSSH_PIDFILE")" | _log-to "$cfname"
+		printf "%s not created\n" "$(basename "$AUTOSSH_PIDFILE")" 1>&2 | _log-to "$cfname"
 		return 1
 	fi
 
@@ -210,7 +210,7 @@ stop() {
 		pidfile="/var/run/$NAME/$cfname.pid"
 		if [[ ! -f "$pidfile" ]]
 		then
-			printf "%s %s: %s missing\n" "$NAME" "$cfname" "$pidfile" | _log-to "$cfname"
+			printf "%s %s: %s missing\n" "$NAME" "$cfname" "$pidfile" 1>&2 | _log-to "$cfname"
 			return 1
 		else
 			printf "Stopping %s %s: " "$NAME" "$cfname"
