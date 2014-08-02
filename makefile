@@ -338,7 +338,7 @@ deploy-key: create-ssh-key
 #@alias: create-ssh-key:
 ${SSH_KEYFILE}:
 	@printf "Creating… %s\n" $$'$(call VALUE,SSH keys)'
-		[[ ! -d ${SSH_DIR} ]] && mkdir "${SSH_DIR}" || true
+		@[[ ! -d ${SSH_DIR} ]] && mkdir "${SSH_DIR}" || true
 	@printf "\t%-50s%s" $$'$(call INFO, removing existing key)'
 		@rm -f ${SSH_KEYFILE}{,.pub} \
 			&& printf "%s\n" $$'$(call SUCCESS, done)' \
