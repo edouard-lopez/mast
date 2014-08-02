@@ -103,9 +103,6 @@ _log-to() {
 }
 
 
-
-
-
 start() {
 	config="$1"
 	cfname="$(basename "$config")"
@@ -237,7 +234,7 @@ list() {
 # @scope: private
 _list-config-port() {
 		source "$1"
-		for fp in "${ForwardPort[@]}"; do 
+		for fp in "${ForwardPort[@]}"; do
 			! [[ $fn =~ NEW_FORWARD_PORTS ]] && printf "\t%s\n" "$(_value "$fp")" ;
 		done
 }
@@ -248,7 +245,7 @@ list-ports() {
 	# if no config names (on the command-line), stop all autossh processes
 	if [[ -z "$config" ]]; then
 		config=( "$CONFIG_DIR"/* )
-	else 
+	else
 		config=(  "$CONFIG_DIR/$config" )
 	fi
 
@@ -268,6 +265,7 @@ list-log() {
 		printf "* %s\t\t%s\n" "$(_value "$fn")" "$(_info "$f")" | _log-to "all"
 	done
 }
+
 
 # save the action name, and shift the command-line array
 # all remaining command-line arguments *should* be config names
