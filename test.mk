@@ -23,115 +23,115 @@ install-systemd \
 setup-infra
 
 default:
-	$(call self)
+	$(call self,$@)
 	@assert=1; \
 	test=$$(make default | grep -c '') &> /dev/null; \
 	(( test >= assert )) && printf "$(call PASS)" || printf "$(call FAIL)" 1>&2;
 
 setup-customer:
-	$(call self)
+	$(call self,$@)
 	@assert=1; \
 	test=$$(make setup-customer | grep -c '') &> /dev/null; \
 	(( test >= assert )) && printf "$(call PASS)" || printf "$(call FAIL)" 1>&2;
 
 setup-infra:
-	$(call self)
+	$(call self,$@)
 	@assert=1; \
 	test=$$(make setup-infra | grep -c '') &> /dev/null; \
 	(( test >= assert )) && printf "$(call PASS)" || printf "$(call FAIL)" 1>&2;
 
 create-ssh-key:
-	$(call self)
+	$(call self,$@)
 	@assert=1; \
 	test=$$(make create-ssh-key | grep -c '') &> /dev/null; \
 	(( test >= assert )) && printf "$(call PASS)" || printf "$(call FAIL)" 1>&2;
 
 list-channels:
-	$(call self)
+	$(call self,$@)
 	@assert=2; \
 	test=$$(make create-ssh-key | grep -c '') &> /dev/null; \
 	(( test >= assert )) && printf "$(call PASS)" || printf "$(call FAIL)" 1>&2;
 
 list-logs:
-	$(call self)
+	$(call self,$@)
 	@assert=1; \
 	test=$$(make list-logs | grep -c '') &> /dev/null; \
 	(( test >= assert )) && printf "$(call PASS)" || printf "$(call FAIL)" 1>&2;
 
 list-host:
-	$(call self)
+	$(call self,$@)
 	@assert=1; \
 	test=$$(make list-host  &> /dev/null| grep -c ''); \
 	(( test >= assert )) && printf "$$'$(call PASS)'" || printf "$(call FAIL)" 1>&2;
 
 add-host:
-	$(call self)
+	$(call self,$@)
 	@assert=1; \
 	test=$$(make add-host | grep -c '') &> /dev/null; \
 	(( test >= assert )) && printf "$(call PASS)" || printf "$(call FAIL)" 1>&2;
 
 remove-host:
-	$(call self)
+	$(call self,$@)
 	@assert=1; \
 	test=$$(make remove-host | grep -c '') &> /dev/null; \
 	(( test >= assert )) && printf "$(call PASS)" || printf "$(call FAIL)" 1>&2;
 
 uninstall:
-	$(call self)
+	$(call self,$@)
 	@assert=1; \
 	test=$$(make uninstall | grep -c '') &> /dev/null; \
 	(( test >= assert )) && printf "$(call PASS)" || printf "$(call FAIL)" 1>&2;
 
 deploy-webapp:
-	$(call self)
+	$(call self,$@)
 	@assert=1; \
 	test=$$(make deploy-webapp | grep -c '') &> /dev/null; \
 	(( test >= assert )) && printf "$(call PASS)" || printf "$(call FAIL)" 1>&2;
 
 deploy-service:
-	$(call self)
 	@assert=1; \
 	test=$$(make deploy-service | grep -c '') &> /dev/null; \
+	$(call self,$@)
 	(( test >= assert )) && printf "$(call PASS)" || printf "$(call FAIL)" 1>&2;
 
 deploy:
-	$(call self)
+	$(call self,$@)
 	@assert=1; \
 	test=$$(make deploy | grep -c '') &> /dev/null; \
 	(( test >= assert )) && printf "$(call PASS)" || printf "$(call FAIL)" 1>&2;
 
 config-ssh:
-	$(call self)
+	$(call self,$@)
 	@assert=1; \
 	test=$$(make config-ssh | grep -c '') &> /dev/null; \
 	(( test >= assert )) && printf "$(call PASS)" || printf "$(call FAIL)" 1>&2;
 
 deploy-key:
-	$(call self)
+	$(call self,$@)
 	@assert=1; \
 	test=$$(make deploy-key | grep -c '') &> /dev/null; \
 	(( test >= assert )) && printf "$(call PASS)" || printf "$(call FAIL)" 1>&2;
 
 install-infra:
-	$(call self)
+	$(call self,$@)
 	@assert=1; \
 	test=$$(make install-infra | grep -c '') &> /dev/null; \
 	(( test >= assert )) && printf "$(call PASS)" || printf "$(call FAIL)" 1>&2;
 
 install-systemd:
-	$(call self)
+	$(call self,$@)
 	@assert=1; \
 	test=$$(make install-systemd | grep -c '') &> /dev/null; \
 	(( test >= assert )) && printf "$(call PASS)" || printf "$(call FAIL)" 1>&2;
 
 install-customer:
-	$(call self)
+	$(call self,$@)
 	@assert=1; \
 	test=$$(make install-customer | grep -c '') &> /dev/null; \
 	(( test >= assert )) && printf "$(call PASS)" || printf "$(call FAIL)" 1>&2;
 
 check-system:
-	$(call self)
+	$(call self,$@)
 	@assert=1; \
 	test=$$(make check-system | grep -c '') &> /dev/null; \
 	(( test >= assert )) && printf "$(call PASS)" || printf "$(call FAIL)" 1>&2;
