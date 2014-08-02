@@ -22,6 +22,8 @@ REMOTE_USER:=coaxis
 # Below are CRITICAL SETTINGS for the application.
 # Seriously, otherwise you VOID THE SUPPORT AND WARRANTY contract.
 
+APP:=mast
+
 # force use of Bash
 SHELL := /bin/bash
 
