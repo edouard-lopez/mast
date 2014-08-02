@@ -56,8 +56,9 @@ DEPS_UTILS:=bmon iftop htop
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 # Code source repository
+BRANCH=dev
 WEBAPP_REPO:=https://github.com/edouard-lopez/mast-web.git
-WEBAPP_ARCHIVE:=https://github.com/edouard-lopez/mast-web/archive/master.tar.gz
+WEBAPP_ARCHIVE:=https://github.com/edouard-lopez/mast-web/archive/${BRANCH}.tar.gz
 # DEV ONLY
 WEBAPP_REPO:=file://$(shell pwd)/../mast-web/.git
 # Web app's hostname
@@ -212,7 +213,7 @@ deploy-webapp:
 				printf "\t%-50s" $$'$(call INFO,fetching)'; \
 				wget --quiet --output-document="${WEBAPP}.tar.gz" ${WEBAPP_ARCHIVE}; \
 				tar xzf "${WEBAPP}.tar.gz"; \
-				mv ${WEBAPP}{-master,}; \
+				mv ${WEBAPP}{-${BRANCH},}; \
 			fi \
 		elif [[ -f ${WEBAPP}/.git || -d ${WEBAPP}/.git ]]; then \
 			printf "\t%-50s" $$'$(call INFO,updating repository)'; \
