@@ -87,7 +87,7 @@ make install
 
 ## Toolbox's Tasks
 
-A _makefile_ define so-called _tasks_, that allow admin to easily run a complex sequence of commands in a single call. For instance, `make install` might run commands to ① check the system state, ② install the requirements, ③ configure everything, etc.
+A _makefile_ define so-called _tasks_, that allow admin to easily run a complex sequence of commands in a single call. For instance, `make install` might run commands to ① [check the system state](#checking-your-system), ② [install the requirements](#installing-on-infra), ③ [configure everything](#deploying), etc.
 
 It is useful to know that a `make` command can take a series of tasks to accomplish, the previous `make install` task could have been run as `make check-system install-infra deploy`, which is more explicit but a bit longer.
 
