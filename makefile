@@ -52,6 +52,7 @@ WEBAPP_DEST_DIR=/var/www/
 DEPS_CORE_INFRA:=autossh openssh-client trickle apache2 sudo unzip aha
 DEPS_CORE_CUSTOMER:=openssh-server
 DEPS_UTILS:=bmon iftop htop
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 # Code source repository
@@ -77,11 +78,11 @@ create-ssh-key: ${SSH_KEYFILE}
 .PHONY: deploy-key \
 install-customer \
 remove-host \
-usage \
 add-host \
 list-host \
 list-logs \
 list-channels \
+usage \
 config-ssh \
 install-infra \
 setup-customer \
@@ -299,6 +300,7 @@ deploy-service:
 	@printf "\t%-50s%s\n" $$'$(call _INFO_, log directory…)' $$'$(call _VALUE_, ${LOG_DIR}/)'
 		@[[ ! -d "${LOG_DIR}" ]] && mkdir "${LOG_DIR}" || true
 		@chown www-data -R "${LOG_DIR}" && chmod u=rwx,g=rwx "${LOG_DIR}"
+
 
 deploy: deploy-service deploy-webapp
 
