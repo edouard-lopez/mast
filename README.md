@@ -119,14 +119,6 @@ Checking system…
 	aha                                   installed
 ```
 
-### Installing on Customer device
-
-Install required packages (`autossh`, `openssh-client`, `ssh-client`, `trickle`).
-
-```bash
-make install-customer
-```
-
 ### Installing on Infra
 
 Install required packages (`openssh-client`, `trickle`, ...).
