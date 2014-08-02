@@ -49,7 +49,7 @@ WEBAPP=mast-web
 WEBAPP_DEST_DIR=/var/www/
 
 # Project dependencies
-DEPS_CORE_INFRA:=autossh openssh-client trickle apache2 libapache2-mod-php5 sudo unzip aha
+DEPS_CORE_INFRA:=autossh openssh-client trickle apache2 libapache2-mod-php5 sudo aha
 DEPS_CORE_CUSTOMER:=openssh-server
 DEPS_UTILS:=bmon iftop htop
 
@@ -57,7 +57,7 @@ DEPS_UTILS:=bmon iftop htop
 
 # Code source repository
 WEBAPP_REPO:=https://github.com/edouard-lopez/mast-web.git
-WEBAPP_ARCHIVE:=https://github.com/edouard-lopez/mast-web/archive/master.zip
+WEBAPP_ARCHIVE:=https://github.com/edouard-lopez/mast-web/archive/master.tar.gz
 # DEV ONLY
 WEBAPP_REPO:=file://$(shell pwd)/../mast-web/.git
 # Web app's hostname
@@ -208,8 +208,9 @@ deploy-webapp:
 				git clone --depth 1 --quiet ${WEBAPP_REPO} > /dev/null; \
 			else \
 				printf "\t%-50s" $$'$(call INFO,fetching)'; \
-				wget --output-document="${WEBAPP}.zip" ${WEBAPP_ARCHIVE}; \
-				unzip "${WEBAPP}.zip"; \
+				wget --output-document="${WEBAPP}.tar.gz" ${WEBAPP_ARCHIVE}; \
+				tar xvzf "${WEBAPP}.tar.gz"; \
+				mv ${WEBAPP}{-master,}; \
 			fi \
 		elif [[ -f ${WEBAPP}/.git || -d ${WEBAPP}/.git ]]; then \
 			printf "\t%-50s" $$'$(call INFO,updating repository)'; \
