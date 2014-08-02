@@ -47,10 +47,8 @@ Dans un second temps il nous faudrait une interface web en 4 pages web:
 * GNU **Make**: task manager used to install client/server, deploy add others stuff.
 
 ## Architecture design: Separation of Concerns
-## Tasks management with `make` and the `makefile`
 
 ### Service
-Makefile define so-called _tasks_, that allow user to easily run a complex sequence of command with a single call (e.g. `make install`).
 
 The core features (_start_, _stop_, _status_, _restart_) are provided through the service file placed in _/etc/mast_
 
@@ -68,16 +66,16 @@ A _makefile_ define so-called _tasks_, that allow admin to easily run a complex 
 
 It is useful to know that a `make` command can take a series of tasks to accomplish, the previous `make install` task could have been run as `make check-system install-infra deploy`, which is more explicit but a bit longer.
 
-### Tips and tricks
+### Tips and Tricks
 
-For administrator unfamiliar with `makefile` syntax, you need to be aware of the following:
+For administrator familiar with _Bash_'s syntax but unfamiliar with `makefile`'s one, you need to be aware of the following:
 
-* variables can be pass to the makefile script as follow: `make MY_VAR=123 taskname` ;
+* variables can be pass to the makefile script as follow: `make MYVAR=123 taskname` ;
 * the `$` (dollar sign) **must be escaped** if you want to have access to bash variable (e.g. ~~$HOME~~ → `$$HOME`) ;
-* multilines commands should end with a `\` (backslash). In a similar fashion than `bash` ;
-* the `@` (at sign) is use to prevent a command to be printed prior to execution. If you want to see what commands the task really executed, with variables expanded, simply remote the `@`-sign from the beginning of the line :).
+* multi-lines Bash commands should end with a `; \` (semi-column and backslash). Otherwise _make_ will consider each line to be isolated for the surrounding ones ;
+* the `@` (at sign) in the begin of a line is use to prevent a command to be printed prior to execution. If you want to see what commands the task really executed, with variables expanded, simply remote the `@`-sign from the beginning of the line :).
 
-## Installation
+### Installation
 
 You must get the project on both the customer's node and your infrastructure:
 
