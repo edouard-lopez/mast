@@ -173,6 +173,7 @@ remove-host:
 		rm -f "${CONFIG_DIR}/${NAME}" && printf "$(call SUCCESS, done)" || printf "$(call ERROR, error)" 1>&2; \
 	fi
 
+install: install-infra deploy-service create-ssh-key deploy-webapp
 
 uninstall:
 	@printf "Uninstalling…\n"
@@ -395,6 +396,7 @@ usage:
 	@printf "Usage…\n"
 	@printf "\t%s: both commands require %s privilieges.\n" $$'$(call WARNING, warning)' $$'$(call VALUE,sudo)' 1>&2
 	@printf "\n"
+	@printf "\t * %-50s%s\n" $$'$(call INFO,on infrastructure)' $$'$(call VALUE, make install)'
 	@printf "\t * %-50s%s\n" $$'$(call INFO,on infrastructure)' $$'$(call VALUE, make setup-infra)'
 
 
