@@ -275,7 +275,7 @@ deploy-service:
 
 	@printf "\t%-50s" $$'$(call _INFO_, initd service…)'
 		@rm -f /etc/init.d/mast \
-		&& cp mast /etc/init.d/ \
+		&& ln -nfs $$PWD/mast /etc/init.d/ \
 		&& printf "$(call _SUCCESS_, done)\n" || printf "$(call _ERROR_, error)\n" 1>&2
 		@chown www-data /etc/init.d/mast
 		@update-rc.d mast defaults > /dev/null
@@ -358,6 +358,9 @@ check-privileges:
 	@[[ ! -d ${LOG_DIR} ]] && mkdir "${LOG_DIR}"
 	@chown www-data -R "${LOG_DIR}"
 	@chmod u=rwx,g=rwx "${LOG_DIR}"
+	# open privileges to www-data
+	chown www-data "$(_log-file  "$fn")"
+	chmod u=rwx,g=rwx "$(_log-file  "$fn")"
 
 
 # Check system status for dependencies
