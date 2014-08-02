@@ -41,7 +41,8 @@ LOG_DIR:=/var/log/mast
 # Passphrase MUST be empty to allow automation (no passphrase prompt)
 EMPTY:=
 # Path to the SSH keys pair (public key is suffixed by .pub).
-SSH_KEYFILE:=$$HOME/.ssh/id_rsa.mast.coaxis
+SSH_DIR:=$$HOME/.ssh
+SSH_KEYFILE:=${SSH_DIR}/id_rsa.mast.coaxis
 
 # webapp sources directory, cloned during install (deployed to /var/www/mast-web)
 WEBAPP=mast-web
@@ -333,6 +334,7 @@ deploy-key: create-ssh-key
 #@alias: create-ssh-key:
 ${SSH_KEYFILE}:
 	@printf "Creating… %s\n" $$'$(call VALUE,SSH keys)'
+		[[ ! -d ${SSH_DIR} ]] && mkdir "${SSH_DIR}" || true
 	@printf "\t%-50s%s" $$'$(call INFO, removing existing key)'
 		@rm -f ${SSH_KEYFILE}{,.pub} \
 			&& printf "%s\n" $$'$(call SUCCESS, done)' \
