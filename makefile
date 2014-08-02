@@ -186,6 +186,7 @@ uninstall:
 		/etc/systemd/system/mastd.service \
 		/etc/init.d/mast \
 		/usr/sbin/mastd \
+		/usr/sbin/mast-utils \
 		"${CONFIG_DIR}"/* \
 		"${CONFIG_DIR}" \
 		/etc/apache2/sites-enabled/${WEBAPP}.conf \
