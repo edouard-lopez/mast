@@ -202,13 +202,13 @@ deploy-webapp:
 	@# cloning repository
 	@if [[ ! -f ${WEBAPP}/.git && ! -d ${WEBAPP}/.git ]]; \
 		then \
-			if type git > /dev/null; then \
+			if type git &> /dev/null; then \
 				printf "\t%-50s" $$'$(call INFO,cloning repository)'; \
 				git clone --depth 1 --quiet ${WEBAPP_REPO} > /dev/null; \
 			else \
 				printf "\t%-50s" $$'$(call INFO,fetching)'; \
-				wget --output-document="${WEBAPP}.tar.gz" ${WEBAPP_ARCHIVE}; \
-				tar xvzf "${WEBAPP}.tar.gz"; \
+				wget --quiet --output-document="${WEBAPP}.tar.gz" ${WEBAPP_ARCHIVE}; \
+				tar xzf "${WEBAPP}.tar.gz"; \
 				mv ${WEBAPP}{-master,}; \
 			fi \
 		elif [[ -f ${WEBAPP}/.git || -d ${WEBAPP}/.git ]]; then \
@@ -353,7 +353,7 @@ ${SSH_KEYFILE}:
 # Install packages required on the Coaxis' INFRAstructure
 install-infra:
 	@printf "Installing…\t%s\n" $$'$(call VALUE, infrastructure\'s node)'
-	apt-get install ${DEPS_CORE_INFRA} ${DEPS_UTILS}
+	@apt-get -q install ${DEPS_CORE_INFRA} ${DEPS_UTILS} > /dev/null
 
 
 # Check files permission
