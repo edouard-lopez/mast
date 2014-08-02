@@ -135,8 +135,8 @@ list-host:
 
 
 # Adding a new host config require to provide it's NAME and HOST
-# @require: NAME
-# @require: HOST
+# @require: {string} NAME host's name
+# @require: {string} HOST  IP address or FQDN
 add-host:
 	@printf "Adding host…\n"
 	@if [[ "${NAME}" == "none" || -z "${NAME}" || "${HOST}" == "none" || -z "${HOST}" ]]; then \
