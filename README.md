@@ -80,20 +80,12 @@ Checking system…
 	useradd Installed
 ```
 
-### Installing on Customer device
-
-Install required packages (`autossh`, `openssh-client`, `ssh-client`, `trickle`).
-
-```bash
-make install-customer
-```
-
 ### Installing on Server
 
-Install required packages (`openssh-server`, `ssh-server`, `useradd`).
+Install required packages (`openssh-client`, `trickle`, ...).
 
 ```bash
-make install-server
+make setup-infra
 ```
 
 #### Using `systemd` (experimental)
