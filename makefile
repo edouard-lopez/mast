@@ -57,7 +57,7 @@ DEPS_UTILS:=bmon iftop htop
 
 # Code source repository
 WEBAPP_REPO:=https://github.com/edouard-lopez/mast-web.git
-WEBAPP_ARCHIVE:=https://github.com/edouard-lopez/mast/archive/master.zip
+WEBAPP_ARCHIVE:=https://github.com/edouard-lopez/mast-web/archive/master.zip
 # DEV ONLY
 WEBAPP_REPO:=file://$(shell pwd)/../mast-web/.git
 # Web app's hostname
