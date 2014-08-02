@@ -62,6 +62,32 @@ All administrative tasks are accomplished through an utility command-line call `
 
 Build on top of both the service and the utility toolbox
 
+## Installation
+
+First, be sure to have _make_ installed on your system:
+```bash
+apt-get install -y make
+```
+
+Then, you must get the project on both the customer's node and your infrastructure:
+```bash
+wget --output-document="mast.tar.gz" https://github.com/edouard-lopez/mast/archive/master.tar.gz
+tar xvzf ./mast.tar.gz && cd mast-master
+```
+
+Finally, you can type:
+```bash
+make install
+```
+
+### Using Git
+
+If `git` is installed, you can use it as follow:
+```bash
+git clone --depth 1 https://github.com/edouard-lopez/mast.git && cd mast
+make install
+```
+
 ## Toolbox's Tasks
 
 A _makefile_ define so-called _tasks_, that allow admin to easily run a complex sequence of commands in a single call. For instance, `make install` might run commands to ① check the system state, ② install the requirements, ③ configure everything, etc.
@@ -76,18 +102,6 @@ For administrator familiar with _Bash_'s syntax but unfamiliar with `makefile`'s
 * the `$` (dollar sign) **must be escaped** if you want to have access to bash variable (e.g. ~~$HOME~~ → `$$HOME`) ;
 * multi-lines Bash commands should end with a `; \` (semi-column and backslash). Otherwise _make_ will consider each line to be isolated for the surrounding ones ;
 * the `@` (at sign) in the begin of a line is use to prevent a command to be printed prior to execution. If you want to see what commands the task really executed, with variables expanded, simply remote the `@`-sign from the beginning of the line :).
-
-### Installation
-
-You must get the project on both the customer's node and your infrastructure:
-
-```bash
-git clone --depth 1 https://github.com/edouard-lopez/mast.git && cd mast
-```
-Then you can type:
-```bash
-make
-```
 
 ### Checking your system
 
