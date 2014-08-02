@@ -316,6 +316,7 @@ deploy-service:
 		@chown www-data -R "${LOG_DIR}" && chmod u=rwx,g=rwx "${LOG_DIR}"
 
 
+
 deploy: deploy-service deploy-webapp
 
 config-ssh: deploy-key
@@ -351,15 +352,6 @@ ${SSH_KEYFILE}:
 install-infra:
 	@printf "Installing…\t%s\n" $$'$(call VALUE, infrastructure\'s node)'
 	apt-get install ${DEPS_CORE_INFRA} ${DEPS_UTILS}
-
-# Add PPA for Ubuntu 12.04, 14.04 and higher to leverage systemd
-install-systemd:
-	apt-get install openssh-server
-	add-apt-repository ppa:pitti/systemd
-	apt-get update && apt-get dist-upgrade
-	printf "You MUST update GRUB config\n"
-	printf "\treading: http://linuxg.net/how-to-install-and-test-systemd-on-ubuntu-14-04-trusty-tahr-and-ubuntu-12-04-precise-pangolin/\n"
-	printf "\tby editing GRUB_CMDLINE_LINUX_DEFAULT to \"init=/lib/systemd/systemd\"\n"
 
 
 # Check files permission

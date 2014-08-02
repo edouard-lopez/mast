@@ -127,15 +127,6 @@ Install required packages (`openssh-client`, `trickle`, ...).
 make setup-infra
 ```
 
-#### Using `systemd` (experimental)
-
-The use of `systemd` is not widespread yet. However, is planned to become the default service manager on future release of numerous Linux distributions.
-In order to support this on current LTS Ubuntu (12.04 and 14.04) we need an [additional PPA repository](https://launchpad.net/~pitti/+archive/systemd) and some [modification to the `GRUB` config](http://linuxg.net/how-to-install-and-test-systemd-on-ubuntu-14-04-trusty-tahr-and-ubuntu-12-04-precise-pangolin/)[^systemd-on-ubuntu].
-
-```bash
-make install-systemd
-```
-
 #### Deploying service and daemon
 
 This task copy project file to their adequate location (_i.e._ `/etc/init.d/`, `/usr/sbin/`, `/etc/systemd/system/`)
