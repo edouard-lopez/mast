@@ -284,6 +284,12 @@ deploy-service:
 		&& cp mastd /usr/sbin/ \
 		&& printf "$(call _SUCCESS_, done)\n" || printf "$(call _ERROR_, error)\n" 1>&2
 
+	@printf "\t%-50s" $$'$(call _INFO_, toolbox…)'
+		@rm -f /usr/sbin/mast-utils \
+		&& cp makefile /usr/sbin/mast-utils \
+		&& printf "$(call _SUCCESS_, done)\n" || printf "$(call _ERROR_, error)\n" 1>&2
+
+
 	@printf "\t%-50s%s\n" $$'$(call _INFO_, config directory…)' $$'$(call _VALUE_, ${CONFIG_DIR}/)'
 		@[[ ! -d "${CONFIG_DIR}" ]] && mkdir "${CONFIG_DIR}" || printf "";
 
