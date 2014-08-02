@@ -130,7 +130,7 @@ Install required packages (`autossh`, `openssh-client`, `ssh-client`, `trickle`)
 make install-customer
 ```
 
-### Installing on Server
+### Installing on Infra
 
 Install required packages (`openssh-server`, `ssh-server`, `useradd`).
 
