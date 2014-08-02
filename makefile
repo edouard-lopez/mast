@@ -49,7 +49,7 @@ WEBAPP=mast-web
 WEBAPP_DEST_DIR=/var/www/
 
 # Project dependencies
-DEPS_CORE_INFRA:=autossh openssh-client trickle apache2 sudo unzip aha
+DEPS_CORE_INFRA:=autossh openssh-client trickle apache2 libapache2-mod-php5 sudo unzip aha
 DEPS_CORE_CUSTOMER:=openssh-server
 DEPS_UTILS:=bmon iftop htop
 
