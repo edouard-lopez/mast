@@ -129,7 +129,7 @@ make setup-infra
 
 #### Deploying service and daemon
 
-This task copy project file to their adequate location (_i.e._ `/etc/init.d/`, `/usr/sbin/`, `/etc/systemd/system/`)
+This task copy project file to their adequate location (_i.e._ `/etc/init.d/`, `/usr/sbin/`)
 ```bash
 make deploy-service
 ```
@@ -160,13 +160,10 @@ make REMOTE_SRV=11.22.33.44 deploy-key
 
 ## Service
 
-### Service file^[service-file]
 
-* The `[Unit]` section contains generic information about the service. `systemd` not only manages system services, but also devices, mount points, timer, and other components of the system.
-* `[Service]` section encodes information about the service itself. It contains all those settings that apply only to services, and not the other kinds of units `systemd` maintains (mount points, devices, timers, ...)
-* [Install]` section encodes information about how the suggested installation should look like, _i.e._ under which circumstances and by which triggers the service shall be started. In this case we simply say that this service shall be started when the multi-user.target unit is activated
 
 ### Don't kill me, I have kids!
+
 Check if tunnels are children of the service. If this is the case, that means that killing the service will kill **all** tunnels.
 
 ## Configuration File
@@ -193,8 +190,6 @@ Below is a list of available parameters and their roles:
 
 ### References
 
-* [^service-file]: [How Do I Convert A SysV Init Script Into A systemd Service File?](http://0pointer.de/blog/projects/systemd-for-admins-3.html)
-* [^systemd-on-ubuntu]: [How To Install And Test Systemd On Ubuntu 14.04 Trusty Tahr And Ubuntu 12.04 Precise Pangolin.](http://linuxg.net/how-to-install-and-test-systemd-on-ubuntu-14-04-trusty-tahr-and-ubuntu-12-04-precise-pangolin/)
 * [^manpage-ssh-config]: [Manual for OpenSSH SSH **client configuration files**.](http://manpages.ubuntu.com/manpages/precise/en/man5/ssh_config.5.html)
 * [^js-morisset]: [Autossh Startup Script for Multiple Tunnels.](http://surniaulula.com/2012/12/10/autossh-startup-script-for-multiple-tunnels/)
 * [^manpage-ssh-client]: [Manual for OpenSSH SSH **client**.](http://manpages.ubuntu.com/manpages/precise/en/man1/ssh.1.html)
