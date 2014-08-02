@@ -80,6 +80,7 @@ remove-host \
 usage \
 add-host \
 list-host \
+list-logs \
 config-ssh \
 install-infra \
 setup-customer \
@@ -91,6 +92,14 @@ install-systemd \
 setup-infra
 
 
+# List all log files, one for each tunnel
+list-logs:
+	@printf "Listing hosts…\n"
+	@for log in "${LOG_DIR}/${APP}"-*.log; do \
+		fn="$$(basename "$$log")"; \
+		[[ ! -f $$log || -d $$log || $fn == "template" ]] && continue; \
+		printf "\t%-50s%s\n" $$'$(call _VALUE_,'"$$fn"$$')' $$'$(call _INFO_,'"$$log"$$')'; \
+	done
 
 
 # List all hosts available to the service
