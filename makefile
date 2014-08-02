@@ -81,6 +81,7 @@ config-ssh \
 install-infra \
 setup-customer \
 check-system \
+check-privileges \
 create-ssh-key \
 default \
 install-systemd \
@@ -305,6 +306,14 @@ install-systemd:
 install-customer:
 	@printf "Installing…\t%s\n" $$'$(call _VALUE_, customer\'s node)'
 	apt-get install -y ${DEPS_CORE_CUSTOMER} ${DEPS_UTILS}
+
+
+# Check files permission
+check-privileges:
+	@[[ ! -d ${LOG_DIR} ]] && mkdir "${LOG_DIR}"
+	@chown www-data -R "${LOG_DIR}"
+	@chmod u=rwx,g=rwx "${LOG_DIR}"
+
 
 # Check system status for dependencies
 check-system:
