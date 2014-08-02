@@ -130,7 +130,7 @@ list-host:
 		h=$$(basename "$$fn"); \
 		[[ $$h == "template" ]] && continue; \
 		remoteHost="$$(grep RemoteHost "$$fn" | tr -d ' \"' | cut -d '=' -f 2 )"; \
-		printf "\t* %s (%s)\n" $$'$(call _VALUE_,'$$h$$')' $$'$(call _INFO_,'"$$remoteHost"$$')'; \
+		printf "\t%-50s (%s)\n" $$'$(call _VALUE_,'$$h$$')' $$'$(call _INFO_,'"$$remoteHost"$$')'; \
 	done
 
 
