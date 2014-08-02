@@ -140,7 +140,7 @@ check-system:
 usage:
 	$(call self,$@)
 	@assert=2; \
-	test=$$(make usage 2>&1 | grep -c 'setup') &> /dev/null; \
+	test=$$(make usage 2>&1 | grep -c 'make') &> /dev/null; \
 	(( test >= assert )) && printf "$(call PASS)" || printf "$(call FAIL)" 1>&2;
 
 # Reset

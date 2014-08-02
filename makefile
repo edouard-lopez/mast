@@ -393,10 +393,10 @@ check-system:
 # Display basic help. For further information refer to the docs http://github.com/edouard-lopez/mast/README.md
 usage:
 	@printf "Usage…\n"
-	@printf "\t%s: both commands require %s privilieges.\n" $$'$(call WARNING, warning)' $$'$(call VALUE,sudo)' 1>&2
+	@printf "\t%s: both commands require %s privilieges.\n" $$'$(call WARNING,warning)' $$'$(call VALUE,sudo)' 1>&2
 	@printf "\n"
-	@printf "\t * %-50s%s\n" $$'$(call INFO,on infrastructure)' $$'$(call VALUE, make install)'
-	@printf "\t * %-50s%s\n" $$'$(call INFO,on infrastructure)' $$'$(call VALUE, make setup-infra)'
+	@printf "\t%-50s%s %s\n" $$'$(call INFO,for install requirements)' $$'$(call WARNING,sudo)' $$'$(call VALUE,make setup-infra)'
+	@printf "\t%-50s%s %s\n" $$'$(call INFO,for full installation)' $$'$(call WARNING,sudo)' $$'$(call VALUE,make install)'
 
 
 # Coloring constants
