@@ -77,6 +77,7 @@ install-customer \
 remove-host \
 usage \
 add-host \
+list-host \
 config-ssh \
 install-infra \
 setup-customer \
@@ -88,14 +89,18 @@ install-systemd \
 setup-infra
 
 
+
+
+# List all hosts available to the service
 list-host:
 	@printf "Listing hosts…\n"
 	@for fn in ${CONFIG_DIR}/*; do \
 		h=$$(basename "$$fn"); \
-		[[ "$$h" == "template" ]] && continue; \
-		rhost="$$(grep RemoteHost "$$fn" | tr -d '\"' | cut -d '=' -f 2 )"; \
-		printf "\t* $(call _VALUE_,$$h) ($(call _INFO_,$$rhost))\n"; \
+		[[ $$h == "template" ]] && continue; \
+		remoteHost="$$(grep RemoteHost "$$fn" | tr -d ' \"' | cut -d '=' -f 2 )"; \
+		printf "\t* %s (%s)\n" $$'$(call _VALUE_,'$$h$$')' $$'$(call _INFO_,'"$$remoteHost"$$')'; \
 	done
+
 
 # Adding a new host config require to provide it's NAME and HOST
 # @require: NAME
