@@ -365,7 +365,7 @@ install-systemd:
 # Install packages required on the CUSTOMER's node
 install-customer:
 	@printf "Installing…\t%s\n" $$'$(call VALUE, customer\'s node)'
-	apt-get install -y ${DEPS_CORE_CUSTOMER} ${DEPS_UTILS}
+	apt-get install ${DEPS_CORE_CUSTOMER} ${DEPS_UTILS}
 
 
 # Check files permission
