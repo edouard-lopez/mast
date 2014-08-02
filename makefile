@@ -119,7 +119,7 @@ list-host:
 add-host:
 	@printf "Adding host…\n"
 	@if [[ "${NAME}" == "none" || -z "${NAME}" || "${HOST}" == "none" || -z "${HOST}" ]]; then \
-		printf "\t%s or %s.\n" $$'$(call _ERROR_,missing HOST)' $$'$(call _ERROR_,NAME)'; \
+		printf "\t%s or %s.\n" $$'$(call _ERROR_,missing HOST)' $$'$(call _ERROR_,NAME)' 1>&2; \
 		exit 0; \
 	elif [[ "${NAME}" != "none" ]]; then \
 		cp ${CONFIG_DIR}/{template,${NAME}}; \
@@ -129,7 +129,7 @@ add-host:
 			case $$yn in \
 				[Yy]* ) \
 					editor ${CONFIG_DIR}/${NAME}; \
-					printf "\nYou must %s the tunnel with:\n\t%s %s\n" $$'$(call _WARNING_,start –manually–)' $$'$(call _INFO_,sudo /etc/init.d/mast start ${NAME})'; \
+					printf "\nYou must %s the tunnel with:\n\t%s %s\n" $$'$(call _WARNING_,start –manually–)' $$'$(call _INFO_,sudo /etc/init.d/mast start ${NAME})' 1>&2; \
 					break;; \
 				[Nn]* ) \
 					printf "\t%s\n" $$'$(call _INFO_,Skipping)'; \
@@ -145,13 +145,13 @@ add-host:
 remove-host:
 	@printf "Removing host…\n\t%s\t\t" $$'$(call _VALUE_, ${NAME})'
 	@if [[ "${NAME}" == "none" || -z "${NAME}" ]]; then \
-		printf "%s host\'s NAME.\n" $$'$(call _WARNING_, invalid)'; \
+		printf "%s host\'s NAME.\n" $$'$(call _WARNING_, invalid)' 1>&2; \
 	elif [[ ! -e "${CONFIG_DIR}/${NAME}" ]]; then \
-		printf "does %s.\n" $$'$(call _WARNING_,not exist)'; \
+		printf "does %s.\n" $$'$(call _WARNING_,not exist)' 1>&2; \
 	elif [[ ! -f "${CONFIG_DIR}/${NAME}" ]]; then \
-		printf "%s host\'s file.\n" $$'$(call _WARNING_, invalid)'; \
+		printf "%s host\'s file.\n" $$'$(call _WARNING_, invalid)' 1>&2; \
 	else \
-		rm -f "${CONFIG_DIR}/${NAME}" && printf "$(call _SUCCESS_, done)" || printf "$(call _ERROR_, error)"; \
+		rm -f "${CONFIG_DIR}/${NAME}" && printf "$(call _SUCCESS_, done)" || printf "$(call _ERROR_, error)" 1>&2; \
 	fi
 
 
@@ -197,7 +197,7 @@ deploy-webapp:
 				git checkout --quiet ${WEBAPP_BRANCH} > /dev/null \
 					&& printf "$(call _SUCCESS_, done)" \
 		else \
-			printf "%s (already existing)\n" $$'$(call _WARNING_,skipped)'; \
+			printf "%s (already existing)\n" $$'$(call _WARNING_,skipped)' 1>&2; \
 		fi; \
 		chmod u=rwx,g=rwx,o= -R "${WEBAPP}/"; \
 		chown $${USER}:www-data -R "${WEBAPP}/"
@@ -226,7 +226,7 @@ deploy-webapp:
 			printf "%s" $$'$(call _SUCCESS_, done)'; \
 			printf "\t%s\n" $$'$(call _DEBUG_,/etc/hosts)'; \
 		else \
-			printf "%s\t%s" $$'$(call _WARNING_, skipped)'; \
+			printf "%s\t%s" $$'$(call _WARNING_, skipped)' 1>&2; \
 			printf "%s\n" $$'$(call _DEBUG_,/etc/hosts already existing)'; \
 		fi
 
@@ -249,19 +249,19 @@ deploy-service:
 	@printf "Deploying… %s\n" $$'$(call _VALUE_,service)'
 	@printf "\t%-50s" $$'$(call _INFO_, systemd service…)'
 		@cp mastd.service /etc/systemd/system/ \
-		&& printf "$(call _SUCCESS_, done)\n" || printf "$(call _ERROR_, error)\n"
+		&& printf "$(call _SUCCESS_, done)\n" || printf "$(call _ERROR_, error)\n" 1>&2
 
 	@printf "\t%-50s" $$'$(call _INFO_, initd service…)'
 		@rm -f /etc/init.d/mast \
 		&& cp mast /etc/init.d/ \
-		&& printf "$(call _SUCCESS_, done)\n" || printf "$(call _ERROR_, error)\n"
+		&& printf "$(call _SUCCESS_, done)\n" || printf "$(call _ERROR_, error)\n" 1>&2
 		@chown www-data /etc/init.d/mast
 		@update-rc.d mast defaults > /dev/null
 
 	@printf "\t%-50s" $$'$(call _INFO_, daemon…)'
 		@rm -f /usr/sbin/mastd \
 		&& cp mastd /usr/sbin/ \
-		&& printf "$(call _SUCCESS_, done)\n" || printf "$(call _ERROR_, error)\n"
+		&& printf "$(call _SUCCESS_, done)\n" || printf "$(call _ERROR_, error)\n" 1>&2
 
 	@printf "\t%-50s%s\n" $$'$(call _INFO_, config directory…)' $$'$(call _VALUE_, ${CONFIG_DIR}/)'
 		@[[ ! -d "${CONFIG_DIR}" ]] && mkdir "${CONFIG_DIR}" || printf "";
@@ -353,7 +353,7 @@ check-system:
 # Display basic help. For further information refer to the docs http://github.com/edouard-lopez/mast/README.md
 usage:
 	@printf "Usage…\n"
-	@printf "\t%s: both commands require %s privilieges.\n" $$'$(call _WARNING_, warning)' $$'$(call _VALUE_,sudo)'
+	@printf "\t%s: both commands require %s privilieges.\n" $$'$(call _WARNING_, warning)' $$'$(call _VALUE_,sudo)' 1>&2
 	@printf "\n"
 	@printf "\t * %-50s%s\n" $$'$(call _INFO_,on infrastructure)' $$'$(call _VALUE_, make setup-infra)'
 	@printf "\t * %-50s%s\n" $$'$(call _INFO_,on customer\'s node)' $$'$(call _VALUE_, make setup-customer)'
