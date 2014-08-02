@@ -46,9 +46,27 @@ Dans un second temps il nous faudrait une interface web en 4 pages web:
 * **trickle**: user-space bandwidth shaper ;
 * GNU **Make**: task manager used to install client/server, deploy add others stuff.
 
+## Architecture design: Separation of Concerns
 ## Tasks management with `make` and the `makefile`
 
+### Service
 Makefile define so-called _tasks_, that allow user to easily run a complex sequence of command with a single call (e.g. `make install`).
+
+The core features (_start_, _stop_, _status_, _restart_) are provided through the service file placed in _/etc/mast_
+
+### Administrative Toolbox
+
+All administrative tasks are accomplished through an utility command-line call `mast-utils` placed in _/usr/bin/mast-utils_. A list of available tasks is available in the section [Toolbox's Tasks](#toolboxs-tasks).
+
+### Web Interface
+
+Build on top of both the service and the utility toolbox
+
+## Toolbox's Tasks
+
+A _makefile_ define so-called _tasks_, that allow admin to easily run a complex sequence of commands in a single call. For instance, `make install` might run commands to ① check the system state, ② install the requirements, ③ configure everything, etc.
+
+It is useful to know that a `make` command can take a series of tasks to accomplish, the previous `make install` task could have been run as `make check-system install-infra deploy`, which is more explicit but a bit longer.
 
 ### Tips and tricks
 
