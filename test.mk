@@ -8,7 +8,7 @@ SHELL := /bin/bash
 install-customer \
 remove-host \
 add-host \
-list-host \
+list-hosts \
 list-logs \
 list-channels \
 usage \
@@ -58,10 +58,10 @@ list-logs:
 	test=$$(make list-logs | grep -c '') &> /dev/null; \
 	(( test >= assert )) && printf "$(call PASS)" || printf "$(call FAIL)" 1>&2;
 
-list-host:
+list-hosts:
 	$(call self,$@)
 	@assert=1; \
-	test=$$(make list-host  &> /dev/null| grep -c ''); \
+	test=$$(make list-hosts  &> /dev/null| grep -c ''); \
 	(( test >= assert )) && printf "$$'$(call PASS)'" || printf "$(call FAIL)" 1>&2;
 
 add-host:

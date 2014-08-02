@@ -75,7 +75,7 @@ WEBAPP_BRANCH=dev
 	create-ssh-key  \
 	list-channels  \
 	list-logs  \
-	list-host  \
+	list-hosts  \
 	add-host  \
 	remove-host  \
 	install  \
@@ -127,7 +127,7 @@ list-logs:
 
 
 # List all hosts available to the service
-list-host:
+list-hosts:
 	@printf "Listing hosts…\n"
 	@for fn in ${CONFIG_DIR}/*; do \
 		h=$$(basename "$$fn"); \
