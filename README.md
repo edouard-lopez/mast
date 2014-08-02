@@ -36,7 +36,6 @@ Dans un second temps il nous faudrait une interface web en 4 pages web:
 * **host**: a machine accessible through Internet by its IP address or FQDN. Can have one or more _tunnels_ ;
 * **tunnel**: an SSH's tunnel between our infrastructure and the host's machine. Can have one or more channels (each for a different printer);
 * **channel**: a port forwarding configuration from _infrastructure_ to _host_ through a _tunnel_.
-
 ## Requirements
 
 * **Debian-based** OS: we are expecting a Debian `6.0+` or Ubuntu-server `12.04+` ;
@@ -74,12 +73,10 @@ Then, you must get the project on both the customer's node and your infrastructu
 wget --output-document="mast.tar.gz" https://github.com/edouard-lopez/mast/archive/master.tar.gz
 tar xvzf ./mast.tar.gz && cd mast-master
 ```
-
 Finally, you can type:
 ```bash
 make install
 ```
-
 ### Using Git
 
 If `git` is installed, you can use it as follow:
@@ -132,10 +129,10 @@ make install-customer
 
 ### Installing on Infra
 
-Install required packages (`openssh-server`, `ssh-server`, `useradd`).
+Install required packages (`openssh-client`, `trickle`, ...).
 
 ```bash
-make install-server
+make setup-infra
 ```
 
 #### Using `systemd` (experimental)
