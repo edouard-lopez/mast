@@ -108,7 +108,6 @@ list-channels:
 	for cfg in "$${config[@]}"; do \
 		fn="$$(basename "$$cfg")"; \
 		[[ $$fn == "template" ]] && continue; \
-		printf "* %s\n" $$'$(call INFO,'"$$fn"$$')'; \
 		source "$${cfg}"; \
 		for fp in "$${ForwardPort[@]}"; do \
 			! [[ $$fp =~ NEW_FORWARD_PORTS ]] && printf "\t%s\n" $$'$(call VALUE,'"$$fp"$$')' ; \
