@@ -100,7 +100,23 @@ For administrator familiar with _Bash_'s syntax but unfamiliar with `makefile`'s
 * multi-lines Bash commands should end with a `; \` (semi-column and backslash). Otherwise _make_ will consider each line to be isolated for the surrounding ones ;
 * the `@` (at sign) in the begin of a line is use to prevent a command to be printed prior to execution. If you want to see what commands the task really executed, with variables expanded, simply remote the `@`-sign from the beginning of the line :).
 
-### Checking your system
+### Default Usage
+
+```bash
+sudo make
+```
+
+### Add Channel
+
+### Add Host
+
+
+### Check Privileges
+
+Check files permission.
+
+### Check System
+Check system status for dependencies.
 
 After getting the project source code, you can check your system status for requirements using :
 
@@ -119,28 +135,13 @@ Checking system…
 	aha                                   installed
 ```
 
-### Installing on Infra
+### Config SSH 
 
-Install required packages (`openssh-client`, `trickle`, ...).
+* requires [Deploy Key](#deploy-key).
 
-```bash
-make setup-infra
-```
+### Create SSH Key (alias)
 
-#### Deploying service and daemon
-
-This task copy project file to their adequate location (_i.e._ `/etc/init.d/`, `/usr/sbin/`)
-```bash
-make deploy-service
-```
-
-### Creating SSH Key
-
-Create SSH keys pair on infrastructure to allow friction-less connection to the customer's node.
-
-```bash
-make create-ssh-key
-```
+Aliases to [${SSH_KEYFILE}](#ssh_keyfile).
 
 ### Deploying SSH Key
 
@@ -158,9 +159,73 @@ make REMOTE_SRV=11.22.33.44 deploy-key
 
 **Note:** This task require `create-ssh-key` to be done, this mean you can directly call the `deploy-key` task and it will trigger the `create-ssh-key` if needed
 
+### Deploy 
+* requires [Deploy Service](#deploy-service) ;
+* requires [Deploy Webapp](#deploy-webapp).
+
+### Deploy Key
+
+* requires [Create SSH Key](#deploy-ssh-key).
+
+Copy infra public key on customer's node (defined by remote_srv).
+
+### Deploy Service
+
+This task copy project file to their adequate location (_i.e._ `/etc/init.d/`, `/usr/sbin/`)
+```bash
+make deploy-service
+```
+
+### Deploy Webapp
+Deploy The Webapp, Configure Apache, /etc/hosts
+
+### Install 
+Install infra deploy service create ssh key deploy webapp
+
+### Install Infra
+
+Install required packages (`autossh`, `trickle`, `openssh-client`, ...) on the infrastructure.
+
+```bash
+make setup-infra
+```
+
+
+### ${SSH_KEYFILE}
+
+Create SSH keys pair on infrastructure to allow friction-less connection to the customer's node.
+
+```bash
+make create-ssh-key
+```
+
+### List Channels
+List channels for given host. if none is given, iterate over all hosts.
+
+### List Logs
+List all log files, one for each tunnel.
+
+### List Hosts
+List all hosts available to the service.
+
+### Remove Channel
+
+### Remove Host
+
+### Setup Infra (alias)
+
+Aliases to [Install Infra](#instal-infra).
+
+### Uninstall
+
+Remove configuration files, services, utility, etc. So you can make a fresh [install](#install)
+
+### Usage
+Display basic help. for further information refer to the docs http//github.com/edouard lopez/mast/readme.md.
+
+
+
 ## Service
-
-
 
 ### Don't kill me, I have kids!
 
