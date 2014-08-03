@@ -175,7 +175,7 @@ remove-host:
 		rm -f "${CONFIG_DIR}/${NAME}" && printf "$(call SUCCESS,done)" || printf "$(call ERROR,error)" 1>&2; \
 	fi
 
-install: install-infra check-system deploy-service create-ssh-key deploy-webapp
+install: install-infra check-system check-privileges deploy-service create-ssh-key deploy-webapp
 
 uninstall:
 	@printf "Uninstalling…\n"
@@ -367,12 +367,23 @@ install-infra:
 
 # Check files permission
 check-privileges:
-	@[[ ! -d ${LOG_DIR} ]] && mkdir "${LOG_DIR}"
+	@printf "Checking…\t%s\n" $$'$(call VALUE,privileges)'
+	@[[ ! -d ${LOG_DIR} ]] && mkdir "${LOG_DIR}" || true
 	@chown www-data -R "${LOG_DIR}"
-	@chmod u=rwx,g=rwx "${LOG_DIR}"
-	# open privileges to www-data
-	chown www-data "$(_log-file  "$fn")"
-	chmod u=rwx,g=rwx "$(_log-file  "$fn")"
+	@# open privileges to www-data
+	@printf "\t%-50s" $$'$(call INFO,service\'s user)'
+	@if ! getent passwd ${APP} > /dev/null; then \
+		useradd \
+			--gid www-data \
+			--groups ${REMOTE_USER} \
+			--password $(mkpasswd "${REMOTE_INIT_PWD}") \
+			--system ${APP}; \
+		printf "%s" $$'$(call SUCCESS,added)'; \
+	else \
+		printf "%s" $$'$(call WARNING,modified)'; \
+		usermod --append --groups ${REMOTE_USER} ${REMOTE_USER}; \
+	fi
+	@usermod --append --groups www-data ${REMOTE_USER}
 
 
 # Check system status for dependencies
