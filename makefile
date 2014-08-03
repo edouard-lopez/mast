@@ -381,9 +381,9 @@ check-privileges:
 			--groups ${REMOTE_USER} \
 			--password $(mkpasswd "${REMOTE_INIT_PWD}") \
 			--system ${APP}; \
-		printf "%s" $$'$(call SUCCESS,added)'; \
+		printf "%s" $$'$(call SUCCESS,added)\n'; \
 	else \
-		printf "%s" $$'$(call WARNING,modified)'; \
+		printf "%s" $$'$(call WARNING,modified)\n'; \
 		usermod --append --groups ${REMOTE_USER} ${REMOTE_USER}; \
 	fi
 	@usermod --append --groups www-data ${REMOTE_USER}
