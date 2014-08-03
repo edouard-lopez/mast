@@ -176,7 +176,7 @@ remove-host:
 		rm -f "${CONFIG_DIR}/${NAME}" && printf "$(call SUCCESS,done)" || printf "$(call ERROR,error)" 1>&2; \
 	fi
 
-install: install-infra deploy-service create-ssh-key deploy-webapp
+install: install-infra check-system deploy-service create-ssh-key deploy-webapp
 
 uninstall:
 	@printf "Uninstalling…\n"
