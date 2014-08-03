@@ -300,7 +300,7 @@ deploy-service:
 	@printf "\t%-50s%s" $$'$(call INFO, config directory…)'
 		@if [[ ! -d "${CONFIG_DIR}" ]]; then \
 			mkdir "${CONFIG_DIR}" \
-				&& printf "%s\t%s\n" "$(call SUCCESS, done)" $$'$(call VALUE, ${CONFIG_DIR}/)' \
+				&& printf "%s\t%s\n" $$'$(call SUCCESS, done)' $$'$(call VALUE, ${CONFIG_DIR}/)' \
 				|| printf "$(call ERROR, error)\n" 1>&2; \
 		elif [[ -d "${CONFIG_DIR}" ]]; then \
 			printf "%s\t%s\n" $$'$(call WARNING, skipped)' $$'$(call VALUE, ${CONFIG_DIR}/)'; \
@@ -316,7 +316,7 @@ deploy-service:
 	@printf "\t%-50s%s" $$'$(call INFO, log directory…)'
 		@if [[ ! -d "${LOG_DIR}" ]]; then \
 			mkdir "${LOG_DIR}" \
-				&& printf "%s\t%s\n" "$(call SUCCESS, done)" $$'$(call VALUE, ${LOG_DIR}/)' \
+				&& printf "%s\t%s\n" $$'$(call SUCCESS, done)' $$'$(call VALUE, ${LOG_DIR}/)' \
 				|| printf "$(call ERROR, error)\n" 1>&2; \
 		elif [[ -d "${LOG_DIR}" ]]; then \
 			printf "%s\t%s\n" $$'$(call WARNING, skipped)' $$'$(call VALUE, ${LOG_DIR}/)'; \
