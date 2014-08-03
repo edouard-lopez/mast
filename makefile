@@ -261,7 +261,7 @@ deploy-webapp:
 		@if apache2ctl configtest &> /dev/null; then \
 				apache2ctl graceful; \
 				printf "$(call SUCCESS,done)\n"; \
-				printf "\t%-50s%s\n" $$'$(call SUCCESS,test installation using)' $$'$(call VALUE, http://mast.dev/)'; \
+				printf "\t%-50s%s\n" $$'$(call SUCCESS,test installation using)' $$'$(call VALUE, http://%SOCIETE%.opt/)'; \
 			else \
 				printf "$(call ERROR,failed)"; \
 				printf "\t%s\n" $$'$(call DEBUG,${WEBAPP_DEST_DIR}/${WEBAPP})'; \
