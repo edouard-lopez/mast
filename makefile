@@ -15,6 +15,7 @@ endif
 
 # default remote user
 REMOTE_USER:=coaxis
+REMOTE_INIT_PWD:=C1i3ntRmSid3
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -50,7 +51,7 @@ WEBAPP=mast-web
 WEBAPP_DEST_DIR=/var/www/
 
 # Project dependencies
-DEPS_CORE_INFRA:=autossh openssh-client trickle apache2 libapache2-mod-php5 sudo aha
+DEPS_CORE_INFRA:=autossh openssh-client trickle apache2 libapache2-mod-php5 sudo aha sshpass
 DEPS_UTILS:=bmon iftop htop
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -332,7 +333,10 @@ config-ssh: deploy-key
 deploy-key: create-ssh-key
 	@printf "Deploying…\t%s\n" $$'$(call VALUE, public key)'
 	@printf "\t%-50s%s\n" $$'$(call INFO, copy public key to)' $$'$(call VALUE, ${REMOTE_USER}@${REMOTE_SRV})'
-	@ssh-copy-id -i ${SSH_KEYFILE} ${REMOTE_USER}@${REMOTE_SRV} > /dev/null
+	@sshpass -p "${REMOTE_INIT_PWD}" \
+		ssh \
+			-o StrictHostKeyChecking=no \
+			${REMOTE_USER}@${REMOTE_SRV} > /dev/null
 	@printf "\n"
 
 
