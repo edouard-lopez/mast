@@ -118,7 +118,6 @@ list-channels:
 
 # List all log files, one for each tunnel
 list-logs:
-	@printf "Listing hosts…\n"
 	@for log in "${LOG_DIR}/${APP}"-*.log; do \
 		fn="$$(basename "$$log")"; \
 		[[ ! -f $$log || -d $$log || $fn == "template" ]] && continue; \
@@ -128,12 +127,11 @@ list-logs:
 
 # List all hosts available to the service
 list-hosts:
-	@printf "Listing hosts…\n"
 	@for fn in ${CONFIG_DIR}/*; do \
 		h=$$(basename "$$fn"); \
 		[[ $$h == "template" ]] && continue; \
 		remoteHost="$$(grep RemoteHost "$$fn" | tr -d ' \"' | cut -d '=' -f 2 )"; \
-		printf "\t%-50s (%s)\n" $$'$(call VALUE,'$$h$$')' $$'$(call INFO,'"$$remoteHost"$$')'; \
+		printf "\t%-50s%s\n" $$'$(call VALUE,'$$h$$')' $$'$(call INFO,'"$$remoteHost"$$')'; \
 	done
 
 
