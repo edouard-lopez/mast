@@ -363,7 +363,7 @@ ${SSH_KEYFILE}:
 # Install packages required on the Coaxis' INFRAstructure
 install-infra:
 	@printf "Installing…\t%s\n" $$'$(call VALUE, infrastructure\'s node)'
-	@apt-get -q install ${DEPS_CORE_INFRA} ${DEPS_UTILS} > /dev/null
+	apt-get -y -q install ${DEPS_CORE_INFRA} ${DEPS_UTILS}
 
 
 # Check files permission
