@@ -169,13 +169,13 @@ add-host:
 remove-host:
 	@printf "Removing host…\n\t%s\t\t" $$'$(call VALUE, ${NAME})'
 	@if [[ "${NAME}" == "none" || -z "${NAME}" ]]; then \
-		printf "%s host\'s NAME.\n" $$'$(call WARNING, invalid)' 1>&2; \
+		printf "%s host\'s NAME.\n" $$'$(call WARNING,invalid)' 1>&2; \
 	elif [[ ! -e "${CONFIG_DIR}/${NAME}" ]]; then \
 		printf "does %s.\n" $$'$(call WARNING,not exist)' 1>&2; \
 	elif [[ ! -f "${CONFIG_DIR}/${NAME}" ]]; then \
-		printf "%s host\'s file.\n" $$'$(call WARNING, invalid)' 1>&2; \
+		printf "%s host\'s file.\n" $$'$(call WARNING,invalid)' 1>&2; \
 	else \
-		rm -f "${CONFIG_DIR}/${NAME}" && printf "$(call SUCCESS, done)" || printf "$(call ERROR, error)" 1>&2; \
+		rm -f "${CONFIG_DIR}/${NAME}" && printf "$(call SUCCESS,done)" || printf "$(call ERROR,error)" 1>&2; \
 	fi
 
 install: install-infra deploy-service create-ssh-key deploy-webapp
@@ -195,7 +195,7 @@ uninstall:
 		mast-web \
 	); for fn in "$${filesList[@]}"; do \
 		[[ -f $$fn || -d $$fn ]] || continue; \
-		rm -rf "$$fn" && printf "\t%-50s%s\n" $$'$(call VALUE,'$$fn$$')' $$'$(call SUCCESS, done)'; \
+		rm -rf "$$fn" && printf "\t%-50s%s\n" $$'$(call VALUE,'$$fn$$')' $$'$(call SUCCESS,done)'; \
 	done
 	@update-rc.d -f mast remove > /dev/null
 	@printf "\n"
@@ -223,7 +223,7 @@ deploy-webapp:
 				&& git pull ${WEBAPP_REPO} > /dev/null; \
 			popd; \
 				git checkout --quiet ${WEBAPP_BRANCH} > /dev/null \
-					&& printf "$(call SUCCESS, done)" \
+					&& printf "$(call SUCCESS,done)" \
 		else \
 			printf "%s (already existing)\n" $$'$(call WARNING,skipped)' 1>&2; \
 		fi; \
@@ -234,16 +234,16 @@ deploy-webapp:
 	@# deploying webapp: /var/www/mast
 	@printf "\t%-50s" $$'$(call INFO,deploying webapp)'
 		@cp -R --preserve=all ${WEBAPP} ${WEBAPP_DEST_DIR} \
-			&& printf "$(call SUCCESS, done)" \
-			|| printf "$(call ERROR, fail)"
+			&& printf "$(call SUCCESS,done)" \
+			|| printf "$(call ERROR,fail)"
 	@printf "\t%s\n" $$'$(call DEBUG,${WEBAPP_DEST_DIR}/${WEBAPP})'
 
 	@# configuring Apache: /etc/apache2/sites-enabled/mast-web.conf
 	@printf "\t%-50s" $$'$(call INFO,configuring Apache)'
 		@a2enmod php5 rewrite > /dev/null  # enable Apache module
 		@cp ${APACHE_SRC_CONF} ${APACHE_DEST_CONF} \
-			&& printf "$(call SUCCESS, done)" \
-			|| printf "$(call ERROR, fail)"
+			&& printf "$(call SUCCESS,done)" \
+			|| printf "$(call ERROR,fail)"
 		@printf "\t%s\n" $$'$(call DEBUG,${APACHE_DEST_CONF})'
 
 	@# declaring hostname: /etc/hosts
@@ -251,10 +251,10 @@ deploy-webapp:
 		@if ! grep -iq 'mast' /etc/hosts; then \
 			printf '%s\n' H 1i "127.0.0.1 ${APACHE_HOSTNAME} www.${APACHE_HOSTNAME}" . w | ed -s /etc/hosts; \
 			printf '%s\n' H 1i "# Mast-web" . w | ed -s /etc/hosts; \
-			printf "%s" $$'$(call SUCCESS, done)'; \
+			printf "%s" $$'$(call SUCCESS,done)'; \
 			printf "\t%s\n" $$'$(call DEBUG,/etc/hosts)'; \
 		else \
-			printf "%s\t%s" $$'$(call WARNING, skipped)' 1>&2; \
+			printf "%s\t%s" $$'$(call WARNING,skipped)' 1>&2; \
 			printf "%s\n" $$'$(call DEBUG,/etc/hosts already existing)'; \
 		fi
 
@@ -262,10 +262,10 @@ deploy-webapp:
 	@printf "\t%-50s" $$'$(call INFO,reloading Apache)'
 		@if apache2ctl configtest &> /dev/null; then \
 				apache2ctl graceful; \
-				printf "$(call SUCCESS, done)\n"; \
+				printf "$(call SUCCESS,done)\n"; \
 				printf "\t%-50s%s\n" $$'$(call SUCCESS,test installation using)' $$'$(call VALUE, http://mast.dev/)'; \
 			else \
-				printf "$(call ERROR, failed)"; \
+				printf "$(call ERROR,failed)"; \
 				printf "\t%s\n" $$'$(call DEBUG,${WEBAPP_DEST_DIR}/${WEBAPP})'; \
 				apache2ctl configtest; \
 			fi
@@ -275,51 +275,51 @@ deploy-webapp:
 
 deploy-service:
 	@printf "Deploying… %s\n" $$'$(call VALUE,service)'
-	@printf "\t%-50s" $$'$(call INFO, systemd service…)'
+	@printf "\t%-50s" $$'$(call INFO,systemd service…)'
 		@cp mastd.service /etc/systemd/system/ \
-		&& printf "$(call SUCCESS, done)\n" || printf "$(call ERROR, error)\n" 1>&2
+		&& printf "$(call SUCCESS,done)\n" || printf "$(call ERROR,error)\n" 1>&2
 
-	@printf "\t%-50s" $$'$(call INFO, initd service…)'
+	@printf "\t%-50s" $$'$(call INFO,initd service…)'
 		@rm -f /etc/init.d/mast \
 		&& ln -nfs $$PWD/mast /etc/init.d/ \
-		&& printf "$(call SUCCESS, done)\n" || printf "$(call ERROR, error)\n" 1>&2
+		&& printf "$(call SUCCESS,done)\n" || printf "$(call ERROR,error)\n" 1>&2
 		@chown www-data /etc/init.d/mast
 		@update-rc.d mast defaults > /dev/null
 
-	@printf "\t%-50s" $$'$(call INFO, daemon…)'
+	@printf "\t%-50s" $$'$(call INFO,daemon…)'
 		@rm -f /usr/sbin/mastd \
 		&& cp mastd /usr/sbin/ \
-		&& printf "$(call SUCCESS, done)\n" || printf "$(call ERROR, error)\n" 1>&2
+		&& printf "$(call SUCCESS,done)\n" || printf "$(call ERROR,error)\n" 1>&2
 
-	@printf "\t%-50s" $$'$(call INFO, utils…)'
+	@printf "\t%-50s" $$'$(call INFO,utils…)'
 		@rm -f /usr/sbin/mast-utils \
 		&& cp makefile /usr/sbin/mast-utils \
-		&& printf "$(call SUCCESS, done)\n" || printf "$(call ERROR, error)\n" 1>&2
+		&& printf "$(call SUCCESS,done)\n" || printf "$(call ERROR,error)\n" 1>&2
 		@chown www-data /usr/sbin/mast-utils; \
 
-	@printf "\t%-50s%s" $$'$(call INFO, config directory…)'
+	@printf "\t%-50s%s" $$'$(call INFO,config directory…)'
 		@if [[ ! -d "${CONFIG_DIR}" ]]; then \
 			mkdir "${CONFIG_DIR}" \
-				&& printf "%s\t%s\n" $$'$(call SUCCESS, done)' $$'$(call VALUE, ${CONFIG_DIR}/)' \
-				|| printf "$(call ERROR, error)\n" 1>&2; \
+				&& printf "%s\t%s\n" $$'$(call SUCCESS,done)' $$'$(call VALUE, ${CONFIG_DIR}/)' \
+				|| printf "$(call ERROR,error)\n" 1>&2; \
 		elif [[ -d "${CONFIG_DIR}" ]]; then \
-			printf "%s\t%s\n" $$'$(call WARNING, skipped)' $$'$(call VALUE, ${CONFIG_DIR}/)'; \
+			printf "%s\t%s\n" $$'$(call WARNING,skipped)' $$'$(call VALUE, ${CONFIG_DIR}/)'; \
 		fi
 
-	@printf "\t%-50s%s" $$'$(call INFO, template…)'
+	@printf "\t%-50s%s" $$'$(call INFO,template…)'
 		@rm -f ${CONFIG_DIR}/template \
 			&& chmod u=rw,go= template \
 			&& cp {.,${CONFIG_DIR}}/template \
-				&& printf "%s\t%s\n" $$'$(call SUCCESS, done)' $$'$(call VALUE, ${CONFIG_DIR}/template)' \
-				|| printf "$(call ERROR, error)\n" 1>&2
+				&& printf "%s\t%s\n" $$'$(call SUCCESS,done)' $$'$(call VALUE, ${CONFIG_DIR}/template)' \
+				|| printf "$(call ERROR,error)\n" 1>&2
 
-	@printf "\t%-50s%s" $$'$(call INFO, log directory…)'
+	@printf "\t%-50s%s" $$'$(call INFO,log directory…)'
 		@if [[ ! -d "${LOG_DIR}" ]]; then \
 			mkdir "${LOG_DIR}" \
-				&& printf "%s\t%s\n" $$'$(call SUCCESS, done)' $$'$(call VALUE, ${LOG_DIR}/)' \
-				|| printf "$(call ERROR, error)\n" 1>&2; \
+				&& printf "%s\t%s\n" $$'$(call SUCCESS,done)' $$'$(call VALUE, ${LOG_DIR}/)' \
+				|| printf "$(call ERROR,error)\n" 1>&2; \
 		elif [[ -d "${LOG_DIR}" ]]; then \
-			printf "%s\t%s\n" $$'$(call WARNING, skipped)' $$'$(call VALUE, ${LOG_DIR}/)'; \
+			printf "%s\t%s\n" $$'$(call WARNING,skipped)' $$'$(call VALUE, ${LOG_DIR}/)'; \
 		fi
 		@chown www-data -R "${LOG_DIR}" && chmod u=rwx,g=rwx "${LOG_DIR}"
 
@@ -332,7 +332,7 @@ config-ssh: deploy-key
 # Copy infra public key on customer's node (defined by REMOTE_SRV)
 deploy-key: create-ssh-key
 	@printf "Deploying…\t%s\n" $$'$(call VALUE, public key)'
-	@printf "\t%-50s%s\n" $$'$(call INFO, copy public key to)' $$'$(call VALUE, ${REMOTE_USER}@${REMOTE_SRV})'
+	@printf "\t%-50s%s\n" $$'$(call INFO,copy public key to)' $$'$(call VALUE, ${REMOTE_USER}@${REMOTE_SRV})'
 	@sshpass -p "${REMOTE_INIT_PWD}" \
 		ssh \
 			-o StrictHostKeyChecking=no \
@@ -345,11 +345,11 @@ deploy-key: create-ssh-key
 ${SSH_KEYFILE}:
 	@printf "Creating… %s\n" $$'$(call VALUE,SSH keys)'
 		@[[ ! -d ${SSH_DIR} ]] && mkdir "${SSH_DIR}" || true
-	@printf "\t%-50s%s" $$'$(call INFO, removing existing key)'
+	@printf "\t%-50s%s" $$'$(call INFO,removing existing key)'
 		@rm -f ${SSH_KEYFILE}{,.pub} \
-			&& printf "%s\n" $$'$(call SUCCESS, done)' \
-			|| printf "%s\n" $$'$(call ERROR, failed)'
-	@printf "\t%-50s%s" $$'$(call INFO, generating key)'
+			&& printf "%s\n" $$'$(call SUCCESS,done)' \
+			|| printf "%s\n" $$'$(call ERROR,failed)'
+	@printf "\t%-50s%s" $$'$(call INFO,generating key)'
 		@ssh-keygen -q \
 			-t rsa \
 			-b 4096 \
@@ -357,8 +357,8 @@ ${SSH_KEYFILE}:
 			-N "${EMPTY}" \
 			-O permit-port-forwarding \
 			-C "Automatically generated by MAST script" \
-			&& printf "%s\n" $$'$(call SUCCESS, done)' \
-			|| printf "%s\n" $$'$(call ERROR, failed)'
+			&& printf "%s\n" $$'$(call SUCCESS,done)' \
+			|| printf "%s\n" $$'$(call ERROR,failed)'
 
 # Install packages required on the Coaxis' INFRAstructure
 install-infra:
@@ -388,8 +388,8 @@ check-system:
 	for e in $${executables[@]}; do \
 		printf "\t%-50s" $$'$(call VALUE, '$$e$$')'; \
 		if ! dpkg-query -s "$$e" &> /dev/null; then \
-			printf "%12s\t" $$'$(call ERROR, missing)'; \
-			printf "→ %s %s\n" $$'$(call INFO, apt-get install '$$e $$')'; \
+			printf "%12s\t" $$'$(call ERROR,missing)'; \
+			printf "→ %s %s\n" $$'$(call INFO,apt-get install '$$e $$')'; \
 		else \
 			printf "%-12s\n" $$'$(call SUCCESS,installed)'; \
 		fi \
@@ -433,6 +433,6 @@ ERROR=$(_ERROR_)$(1)$(_RESET_)
 WARNING=$(_WARNING_)$(1)$(_RESET_)
 VALUE=$(_VALUE_)$(1)$(_RESET_)
 # messages helper
-OK=$(call SUCCESS, ok)
+OK=$(call SUCCESS,ok)
 
 
