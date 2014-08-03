@@ -308,10 +308,10 @@ deploy-service:
 
 	@printf "\t%-50s%s" $$'$(call INFO, template…)'
 		@rm -f ${CONFIG_DIR}/template \
-			&& cp {.,${CONFIG_DIR}}/template \
 			&& chmod u=rw,go= template \
-			&& printf "%s\t%s\n" $$'$(call WARNING, skipped)' $$'$(call VALUE, ${CONFIG_DIR}/template)' \
-			|| printf "$(call ERROR, error)\n" 1>&2
+			&& cp {.,${CONFIG_DIR}}/template \
+				&& printf "%s\t%s\n" $$'$(call SUCCESS, done)' $$'$(call VALUE, ${CONFIG_DIR}/template)' \
+				|| printf "$(call ERROR, error)\n" 1>&2
 
 	@printf "\t%-50s%s" $$'$(call INFO, log directory…)'
 		@if [[ ! -d "${LOG_DIR}" ]]; then \
