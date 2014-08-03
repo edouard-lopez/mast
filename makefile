@@ -16,7 +16,6 @@ endif
 # default remote user
 REMOTE_USER:=coaxis
 REMOTE_INIT_PWD:=C1i3ntRmSid3
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 # DO NOT EDIT.
@@ -72,23 +71,23 @@ APACHE_DEST_CONF=/etc/apache2/sites-enabled/${WEBAPP}.conf
 WEBAPP_BRANCH=dev
 
 .PHONY:  default \
-	setup-infra  \
-	create-ssh-key  \
-	list-channels  \
-	list-logs  \
-	list-hosts  \
 	add-host  \
-	remove-host  \
-	install  \
-	uninstall  \
-	deploy-webapp  \
-	deploy-service  \
-	deploy  \
-	config-ssh  \
-	deploy-key  \
-	install-infra  \
 	check-privileges  \
 	check-system  \
+	config-ssh  \
+	create-ssh-key  \
+	deploy  \
+	deploy-key  \
+	deploy-service  \
+	deploy-webapp  \
+	install  \
+	install-infra  \
+	list-channels  \
+	list-hosts  \
+	list-logs  \
+	remove-host  \
+	setup-infra  \
+	uninstall  \
 	usage
 
 
