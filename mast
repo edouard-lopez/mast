@@ -289,7 +289,7 @@ status)
 	fi
 	;;
 *)
-	printf "Usage: %s {start|stop|restart|status|list|list-ports|list-log} {config names...}\n" "$0"
+	printf "Usage: %s {start|stop|restart|status} {config names...}\n" "$0"
 	RETVAL=1
 	;;
 esac
