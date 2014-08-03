@@ -263,7 +263,7 @@ deploy-webapp:
 		@if apache2ctl configtest &> /dev/null; then \
 				apache2ctl graceful; \
 				printf "$(call SUCCESS,done)\n"; \
-				printf "\t%-50s%s\n" $$'$(call SUCCESS,test installation using)' $$'$(call VALUE, http://%SOCIETE%.opt/)'; \
+				printf "\t%-50s%s\n" $$'$(call SUCCESS,test installation using)' $$'$(call VALUE,http://%SOCIETE%.opt/)'; \
 			else \
 				printf "$(call ERROR,failed)"; \
 				printf "\t%s\n" $$'$(call DEBUG,${WEBAPP_DEST_DIR}/${WEBAPP})'; \
@@ -275,29 +275,29 @@ deploy-webapp:
 
 deploy-service:
 	@printf "Deploying… %s\n" $$'$(call VALUE,service)'
-	@printf "\t%-50s" $$'$(call INFO,systemd service…)'
+	@printf "\t%-50s" $$'$(call INFO,systemd service)'
 		@cp mastd.service /etc/systemd/system/ \
 		&& printf "$(call SUCCESS,done)\n" || printf "$(call ERROR,error)\n" 1>&2
 
-	@printf "\t%-50s" $$'$(call INFO,initd service…)'
+	@printf "\t%-50s" $$'$(call INFO,initd service)'
 		@rm -f /etc/init.d/mast \
-		&& ln -nfs $$PWD/mast /etc/init.d/ \
+		&& cp mast /etc/init.d/ \
 		&& printf "$(call SUCCESS,done)\n" || printf "$(call ERROR,error)\n" 1>&2
 		@chown www-data /etc/init.d/mast
 		@update-rc.d mast defaults > /dev/null
 
-	@printf "\t%-50s" $$'$(call INFO,daemon…)'
+	@printf "\t%-50s" $$'$(call INFO,daemon)'
 		@rm -f /usr/sbin/mastd \
 		&& cp mastd /usr/sbin/ \
 		&& printf "$(call SUCCESS,done)\n" || printf "$(call ERROR,error)\n" 1>&2
 
-	@printf "\t%-50s" $$'$(call INFO,utils…)'
+	@printf "\t%-50s" $$'$(call INFO,utils)'
 		@rm -f /usr/sbin/mast-utils \
 		&& cp makefile /usr/sbin/mast-utils \
 		&& printf "$(call SUCCESS,done)\n" || printf "$(call ERROR,error)\n" 1>&2
 		@chown www-data /usr/sbin/mast-utils; \
 
-	@printf "\t%-50s%s" $$'$(call INFO,config directory…)'
+	@printf "\t%-50s" $$'$(call INFO,config directory)'
 		@if [[ ! -d "${CONFIG_DIR}" ]]; then \
 			mkdir "${CONFIG_DIR}" \
 				&& printf "%s\t%s\n" $$'$(call SUCCESS,done)' $$'$(call VALUE, ${CONFIG_DIR}/)' \
@@ -306,14 +306,14 @@ deploy-service:
 			printf "%s\t%s\n" $$'$(call WARNING,skipped)' $$'$(call VALUE, ${CONFIG_DIR}/)'; \
 		fi
 
-	@printf "\t%-50s%s" $$'$(call INFO,template…)'
+	@printf "\t%-50s" $$'$(call INFO,template)'
 		@rm -f ${CONFIG_DIR}/template \
 			&& chmod u=rw,go= template \
 			&& cp {.,${CONFIG_DIR}}/template \
 				&& printf "%s\t%s\n" $$'$(call SUCCESS,done)' $$'$(call VALUE, ${CONFIG_DIR}/template)' \
 				|| printf "$(call ERROR,error)\n" 1>&2
 
-	@printf "\t%-50s%s" $$'$(call INFO,log directory…)'
+	@printf "\t%-50s" $$'$(call INFO,log directory)'
 		@if [[ ! -d "${LOG_DIR}" ]]; then \
 			mkdir "${LOG_DIR}" \
 				&& printf "%s\t%s\n" $$'$(call SUCCESS,done)' $$'$(call VALUE, ${LOG_DIR}/)' \
