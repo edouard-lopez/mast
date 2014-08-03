@@ -1,4 +1,4 @@
-#!/usr/bin/env make
+#!/usr/bin/make -sf
 # DESCRIPTION
 #	Project utility to install client/server, deploy, etc.
 #
@@ -296,6 +296,7 @@ deploy-service:
 		@rm -f /usr/sbin/mast-utils \
 		&& cp makefile /usr/sbin/mast-utils \
 		&& printf "$(call SUCCESS, done)\n" || printf "$(call ERROR, error)\n" 1>&2
+		@chown www-data /usr/sbin/mast-utils; \
 
 	@printf "\t%-50s%s" $$'$(call INFO, config directory…)'
 		@if [[ ! -d "${CONFIG_DIR}" ]]; then \
