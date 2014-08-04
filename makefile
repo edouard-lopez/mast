@@ -151,6 +151,26 @@ add-channel:
 									$$'$(call INFO,(IP address or hostname))'  1>&2; \
 		exit 1; \
 	fi
+
+	@grep --no-filename --only-matching --perl-regexp 'L[\s]+\*:([\d]+):' ${CONFIG_DIR}/* \
+		| cut --delimiter=':' -f 2 \
+		| sort --unique --numeric-sort \
+	> /tmp/ports; \
+	prevPort=$$(head -n 1 /tmp/ports); \
+	nextPort=$$prevPort;\
+	while read -r port; do \
+		(( port == nextPort )) && PORT=$$nextPort || break; \
+		prevPort=$$port; \
+		nextPort=$$(( $$prevPort+1 )); \
+	done < <(cat /tmp/ports); rm /tmp/ports; \
+	source "${CONFIG_DIR}/${NAME}"; \
+	ForwardPort+=( "L *:$$nextPort:${PRINTER}:9100" ); \
+	printf "%s\n%s\n%s\n"	"# - - - - - - - - - - - - - - - - - - - - - - - - - - " \
+								"# See /etc/mast/template for more informations" \
+								"# - - - - - - - - - - - - - - - - - - - - - - - - - - " \
+		> "${CONFIG_DIR}/.${NAME}"; \
+	declare -p RemoteHost RemoteUser RemotePort ServerAliveInterval ServerAliveCountMax StrictHostKeyChecking LocalUser IdentityFile ForwardPort BandwidthLimitation UploadLimit DownloadLimit >> "${CONFIG_DIR}/.${NAME}" \
+		&& mv "${CONFIG_DIR}"/{.,}"${NAME}"
 # @require: {string} HOST  IP address or FQDN
 add-host:
 	@printf "Adding host…\n"
