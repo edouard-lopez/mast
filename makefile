@@ -32,6 +32,7 @@ REMOTE_SRV:=none
 # Current customer's name config and host/ip to work with (add/delete)
 NAME:=none
 HOST:=none
+PRINTER:=none
 
 # SSH tunnel configuration directory (a file per host)
 CONFIG_DIR:=/etc/mast
@@ -71,6 +72,7 @@ APACHE_DEST_CONF=/etc/apache2/sites-enabled/${WEBAPP}.conf
 WEBAPP_BRANCH=dev
 
 .PHONY:  default \
+	add-channel \
 	add-host  \
 	check-privileges  \
 	check-system  \
@@ -135,8 +137,20 @@ list-hosts:
 	done
 
 
-# Adding a new host config require to provide it's NAME and HOST
-# @require: {string} NAME host's name
+# Add a new channel for the given printer
+# @require: {string} 	NAME 		configuration name
+# @require: {string} 	PRINTER 	printer's hostname or ip
+add-channel:
+	@if [[ ${NAME} == "none" || -z "${NAME}" ]]; then \
+		printf "\t%-50s%s\t%s\n" $$'$(call VALUE,NAME)' $$'$(call ERROR,missing)' \
+									$$'$(call INFO,(see \'mast-utils list-host\'))'  1>&2; \
+		exit 1; \
+	fi
+	@if [[ "${PRINTER}" == "none" || -z "${PRINTER}" ]]; then \
+		printf "\t%-50s%s\t%s\n" $$'$(call VALUE,PRINTER)' $$'$(call ERROR,missing)' \
+									$$'$(call INFO,(IP address or hostname))'  1>&2; \
+		exit 1; \
+	fi
 # @require: {string} HOST  IP address or FQDN
 add-host:
 	@printf "Adding host…\n"
