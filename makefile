@@ -33,6 +33,8 @@ REMOTE_SRV:=none
 NAME:=none
 HOST:=none
 PRINTER:=none
+# channel description (default: empty).
+DESC:=
 
 # SSH tunnel configuration directory (a file per host)
 CONFIG_DIR:=/etc/mast
@@ -113,7 +115,9 @@ list-channels:
 		(( "$${#config[@]}" > 1 )) && printf "%-50s\n" $$'$(call INFO,'"$$fn"$$')'; \
 		source "$${cfg}"; \
 		for fp in "$${ForwardPort[@]}"; do \
-			! [[ $$fp =~ NEW_FORWARD_PORTS ]] && printf "\t%s\n" $$'$(call VALUE,'"$$fp"$$')' ; \
+			rule="$$(echo $$fp | awk -F '#' '{print $$1}' | sed -e 's/^ *//' -e 's/ *$$//')"; \
+			comment="$$(echo $$fp | awk -F '#' '{ $$1=""; print $$0}' | sed -e 's/^ *//' -e 's/ *$$//')"; \
+			printf "\t%-50s\t%s\n" $$'$(call VALUE,'"$$rule"$$')' $$'$(call INFO,'"# $$comment"$$')'; \
 		done; \
 	done
 
@@ -140,6 +144,7 @@ list-hosts:
 # Add a new channel for the given printer
 # @require: {string} 	NAME 		configuration name
 # @require: {string} 	PRINTER 	printer's hostname or ip
+# @optional: {string}	DESC 		human readable description
 add-channel:
 	@if [[ ${NAME} == "none" || -z "${NAME}" ]]; then \
 		printf "\t%-50s%s\t%s\n" $$'$(call VALUE,NAME)' $$'$(call ERROR,missing)' \
@@ -164,7 +169,7 @@ add-channel:
 		nextPort=$$(( $$prevPort+1 )); \
 	done < <(cat /tmp/ports); rm /tmp/ports; \
 	source "${CONFIG_DIR}/${NAME}"; \
-	ForwardPort+=( "L *:$$nextPort:${PRINTER}:9100" ); \
+	ForwardPort+=( "L *:$$nextPort:${PRINTER}:9100 # ${DESC}" ); \
 	printf "%s\n%s\n%s\n"	"# - - - - - - - - - - - - - - - - - - - - - - - - - - " \
 								"# See /etc/mast/template for more informations" \
 								"# - - - - - - - - - - - - - - - - - - - - - - - - - - " \
