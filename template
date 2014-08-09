@@ -18,7 +18,7 @@ ServerAliveInterval=10
 ServerAliveCountMax=3
 StrictHostKeyChecking="no"
 
-LocalUser="root"
+LocalUser="mast"
 # @see SSH_KEYFILE in 'makefile'
 IdentityFile="~/.ssh/id_rsa.mast.coaxis"
 
