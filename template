@@ -7,7 +7,7 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #
 # This value will be automatically replaced if you use 'make add-host'
-RemoteHost="{{HOST}}" 
+RemoteHost="{{HOST}}"
 # This should not be changed without confirmation from upper authority
 RemoteUser="coaxis"
 RemotePort=22
