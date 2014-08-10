@@ -35,6 +35,8 @@ HOST:=none
 PRINTER:=none
 # channel description (default: empty).
 DESC:=
+# channel's id, used for removal
+ID:=-1
 
 # SSH tunnel configuration directory (a file per host)
 CONFIG_DIR:=/etc/mast
@@ -89,6 +91,7 @@ WEBAPP_BRANCH=dev
 	list-channels  \
 	list-hosts  \
 	list-logs  \
+	remove-channel \
 	remove-host  \
 	setup-infra  \
 	uninstall  \
@@ -175,6 +178,11 @@ add-channel:
 		> "${CONFIG_DIR}/.${NAME}"; \
 	declare -p RemoteHost RemoteUser RemotePort ServerAliveInterval ServerAliveCountMax StrictHostKeyChecking LocalUser IdentityFile ForwardPort BandwidthLimitation UploadLimit DownloadLimit >> "${CONFIG_DIR}/.${NAME}" \
 		&& mv "${CONFIG_DIR}"/{.,}"${NAME}"
+
+# Remove channel using its index
+# @require: {string} 	NAME 		configuration name
+# @require 	{integer}	ID 		channel index as given by 'list-channels'
+remove-channel:
 # @require: {string} HOST  IP address or FQDN
 add-host:
 	@printf "Adding host…\n"
