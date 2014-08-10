@@ -120,7 +120,7 @@ list-channels:
 		for i in "$${!ForwardPort[@]}"; do \
 			rule="$$(echo $${ForwardPort[i]} | awk -F '#' '{print $$1}' | sed -e 's/^ *//' -e 's/ *$$//')"; \
 			comment="$$(echo $${ForwardPort[i]} | awk -F '#' '{ $$1=""; print $$0}' | sed -e 's/^ *//' -e 's/ *$$//')"; \
-			printf "\t%-45s%-15s\t%s\n" $$'$(call VALUE,'"$$rule"$$')' $$'$(call DEBUG,'"$$i"$$')' $$'$(call INFO,'"# $$comment"$$')'; \
+			printf "\t%-45s%-15s\t%s\n" $$'$(call VALUE,'"$$rule"$$')' $$'$(call INFO,'"$$i"$$')' $$'$(call DEBUG,'"# $$comment"$$')'; \
 		done; \
 	done
 
