@@ -114,10 +114,10 @@ list-channels:
 		[[ $$fn == "template" ]] && continue; \
 		(( "$${#config[@]}" > 1 )) && printf "%-50s\n" $$'$(call INFO,'"$$fn"$$')'; \
 		source "$${cfg}"; \
-		for fp in "$${ForwardPort[@]}"; do \
-			rule="$$(echo $$fp | awk -F '#' '{print $$1}' | sed -e 's/^ *//' -e 's/ *$$//')"; \
-			comment="$$(echo $$fp | awk -F '#' '{ $$1=""; print $$0}' | sed -e 's/^ *//' -e 's/ *$$//')"; \
-			printf "\t%-50s\t%s\n" $$'$(call VALUE,'"$$rule"$$')' $$'$(call INFO,'"# $$comment"$$')'; \
+		for i in "$${!ForwardPort[@]}"; do \
+			rule="$$(echo $${ForwardPort[i]} | awk -F '#' '{print $$1}' | sed -e 's/^ *//' -e 's/ *$$//')"; \
+			comment="$$(echo $${ForwardPort[i]} | awk -F '#' '{ $$1=""; print $$0}' | sed -e 's/^ *//' -e 's/ *$$//')"; \
+			printf "\t%-45s%-15s\t%s\n" $$'$(call VALUE,'"$$rule"$$')' $$'$(call DEBUG,'"$$i"$$')' $$'$(call INFO,'"# $$comment"$$')'; \
 		done; \
 	done
 
@@ -144,7 +144,6 @@ list-hosts:
 # Add a new channel for the given printer
 # @require: {string} 	NAME 		configuration name
 # @require: {string} 	PRINTER 	printer's hostname or ip
-# @optional: {string}	DESC 		human readable description
 add-channel:
 	@if [[ ${NAME} == "none" || -z "${NAME}" ]]; then \
 		printf "\t%-50s%s\t%s\n" $$'$(call VALUE,NAME)' $$'$(call ERROR,missing)' \
