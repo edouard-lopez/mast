@@ -206,6 +206,8 @@ remove-channel:
 		fi;\
 	fi
 
+# Adding a new host configuration require to provide it's NAME and HOST
+# @require: {string} NAME configuration name
 # @require: {string} HOST  IP address or FQDN
 add-host:
 	@printf "Adding host…\n"
