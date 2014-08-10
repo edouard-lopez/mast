@@ -148,6 +148,7 @@ list-hosts:
 # @require: {string} 	NAME 		configuration name
 # @require: {string} 	PRINTER 	printer's hostname or ip
 add-channel:
+	@printf "Adding channel…\n"
 	@if [[ ${NAME} == "none" || -z "${NAME}" ]]; then \
 		printf "\t%-50s%s\t%s\n" $$'$(call VALUE,NAME)' $$'$(call ERROR,missing)' \
 									$$'$(call INFO,(see \'mast-utils list-host\'))'  1>&2; \
@@ -171,13 +172,16 @@ add-channel:
 		nextPort=$$(( $$prevPort+1 )); \
 	done < <(cat /tmp/ports); rm /tmp/ports; \
 	source "${CONFIG_DIR}/${NAME}"; \
-	ForwardPort+=( "L *:$$nextPort:${PRINTER}:9100 # ${DESC}" ); \
+	newRule="L *:$$nextPort:${PRINTER}:9100 # ${DESC}"; \
+	ForwardPort+=( "$$newRule" ); \
 	printf "%s\n%s\n%s\n"	"# - - - - - - - - - - - - - - - - - - - - - - - - - - " \
 								"# See /etc/mast/template for more informations" \
 								"# - - - - - - - - - - - - - - - - - - - - - - - - - - " \
 		> "${CONFIG_DIR}/.${NAME}"; \
 	declare -p RemoteHost RemoteUser RemotePort ServerAliveInterval ServerAliveCountMax StrictHostKeyChecking LocalUser IdentityFile ForwardPort BandwidthLimitation UploadLimit DownloadLimit >> "${CONFIG_DIR}/.${NAME}" \
-		&& mv "${CONFIG_DIR}"/{.,}"${NAME}"
+		&& mv "${CONFIG_DIR}"/{.,}"${NAME}" \
+		&& printf "\t%-50s\t%s\n" $$'$(call VALUE,'"$$newRule$$"')' $$'$(call SUCCESS,added)' \
+		|| printf "\t%-50s\t%s\n" $$'$(call VALUE,'"$$newRule"$$')' $$'$(call ERROR,failed)'
 
 # Remove channel using its index
 # @require: {string} 	NAME 		configuration name
