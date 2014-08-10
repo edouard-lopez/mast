@@ -183,6 +183,25 @@ add-channel:
 # @require: {string} 	NAME 		configuration name
 # @require 	{integer}	ID 		channel index as given by 'list-channels'
 remove-channel:
+	@printf "Removing channel…\n"
+	@if [[ ${ID} == -1 || -z ${ID} ]]; then \
+		printf "\t%s.\n" $$'$(call ERROR,missing ID)' 1>&2; \
+		exit 0; \
+	else \
+		source "${CONFIG_DIR}/${NAME}"; \
+		removedRule="$${ForwardPort[${ID}]}"; \
+		if [[ -z $$removedRule ]]; then \
+			printf "\t%-50s\t%s\t%s\n" "rule "$$'$(call VALUE,#${ID})' $$'$(call WARNING,skipped)' $$'$(call INFO,(doesn\'t exists))' ; \
+		else \
+			unset 'ForwardPort[${ID}]'; \
+			declare -p RemoteHost RemoteUser RemotePort ServerAliveInterval ServerAliveCountMax StrictHostKeyChecking LocalUser IdentityFile ForwardPort BandwidthLimitation UploadLimit DownloadLimit \
+			>> "${CONFIG_DIR}/.${NAME}" \
+			&& mv "${CONFIG_DIR}"/{.,}"${NAME}" \
+			&& printf "\t%-50s\t%s\n" $$'$(call VALUE,'"$$removedRule"$$')' $$'$(call SUCCESS,removed)' \
+			|| printf "\t%-50s\t%s\n" $$'$(call VALUE,'"$$removedRule"$$')' $$'$(call ERROR,failed)'; \
+		fi;\
+	fi
+
 # @require: {string} HOST  IP address or FQDN
 add-host:
 	@printf "Adding host…\n"
