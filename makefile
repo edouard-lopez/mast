@@ -407,9 +407,12 @@ config-ssh: deploy-key
 # @warning: do NOT read ~/.ssh/config
 deploy-key:
 	@printf "Deploying…\t%s\n" $$'$(call VALUE, public key)'
-	if [[ "${REMOTE_USER}" == "none" || -z "${REMOTE_USER}" || "${REMOTE_SRV}" == "none" || -z "${REMOTE_SRV}" ]]; then \
+	@if [[ ! -z "$$SUDO_USER" ]]; then \
+		printf "\t%-50s%s\t%s.\n" $$'$(call VALUE,persmissions)' $$'$(call ERROR,fail)'  $$'$(call INFO,must be executed as normal user)' 1>&2; \
+		exit 1; \
+	elif [[ "${REMOTE_USER}" == "none" || -z "${REMOTE_USER}" || "${REMOTE_SRV}" == "none" || -z "${REMOTE_SRV}" ]]; then \
 		printf "\t%s or %s.\n" $$'$(call ERROR,missing REMOTE_SRV)' $$'$(call ERROR,REMOTE_USER)' 1>&2; \
-		exit 0; \
+		exit 1; \
 	else \
 		printf "\t%-50s%s\n" $$'$(call INFO,copy public key to)' $$'$(call VALUE, ${REMOTE_USER}@${REMOTE_SRV})'; \
 		sshpass -p "${REMOTE_INIT_PWD}" \
