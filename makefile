@@ -413,7 +413,7 @@ deploy-key:
 	else \
 		printf "\t%-50s%s\n" $$'$(call INFO,copy public key to)' $$'$(call VALUE, ${REMOTE_USER}@${REMOTE_SRV})'; \
 		sshpass -p "${REMOTE_INIT_PWD}" \
-			ssh-copy-id -i "${SSH_KEYFILE}" ${REMOTE_USER}@${REMOTE_SRV}; \
+			ssh-copy-id -i "${SSH_KEYFILE}" -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_SRV}; \
 		printf "\n"; \
 	fi
 
