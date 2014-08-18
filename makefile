@@ -249,6 +249,7 @@ remove-host:
 		rm -f "${CONFIG_DIR}/${NAME}" && printf "$(call SUCCESS,done)" || printf "$(call ERROR,error)" 1>&2; \
 	fi
 
+# Install application network may not be setup, so don't deploy (ssh's key) on remote devices
 install: install-infra check-system check-privileges deploy-service create-ssh-key deploy-webapp
 
 uninstall:
@@ -401,10 +402,10 @@ deploy: deploy-service deploy-webapp
 config-ssh: deploy-key
 
 # Copy infra public key on customer's node (defined by REMOTE_SRV)
-deploy-key: create-ssh-key
 # @require: {string} 	REMOTE_USER		user on remote
 # @require: {string} 	REMOTE_SRV 		server hostname or IP
 # @warning: do NOT read ~/.ssh/config
+deploy-key:
 	@printf "Deploying…\t%s\n" $$'$(call VALUE, public key)'
 	if [[ "${REMOTE_USER}" == "none" || -z "${REMOTE_USER}" || "${REMOTE_SRV}" == "none" || -z "${REMOTE_SRV}" ]]; then \
 		printf "\t%s or %s.\n" $$'$(call ERROR,missing REMOTE_SRV)' $$'$(call ERROR,REMOTE_USER)' 1>&2; \
