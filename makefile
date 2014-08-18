@@ -402,13 +402,12 @@ config-ssh: deploy-key
 
 # Copy infra public key on customer's node (defined by REMOTE_SRV)
 deploy-key: create-ssh-key
+# @warning: do NOT read ~/.ssh/config
 	@printf "Deploying…\t%s\n" $$'$(call VALUE, public key)'
 	@printf "\t%-50s%s\n" $$'$(call INFO,copy public key to)' $$'$(call VALUE, ${REMOTE_USER}@${REMOTE_SRV})'
-	@sshpass -p "${REMOTE_INIT_PWD}" \
-		ssh \
-			-o StrictHostKeyChecking=no \
-			${REMOTE_USER}@${REMOTE_SRV} > /dev/null
 	@printf "\n"
+		sshpass -p "${REMOTE_INIT_PWD}" \
+			ssh-copy-id -i "${SSH_KEYFILE}" ${REMOTE_USER}@${REMOTE_SRV}; \
 
 
 # Create keys pair on infra
