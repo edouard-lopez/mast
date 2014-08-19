@@ -110,6 +110,17 @@ sudo make
 
 ### Add Host
 
+Adding a new host configuration. Both `NAME` **and** `HOST` are required.
+
+| Parameter  | Default | Description |
+| ------------- | ------------- | ------------- |
+| `NAME` | **required** | **_string_**.<br> Configuration name |
+| `HOST` | **required** | **_string_**.<br> Host IP address or FQDN |
+
+Example:
+```bash
+sudo make add-host HOST=1.1.1.1 NAME=client-abc
+```
 
 ### Check Privileges
 
