@@ -169,6 +169,12 @@ make REMOTE_SRV=11.22.33.44 deploy-key
 
 Copy infra public key on customer's node (defined by remote_srv).
 
+**Note:** must be **run as normal user** to prevent permissions issues.
+
+```bash
+make REMOTE_SRV=dell deploy-key
+```
+
 ### Deploy Service
 
 This task copy project file to their adequate location (_i.e._ `/etc/init.d/`, `/usr/sbin/`)
