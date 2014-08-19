@@ -158,7 +158,7 @@ Checking system…
 	aha                                   installed
 ```
 
-### Config SSH 
+### Config SSH
 
 * requires [Deploy Key](#deploy-key).
 
@@ -182,7 +182,7 @@ make REMOTE_SRV=11.22.33.44 deploy-key
 
 **Note:** This task require `create-ssh-key` to be done, this mean you can directly call the `deploy-key` task and it will trigger the `create-ssh-key` if needed
 
-### Deploy 
+### Deploy
 * requires [Deploy Service](#deploy-service) ;
 * requires [Deploy Webapp](#deploy-webapp).
 
@@ -208,7 +208,7 @@ make deploy-service
 ### Deploy Webapp
 Deploy The Webapp, Configure Apache, /etc/hosts
 
-### Install 
+### Install
 Install infra deploy service create ssh key deploy webapp
 
 ### Install Infra
@@ -262,7 +262,7 @@ Check if tunnels are children of the service. If this is the case, that means th
 
 ## Configuration File
 
-The configuration files used by `mast` are located in the `$CONFIG_DIR` directory as defined in the _makefile_ (default path is `/etc/mast/`). 
+The configuration files used by `mast` are located in the `$CONFIG_DIR` directory as defined in the _makefile_ (default path is `/etc/mast/`).
 Those files are dynamically generated using the `make add-host` and use the _template_ file as skeleton. Each configuration describe parameters for a given host and most configuration should not be tampered with.
 
 Below is a list of available parameters and their roles:
