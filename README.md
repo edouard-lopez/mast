@@ -108,6 +108,18 @@ sudo make
 
 ### Add Channel
 
+Add a new channel for the given printer.
+
+| Parameter  | Default | Description |
+| ------------- | ------------- | ------------- |
+| `NAME` | **required** | **_string_**.<br/> Configuration name |
+| `PRINTER` | **required** | **_string_**.<br/> Printer's hostname or ip |
+| `DESC` | optional | **_string_**.<br/> Description/comment of the channel |
+
+Example:
+```bash
+make add-channel NAME=site-client-abd PRINTER=1.1.1.1 DESC="Comment blabla"
+```
 ### Add Host
 
 Adding a new host configuration. Both `NAME` **and** `HOST` are required.
