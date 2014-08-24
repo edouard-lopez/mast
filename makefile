@@ -144,8 +144,8 @@ list-hosts:
 	done
 
 
-# Add a new channel for the given printer
-# @require: {string} 	NAME 		configuration name
+# Add a new channel for the given printer to the given host
+# @require: {string} 	NAME 		configuration name as given to 'add-host'
 # @require: {string} 	PRINTER 	printer's hostname or ip
 # @option: {string} 	DESC 		description/comment of the channel
 add-channel:
@@ -185,7 +185,7 @@ add-channel:
 		|| printf "\t%-50s\t%s\n" $$'$(call VALUE,'"$$newRule"$$')' $$'$(call ERROR,failed)'
 
 # Remove channel using its index
-# @require: {string} 	NAME 		configuration name
+# @require: 	{string} 	NAME 		configuration name
 # @require 	{integer}	ID 		channel index as given by 'list-channels'
 remove-channel:
 	@printf "Removing channel…\n"
@@ -238,6 +238,9 @@ add-host:
 	@chmod g=rwx "${CONFIG_DIR}/${NAME}"
 	@chgrp www-data "${CONFIG_DIR}/${NAME}"
 
+
+# Remove host using its configuration name
+# @require: 	{string} 	NAME 		configuration name
 remove-host:
 	@printf "Removing host…\n\t%s\t\t" $$'$(call VALUE, ${NAME})'
 	@if [[ "${NAME}" == "none" || -z "${NAME}" ]]; then \
