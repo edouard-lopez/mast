@@ -190,14 +190,12 @@ start() {
 stop() {
 	config="$1"
 	# if no config names (on the command-line), stop all autossh processes
-	if [[ -z "$config" ]]
-	then
-		printf "Stopping all %s: " "$NAME"
+	if [[ -z "$config" ]]; then
+		printf "Stopping all %s: " "$(_info "$NAME")"
 		killproc "$autossh"
 		RETVAL=$?
 		echo
-		if [ $RETVAL -eq 0 ]
-		then
+		if [[ $RETVAL -eq 0 ]]; then
 			rm -f /var/lock/$NAME/"$cfname"
 			rm -f /var/run/$NAME/*.pid
 		fi
