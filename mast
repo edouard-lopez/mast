@@ -43,8 +43,8 @@ LOG_DIR="/var/log/$NAME"
 CONFIG_DIR="/etc/$NAME"
 
 # Create PID directory missing
-[[ ! -d /var/run/$NAME ]] && mkdir -p /var/run/$NAME
-
+[[ ! -d /var/run/$NAME ]] && mkdir -p /var/run/"$NAME"
+[[ ! -d /var/lock/"$NAME" ]] && mkdir -p /var/lock/"$NAME"
 
 
 # Styling function
@@ -183,7 +183,7 @@ start() {
 	fi
 
 	echo
-	touch /var/lock/subsys/"$NAME"
+	touch /var/lock/"$NAME"/"$cfname"
 }
 
 
@@ -198,7 +198,7 @@ stop() {
 		echo
 		if [ $RETVAL -eq 0 ]
 		then
-			rm -f /var/lock/subsys/$NAME
+			rm -f /var/lock/$NAME/"$cfname"
 			rm -f /var/run/$NAME/*.pid
 		fi
 	else
