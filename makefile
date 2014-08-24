@@ -492,6 +492,59 @@ usage:
 	@printf "\t%-50s%s %s\n" $$'$(call INFO,for install requirements)' $$'$(call WARNING,sudo)' $$'$(call VALUE,make setup-infra)'
 	@printf "\t%-50s%s %s\n" $$'$(call INFO,for full installation)' $$'$(call WARNING,sudo)' $$'$(call VALUE,make install)'
 
+doc:
+	screenshotDir="docs/screenshots"; \
+	[[ ! -d $$screenshotDir ]] && mkdir -p "$$screenshotDir" || true; \
+	taskList=( deploy-service deploy-webapp create-ssh-key deploy-key add-host:fail add-host add-channel:fail add-channel list-channels list-logs list-hosts remove-channel:fail remove-channel remove-host:fail remove-host install-infra check-privileges check-system uninstall usage ); \
+	for task in "$${taskList[@]}"; do \
+		clear; unset fn; \
+		height=200; width=800; lineHeight=13; \
+		case $$task in \
+			'deploy-webapp') height=$$((8*$$lineHeight));; \
+			'deploy-service') height=$$((7*$$lineHeight));; \
+			'create-ssh-key') height=$$((4*$$lineHeight));; \
+			'deploy-key') height=$$((4*$$lineHeight));; \
+			'add-host:fail') height=$$((3*$$lineHeight)); \
+				fn=$$task; \
+				task=$${task%%:*};; \
+			'add-host') height=$$((4*$$lineHeight)); \
+				task=( $$task NAME='host-one' HOST=10.1.9.1 );; \
+			'add-channel:fail') height=$$((4*$$lineHeight)); \
+				fn=$$task; \
+				task=$${task%%:*};; \
+			'add-channel') height=$$((3*$$lineHeight)); \
+				task=( $$task NAME='host-one' PRINTER=10.1.9.1 DESC="First printer" );; \
+			'list-channels') height=$$((4*$$lineHeight));; \
+			'list-logs') height=$$((4*$$lineHeight));; \
+			'list-hosts') height=$$((2*$$lineHeight));; \
+			'remove-channel:fail') height=$$((3*$$lineHeight)); \
+				fn=$$task; \
+				task=$${task%%:*};; \
+			'remove-channel') height=$$((3*$$lineHeight)); \
+				task=( $$task NAME='host-one' ID=1 );; \
+			'remove-host:fail') height=$$((3*$$lineHeight)); \
+				fn=$$task; \
+				task=$${task%%:*};; \
+			'remove-host') height=$$((3*$$lineHeight)); \
+				task=( $$task NAME='host-one' );; \
+			'install-infra') height=$$((17*$$lineHeight));; \
+			'check-privileges') height=$$((3*$$lineHeight));; \
+			'check-system') height=$$((13*$$lineHeight));; \
+			'uninstall') height=$$((10*$$lineHeight));; \
+			'usage') height=$$((6*$$lineHeight));; \
+			default) \
+				;;\
+		esac; \
+		dimensions=$$(($$width+1)),$$(($$height+1)); \
+		$(MAKE) -s "$${task[@]}"; \
+		shutter --output="$$screenshotDir/sudo-make-$${fn:-$$task}.png" \
+			--select=1,1,$$dimensions \
+			--exit_after_capture \
+			--no_session \
+			--remove_cursor &> /dev/null; \
+	done
+
+
 
 # Coloring constants
 NO_COLOR=\x1b[0m
