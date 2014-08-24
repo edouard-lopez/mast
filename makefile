@@ -250,7 +250,7 @@ remove-host:
 	elif [[ ! -f "${CONFIG_DIR}/${NAME}" ]]; then \
 		printf "%s host\'s file.\n" $$'$(call WARNING,invalid)' 1>&2; \
 	else \
-		rm -f "${CONFIG_DIR}/${NAME}" && printf "$(call SUCCESS,done)" || printf "$(call ERROR,error)" 1>&2; \
+		rm -f "${CONFIG_DIR}/${NAME}" && printf "%s\n" $$'$(call SUCCESS,done)' || printf "%s\n" $$'$(call ERROR,error)' 1>&2; \
 	fi
 
 # Install application network may not be setup, so don't deploy (ssh's key) on remote devices
@@ -274,7 +274,6 @@ uninstall:
 		rm -rf "$$fn" && printf "\t%-50s%s\n" $$'$(call VALUE,'$$fn$$')' $$'$(call SUCCESS,done)'; \
 	done
 	@update-rc.d -f mast remove > /dev/null
-	@printf "\n"
 
 # deploy the webapp, configure apache, /etc/hosts
 deploy-webapp:
@@ -346,11 +345,8 @@ deploy-webapp:
 				apache2ctl configtest; \
 			fi
 
-	@printf "\n"
-
-
 deploy-service:
-	@printf "Deploying… %s\n" $$'$(call VALUE,service)'
+	@printf "Deploying…\t%s\n" $$'$(call VALUE,service)'
 	@printf "\t%-50s" $$'$(call INFO,systemd service)'
 		@cp mastd.service /etc/systemd/system/ \
 		&& printf "$(call SUCCESS,done)\n" || printf "$(call ERROR,error)\n" 1>&2
@@ -410,7 +406,7 @@ config-ssh: deploy-key
 # @require: {string} 	REMOTE_SRV 		server hostname or IP
 # @warning: do NOT read ~/.ssh/config
 deploy-key:
-	@printf "Deploying…\t%s\n" $$'$(call VALUE, public key)'
+	@printf "Deploying…\t%s\n" $$'$(call VALUE, Public key)'
 	@if [[ ! -z "$$SUDO_USER" ]]; then \
 		printf "\t%-50s%s\t%s.\n" $$'$(call VALUE,persmissions)' $$'$(call ERROR,fail)'  $$'$(call INFO,must be executed as normal user)' 1>&2; \
 		exit 1; \
@@ -428,7 +424,7 @@ deploy-key:
 # Create keys pair on infra
 #@alias: create-ssh-key:
 ${SSH_KEYFILE}:
-	@printf "Creating… %s\n" $$'$(call VALUE,SSH keys)'
+	@printf "Creating…\t%s\n" $$'$(call VALUE,SSH keys)'
 		@[[ ! -d ${SSH_DIR} ]] && mkdir "${SSH_DIR}" || true
 	@printf "\t%-50s%s" $$'$(call INFO,removing existing key)'
 		@rm -f ${SSH_KEYFILE}{,.pub} \
@@ -449,24 +445,25 @@ ${SSH_KEYFILE}:
 
 # Install packages required on the Coaxis' INFRAstructure
 install-infra:
-	@printf "Installing…\t%s\n" $$'$(call VALUE, infrastructure\'s node)'
+	@printf "Installing…\t%s\n" $$'$(call VALUE, Infrastructure\'s node)'
 	apt-get -y -q install ${DEPS_CORE_INFRA} ${DEPS_UTILS}
 
 
 # Check files permission
 check-privileges:
-	@printf "Checking…\t%s\n" $$'$(call VALUE,privileges)'
+	@printf "Checking…\t%s\n" $$'$(call VALUE,Privileges)'
 	@[[ ! -d ${LOG_DIR} ]] && mkdir "${LOG_DIR}" || true
 	@chown www-data -R "${LOG_DIR}"
 	@# open privileges to www-data
-	@printf "\t%-50s" $$'$(call INFO,service\'s user)'
+	@printf "\t%-50s\t" $$'$(call INFO,service\'s user)'
 	@if ! getent passwd ${APP} > /dev/null; then \
 		useradd \
 			--gid www-data \
 			--groups ${REMOTE_USER} \
 			--password $(mkpasswd "${REMOTE_INIT_PWD}") \
 			--system ${APP}; \
-		printf "%s" $$'$(call SUCCESS,added)\n'; \
+			&& printf "%s" $$'$(call SUCCESS,added)\n' \
+			|| printf "%s" $$'$(call ERROR,failed)\n'; \
 	else \
 		printf "%s" $$'$(call WARNING,modified)\n'; \
 		usermod --append --groups ${REMOTE_USER} ${REMOTE_USER}; \
@@ -476,7 +473,7 @@ check-privileges:
 
 # Check system status for dependencies
 check-system:
-	@printf "Checking system…\n"
+	@printf "Checking…\t%s\n" $$'$(call VALUE,System)'
 	@executables=( ${DEPS_CORE_INFRA} ${DEPS_CORE_CUSTOMER} ${DEPS_UTILS} ); \
 	if ! type dpkg-query &> /dev/null; then \
 		printf "You *MUST* install 'dpkg'\n"; \
