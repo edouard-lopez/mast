@@ -452,8 +452,10 @@ check-privileges:
 		useradd \
 			--gid www-data \
 			--groups ${REMOTE_USER} \
-			--password $(mkpasswd "${REMOTE_INIT_PWD}") \
-			--system ${APP}; \
+			--password "$$(mkpasswd "${REMOTE_INIT_PWD}")" \
+			--create-home \
+			--system ${APP} \
+			--comment "MAST user" \
 			&& printf "%s" $$'$(call SUCCESS,added)\n' \
 			|| printf "%s" $$'$(call ERROR,failed)\n'; \
 	else \
