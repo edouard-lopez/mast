@@ -147,6 +147,7 @@ list-hosts:
 # Add a new channel for the given printer
 # @require: {string} 	NAME 		configuration name
 # @require: {string} 	PRINTER 	printer's hostname or ip
+# @option: {string} 	DESC 		description/comment of the channel
 add-channel:
 	@printf "Adding channel…\n"
 	@if [[ ${NAME} == "none" || -z "${NAME}" ]]; then \
