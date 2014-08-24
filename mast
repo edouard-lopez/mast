@@ -207,7 +207,7 @@ stop() {
 			printf "%s %s: %s missing\n" "$NAME" "$cfname" "$pidfile" 1>&2 | _log-to "$cfname"
 			return 1
 		else
-			printf "Stopping %s %s: " "$NAME" "$cfname"
+			printf "Stopping %s %s\n" "$(_info "$NAME")" "$(_value "$cfname")"
 			killproc -p "/var/run/$NAME/$cfname.pid" "$NAME $cfname"
 			RETVAL=$?
 			echo
