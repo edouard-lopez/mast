@@ -347,9 +347,6 @@ deploy-webapp:
 
 deploy-service:
 	@printf "Deploying…\t%s\n" $$'$(call VALUE,service)'
-	@printf "\t%-50s" $$'$(call INFO,systemd service)'
-		@cp mastd.service /etc/systemd/system/ \
-		&& printf "$(call SUCCESS,done)\n" || printf "$(call ERROR,error)\n" 1>&2
 
 	@printf "\t%-50s" $$'$(call INFO,initd service)'
 		@rm -f /etc/init.d/mast \
@@ -357,11 +354,6 @@ deploy-service:
 		&& printf "$(call SUCCESS,done)\n" || printf "$(call ERROR,error)\n" 1>&2
 		@chown www-data /etc/init.d/mast
 		@update-rc.d mast defaults > /dev/null
-
-	@printf "\t%-50s" $$'$(call INFO,daemon)'
-		@rm -f /usr/sbin/mastd \
-		&& cp mastd /usr/sbin/ \
-		&& printf "$(call SUCCESS,done)\n" || printf "$(call ERROR,error)\n" 1>&2
 
 	@printf "\t%-50s" $$'$(call INFO,utils)'
 		@rm -f /usr/sbin/mast-utils \
