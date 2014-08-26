@@ -1,5 +1,7 @@
 # Step by step Installation
 
+[TOC]
+
 First we need to specify the branch we are working with
 ```bash
 # Development
