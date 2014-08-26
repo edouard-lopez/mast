@@ -394,7 +394,7 @@ deploy: deploy-service deploy-webapp
 config-ssh: deploy-key
 
 # Copy infra public key on customer's node (defined by REMOTE_SRV)
-# @require: {string} 	REMOTE_USER		user on remote
+# @optional: {string} 	REMOTE_USER		user on remote
 # @require: {string} 	REMOTE_SRV 		server hostname or IP
 # @warning: do NOT read ~/.ssh/config
 deploy-key:

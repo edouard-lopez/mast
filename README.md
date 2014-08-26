@@ -100,10 +100,27 @@ For administrator familiar with _Bash_'s syntax but unfamiliar with `makefile`'s
 * multi-lines Bash commands should end with a `; \` (semi-column and backslash). Otherwise _make_ will consider each line to be isolated for the surrounding ones ;
 * the `@` (at sign) in the begin of a line is use to prevent a command to be printed prior to execution. If you want to see what commands the task really executed, with variables expanded, simply remote the `@`-sign from the beginning of the line :).
 
-### Default Usage
+### Default Usage (alias)
+
+Aliases to [Usage](#usage).
 
 ```bash
 sudo make
+```
+
+## Channels management
+
+### List Channels
+List channels for given host. if none is given, iterate over all hosts.
+
+| Parameter  | Default | Description |
+| ------------- | ------------- | ------------- |
+| `NAME` | _optional_ | **_string_**. Configuration name. |
+
+```bash
+sudo make list-channels
+# or
+sudo make list-channels NAME=nautilus
 ```
 
 ### Add Channel
@@ -112,31 +129,72 @@ Add a new channel for the given printer.
 
 | Parameter  | Default | Description |
 | ------------- | ------------- | ------------- |
-| `NAME` | **required** | **_string_**.<br/> Configuration name |
-| `PRINTER` | **required** | **_string_**.<br/> Printer's hostname or ip |
-| `DESC` | optional | **_string_**.<br/> Description/comment of the channel |
+| `NAME` | **required** | **_string_**. Configuration name. |
+| `PRINTER` | **required** | **_string_**. Printer's hostname or ip. |
+| `DESC` | _optional_ | **_string_**. Description/comment of the channel. |
 
 Example:
 ```bash
-make add-channel NAME=site-client-abd PRINTER=1.1.1.1 DESC="Comment blabla"
+make add-channel NAME=nautilus PRINTER=1.1.1.1 DESC="Comment blabla"
 ```
+![sudo-make-add-channel](docs/screenshots/sudo-make-add-channel.png)
+
+### Remove Channel
+
+Remove a channel using its index position from a given host.
+
+| Parameter  | Default | Description |
+| ------------- | ------------- | ------------- |
+| `ID` | **required** | **_integer_**. channel index as given by `sudo make list-channels` (cf. [List Channels](#list-channels). |
+| `NAME` | **required** | **_string_**. Configuration name. |
+
+
+For instance, to remove the _second_ channel from the client _nautilus_
+```bash
+sudo make remove-channel ID=2 NAME=nautilus
+```
+![sudo-make-remove-channel](docs/screenshots/sudo-make-remove-channel.png)
+
+## Hosts management
+### List Hosts
+List all hosts available to the service.
+```bash
+sudo make list-hosts
+```
+![sudo-make-list-logs](docs/screenshots/sudo-make-list-hosts.png)
+
 ### Add Host
 
 Adding a new host configuration. Both `NAME` **and** `HOST` are required.
 
 | Parameter  | Default | Description |
 | ------------- | ------------- | ------------- |
-| `NAME` | **required** | **_string_**.<br> Configuration name |
-| `HOST` | **required** | **_string_**.<br> Host IP address or FQDN |
+| `NAME` | **required** | **_string_**. Configuration name. |
+| `HOST` | **required** | **_string_**. Host IP address or FQDN. |
 
 Example:
 ```bash
-sudo make add-host HOST=1.1.1.1 NAME=client-abc
+sudo make add-host HOST=1.1.1.1 NAME=nautilus
 ```
+![sudo-make-add-host](docs/screenshots/sudo-make-add-host.png)
+
+### Remove Host
+Remove an host by name. For instance, to remove the _second_ channel from the client _nautilus_
+
+| Parameter  | Default | Description |
+| ------------- | ------------- | ------------- |
+| `NAME` | **required** | **_string_**. Configuration name. |
+
+```bash
+sudo make remove-host NAME=nautilus
+```
+![sudo-make-remove-host](docs/screenshots/sudo-make-remove-host.png)
 
 ### Check Privileges
 
 Check files permission.
+
+![sudo-make-check-privileges](docs/screenshots/sudo-make-check-privileges.png)
 
 ### Check System
 Check system status for dependencies.
@@ -147,112 +205,117 @@ After getting the project source code, you can check your system status for requ
 make check-system
 ```
 Once the system is ready for the service, you should get the following output:
-```text
-Checking system…
-	autossh                               installed
-	openssh-client                        installed
-	trickle                               installed
-	apache2                               installed
-	libapache2-mod-php5                   installed
-	sudo                                  installed
-	aha                                   installed
-```
+![dependencies.(docs/screenshots/sudo-make-check-system](docs/screenshots/sudo-make-check-system.png)
 
-### Config SSH
-
-* requires [Deploy Key](#deploy-key).
-
+## SSH Key
 ### Create SSH Key (alias)
 
 Aliases to [${SSH_KEYFILE}](#ssh_keyfile).
-
-### Deploying SSH Key
-
-Once the ssh keys are created we need to copy the public key on the (remote) customer's node, in order to leverage authentication mechanism.
-
-```bash
-make deploy-key
-```
-
-If the customer's node address differ from the default value (see `REMOTE_SRV` in the _makefile_), the new value must be passed **as an argument**
-
-```bash
-make REMOTE_SRV=11.22.33.44 deploy-key
-```
-
-**Note:** This task require `create-ssh-key` to be done, this mean you can directly call the `deploy-key` task and it will trigger the `create-ssh-key` if needed
-
-### Deploy
-* requires [Deploy Service](#deploy-service) ;
-* requires [Deploy Webapp](#deploy-webapp).
-
-### Deploy Key
-
-* requires [Create SSH Key](#deploy-ssh-key).
-
-Copy infra public key on customer's node (defined by remote_srv).
-
-**Note:** must be **run as normal user** to prevent permissions issues.
-
-```bash
-make REMOTE_SRV=dell deploy-key
-```
-
-### Deploy Service
-
-This task copy project file to their adequate location (_i.e._ `/etc/init.d/`, `/usr/sbin/`)
-```bash
-make deploy-service
-```
-
-### Deploy Webapp
-Deploy The Webapp, Configure Apache, /etc/hosts
-
-### Install
-Install infra deploy service create ssh key deploy webapp
-
-### Install Infra
-
-Install required packages (`autossh`, `trickle`, `openssh-client`, ...) on the infrastructure.
-
-```bash
-make setup-infra
-```
-
-
-### ${SSH_KEYFILE}
 
 Create SSH keys pair on infrastructure to allow friction-less connection to the customer's node.
 
 ```bash
 make create-ssh-key
 ```
+![sudo-make-create-ssh-key](docs/screenshots/sudo-make-create-ssh-key.png)
 
-### List Channels
-List channels for given host. if none is given, iterate over all hosts.
+### `${SSH_KEYFILE}`
 
-### List Logs
-List all log files, one for each tunnel.
+Aliased by [Create SSH Key](#create-ssh-key-alias).
 
-### List Hosts
-List all hosts available to the service.
+### Deploy Key
 
-### Remove Channel
+Copy infra public key on customer's node, as defined by `REMOTE_SRV`.
 
-### Remove Host
+Once the ssh keys are created we need to copy the public key on the (remote) customer's node, in order to leverage authentication mechanism.
+
+**Warning:** must be **run as normal user** to prevent permissions issues.
+
+![make-deploy-key](docs/screenshots/sudo-make-deploy-key.png)
+
+```bash
+make deploy-key
+```
+
+If the customer's node address differ from the default value `REMOTE_SRV` (see in the _makefile_), the new value must be passed **as an argument**, as follow:
+
+```bash
+make REMOTE_SRV=11.22.33.44 deploy-key
+```
+
+### Config SSH (alias)
+
+Aliases to [Deploy Key](#deploy-key).
+
+## Modules Deployment
+
+### Deploy
+
+This is a meta-task that will run the following dependencies:
+
+* depends of [Deploy Service](#deploy-service) ;
+* depends of [Deploy Webapp](#deploy-webapp).
+
+### Deploy Service
+
+This task copy project file to their adequate location (_i.e._ `/etc/init.d/`, `/usr/sbin/`)
+```bash
+sudo make deploy-service
+```
+![sudo-make-deploy-service](docs/screenshots/sudo-make-deploy-service.png)
+
+### Deploy Webapp
+Deploy the webapp, configure and reloading apache, configure _/etc/hosts_
+
+```bash
+sudo make deploy-webapp
+```
+![sudo-make-deploy-webapp](docs/screenshots/sudo-make-deploy-webapp.png)
+
+### Install
+
+This is a meta-task that will run the following dependencies:
+
+* [Install project dependencies](#install-infra) ;
+* [Check system](#check-system) and [privileges](](#check-privileges)) ;
+* [Deploy the service](#deploy-service) ;
+* [Create a SSH key pair](#create-ssh-key) if necessary ;
+* and [deploy the webapp](#deploy-webapp).
+
+```bash
+sudo make install
+```
+![sudo-make-install](docs/screenshots/installation-02-make-install.png)
+
+### Install Infra
+
+Install required packages (`autossh`, `trickle`, `openssh-client`, ...) on the infrastructure.
+
+```bash
+sudo make setup-infra
+```
+![sudo-make-install-infra](docs/screenshots/sudo-make-install-infra.png)
 
 ### Setup Infra (alias)
 
 Aliases to [Install Infra](#instal-infra).
 
+## Helper
+### Usage
+Display basic help. for further information refer to the [official docs](http//github.com/edouard lopez/mast/readme.md).
+![sudo-make-usage](docs/screenshots/sudo-make-usage.png)
+
 ### Uninstall
 
-Remove configuration files, services, utility, etc. So you can make a fresh [install](#install)
+Remove configuration files, services, utility, etc. So you can make a fresh [install](#install).
+![sudo-make-uninstall](docs/screenshots/sudo-make-uninstall.png)
 
-### Usage
-Display basic help. for further information refer to the docs http//github.com/edouard lopez/mast/readme.md.
-
-
+### List Logs
+List all log files, one for each tunnel.
+```bash
+sudo make list-logs
+```
+![sudo-make-list-logs](docs/screenshots/sudo-make-list-logs.png)
 
 ## Service
 
@@ -269,18 +332,18 @@ Below is a list of available parameters and their roles:
 
 | Parameter  | Default | Description |
 | ------------- | ------------- | ------------- |
-| `RemoteHost` | _HOST_ | **_string_**.<br> [FQDN](https://en.wikipedia.org/wiki/FQDN) or IP address of the customer's node. |
-| `RemoteUser` | _coaxis_ | **_string_**.<br> Unix' username on the customer's node. |
-| `RemotePort` | `22` | **_integer_**.<br> SSH port on the customer's node. |
-| `ServerAliveInterval` | `10` | **_integer_**.<br> Sets a timeout interval in seconds[^manpage-ssh-config] after which if no data has been received from the server, `ssh` will send a message through the encrypted channel to request a response from the server. |
-| `ServerAliveCountMax` | `3` | **_integer_**.<br> Sets the number of server alive messages which may be sent without `ssh` receiving any messages back from the server.[^manpage-ssh-config] |
-| `StrictHostKeyChecking` | _no_ | **_string_**.<br> If this flag is set to _no_, `ssh` will automatically add new host keys to the user known hosts files.[^manpage-ssh-config] |
-| `LocalUser` | _root_ | **_string_**.<br> The user on the local machine that will be used to create the tunnel.[^js-morisset] |
-| `IdentityFile` | _~/.ssh/id_rsa.mast.coaxis_ | **_string_**.<br> Path to local SSH public key, so we can connect automatically to customer's node. |
-| `ForwardPort` | `"L *:9100:imp1:9100"`<br>`"L *:9101:imp2:9100"` | **_array_**.<br>`L [bind_address:]port:host:hostport` Specifies that the given port on the local (client) host is to be forwarded to the given host and port on the remote side.<br>`R [bind_address:]port:host:hostport` Specifies that the given port on the remote (server) host is to be forwarded to the given host and port on the local side. |
-| `BandwidthLimitation` | `true` | **_boolean_**.<br> Flag to toggle  traffic limitation.<br>`true`: enable limitation or <br>`false`: disable. |
-| `UploadLimit` | `1000` | **_integer_**.<br> Upper limit for _upload_ traffic (customer's node is the source of traffic). |
-| `DownloadLimit` |`100` | **_integer_**.<br> Upper limit for _download_ traffic. |
+| `RemoteHost` | _HOST_ | **_string_**. [FQDN](https://en.wikipedia.org/wiki/FQDN) or IP address of the customer's node.. |
+| `RemoteUser` | _coaxis_ | **_string_**. Unix' username on the customer's node.. |
+| `RemotePort` | `22` | **_integer_**. SSH port on the customer's node.. |
+| `ServerAliveInterval` | `10` | **_integer_**. Sets a timeout interval in seconds[^manpage-ssh-config] after which if no data has been received from the server, `ssh` will send a message through the encrypted channel to request a response from the server.. |
+| `ServerAliveCountMax` | `3` | **_integer_**. Sets the number of server alive messages which may be sent without `ssh` receiving any messages back from the server.[^manpage-ssh-config]. |
+| `StrictHostKeyChecking` | _no_ | **_string_**. If this flag is set to _no_, `ssh` will automatically add new host keys to the user known hosts files.[^manpage-ssh-config]. |
+| `LocalUser` | _root_ | **_string_**. The user on the local machine that will be used to create the tunnel.[^js-morisset]. |
+| `IdentityFile` | _/home/$RemoteUser/.ssh/id_rsa.mast.coaxis_ | **_string_**. Path to local SSH public key, so we can connect automatically to customer's node.. |
+| `ForwardPort` | `"L *:9100:imp1:9100"``"L *:9101:imp2:9100"` | **_array_**.`L [bind_address:]port:host:hostport` Specifies that the given port on the local (client) host is to be forwarded to the given host and port on the remote side.`R [bind_address:]port:host:hostport` Specifies that the given port on the remote (server) host is to be forwarded to the given host and port on the local side.. |
+| `BandwidthLimitation` | `true` | **_boolean_**. Flag to toggle  traffic limitation.`true`: enable limitation or `false`: disable.. |
+| `UploadLimit` | `1000` | **_integer_**. Upper limit for _upload_ traffic (customer's node is the source of traffic).. |
+| `DownloadLimit` |`100` | **_integer_**. Upper limit for _download_ traffic.. |
 
 ### References
 
