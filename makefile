@@ -219,13 +219,14 @@ add-host:
 		cp ${CONFIG_DIR}/{template,${NAME}}; \
 		sed -i 's/{{HOST}}/${HOST}/g' ${CONFIG_DIR}/${NAME}; \
 		while true; do \
-			read -p "$(shell printf "\tEditing…\t%s? [y/n]\n" $$'$(call VALUE, ${CONFIG_DIR}/${NAME})')" yn; \
+			read -p "$(shell printf "\tEditing…\t%s? [y/N]\n" $$'$(call VALUE,${CONFIG_DIR}/${NAME})' )" yn; \
 			case $$yn in \
 				[Yy]* ) \
 					editor ${CONFIG_DIR}/${NAME}; \
 					printf "\nYou must %s the tunnel with:\n\t%s %s\n" $$'$(call WARNING,start –manually–)' $$'$(call INFO,sudo /etc/init.d/mast start ${NAME})' 1>&2; \
 					break;; \
-				[Nn]* ) \
+				'') ;& \
+				[Nn]*) \
 					printf "\t%s\n" $$'$(call INFO,Skipping)'; \
 					exit;; \
 				* ) \
