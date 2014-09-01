@@ -171,6 +171,7 @@ check_ssh_forward_rules() {
 	fi
 
 	for fwd in "${ForwardPort[@]}"; do
+		fwd="${fwd%%#*}"
 		case "$fwd" in
 			D\ *:*|R\ *:*:*:*|L\ *:*:*:*)
 				forward_list+="-$fwd "
