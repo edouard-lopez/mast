@@ -57,24 +57,41 @@ _info_="$(tput setaf 6)"		# blue/information
 _warning_="$(tput setaf 3)"	# yellow/warning
 _error_="$(tput setaf 1)"		# red/error
 _log_="$(tput setaf 7)"			# value/white
+_debug_="$(tput setaf 7)"			# value/white
 _value_="$(tput setaf 5)"		# value/purple
 _valid_="$(tput setaf 2)"		# valid/green
 # helpers
 _underline()	{ printf "${_underline_}%s${_reset_}" "$*"; } 			# style text as underline
 _bold()			{ printf "${_bold_}%s${_reset_}" "$*"; } 				# style text as bold
 _info()			{ printf "${_info_}%s${_reset_}" "$*"; } 				# style text as info
-_log()			{ printf "${_log_}%s${_reset_}" "$*"; } 				# style text as info
+_log()			{ printf "${_log_}%s${_reset_}" "$*"; } 				# style text as log
+_debug()		{ printf "${_debug_}%s${_reset_}" "$*"; } 				# style text as debug
 _warning()		{ printf "${_warning_}%s${_reset_}" "$*"; } 			# style text as warning
 _error()			{ printf "${_bold_}${_error_}%s${_reset_}" "$*"; } 	# style text as error
 _value()		{ printf "${_value_}%s${_reset_}" "$*"; } 				# style text as value
 _valid()			{ printf "${_valid_}%s${_reset_}" "$*"; } 				# style text as valid
+# Print message helper
+feedback() {
+	what="$1"
+	status="$2"
+	todo="$3"
+	# cfname="$4"
+
+	printf "\t%-48s%s\t%s\n" \
+		"$(_info "$what")" \
+		"$(_error "$status")" \
+		"$(_debug "$todo")" \
+	1>&2 | _log-to "$cfname"
+}
+
+
 
 
 # Log file path for given config
 # @param {string} config name
 _log-file() {
 	if [[ -z "$1" ]]; then
-		printf "You must give a %s!\n" "$(_warning "config name")" 1>&2
+		feedback "configuration name"  "$(_warning "required")"  "no configuration's name provided" 1>&2
 		exit 1
 	else
 		echo "$LOG_DIR/$NAME-$1.log"
@@ -85,7 +102,12 @@ _log-file() {
 # @param {string} config name
 _log-to() {
 	if [[ -z "$1" ]]; then
-		printf "You must give a %s!\n" "$(_warning "config name")" 1>&2
+		# do NOT refactor or get a fork bomb :D!
+		printf "\t%s\t%s\t%s\n" \
+			"$(_value "configuration name")" \
+			"$(_warning "required")" \
+			"$(_debug "no configuration's name provided")" \
+		1>&2
 		exit 1
 	fi
 	cfname="$1"
@@ -110,7 +132,7 @@ start() {
 
 	# make sure we have a config file
 	if [[ ! -f "$config" ]]; then
-		printf "%s %s\n" "$cfname" "$(_error "doesn't exists")" 1>&2 | _log-to "$cfname"
+		feedback "$cfname"  "missing"  "no configuration file in $CONFIG_DIR"
 		return 1
 	fi
 
@@ -126,15 +148,15 @@ start() {
 	eval "
 		if [[ -z \$$var ]]
 		then
-			printf \"%s: %s variable empty\\n\" \"$cfname\" \"$var\" 1>&2 | _log-to \"$cfname\"
 			return 1
+			feedback "$var"  "undefined"  "no value in $CONFIG_DIR/$cfname"
 		fi
 		"
 	done
 
 	if (( ${#ForwardPort[*]} == 0 )); then
-		printf "%s: ForwardPort array empty\n" "$cfname" 1>&2 | _log-to "$cfname"
 		return 1
+		feedback "ForwardPort array"  "empty"  "no value in $CONFIG_DIR/$cfname."
 	fi
 
 	for fwd in "${ForwardPort[@]}"; do
@@ -143,7 +165,7 @@ start() {
 				forward_list+="-$fwd "
 			;;
 			*)
-				printf "%s: %s format unknown\n" "$cfname" "$fwd" 1>&2 | _log-to "$cfname"
+				feedback "$cfname"  "mal-formed"  "format $(_value "$fwd") isn't correct."
 				return 1
 			;;
 		esac
@@ -153,7 +175,7 @@ start() {
 	# check if pidfile already exists -- don't start another instance if pidfile exists
 	AUTOSSH_PIDFILE="/var/run/$NAME/$cfname.pid"
 	if [[ -e $AUTOSSH_PIDFILE ]]; then
-		printf "PID for %s %s (%s)\n" "$(_value "$cfname")" "$(_warning "already exists")" "$(_log "$AUTOSSH_PIDFILE")" 1>&2 | _log-to "$cfname"
+		feedback "host PID"  "forbidden"  "PID already exists, stop service or remove $(_value "$AUTOSSH_PIDFILE")."
 		return 1
 	fi
 
