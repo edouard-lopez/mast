@@ -46,6 +46,8 @@ CONFIG_DIR="/etc/$NAME"
 [[ ! -d /var/run/$NAME ]] && mkdir -p /var/run/"$NAME"
 [[ ! -d /var/lock/"$NAME" ]] && mkdir -p /var/lock/"$NAME"
 
+# Constants
+abort_status=1 # used in 'return'
 
 # Styling function
 # formatting
@@ -133,7 +135,7 @@ start() {
 	# make sure we have a config file
 	if [[ ! -f "$config" ]]; then
 		feedback "$cfname"  "missing"  "no configuration file in $CONFIG_DIR"
-		return 1
+		return $abort_status
 	fi
 
 	source "$config"
@@ -148,15 +150,15 @@ start() {
 	eval "
 		if [[ -z \$$var ]]
 		then
-			return 1
 			feedback "$var"  "undefined"  "no value in $CONFIG_DIR/$cfname"
+			return $abort_status
 		fi
 		"
 	done
 
 	if (( ${#ForwardPort[*]} == 0 )); then
-		return 1
 		feedback "ForwardPort array"  "empty"  "no value in $CONFIG_DIR/$cfname."
+		return $abort_status
 	fi
 
 	for fwd in "${ForwardPort[@]}"; do
@@ -166,7 +168,7 @@ start() {
 			;;
 			*)
 				feedback "$cfname"  "mal-formed"  "format $(_value "$fwd") isn't correct."
-				return 1
+				return $abort_status
 			;;
 		esac
 	done
@@ -176,7 +178,7 @@ start() {
 	AUTOSSH_PIDFILE="/var/run/$NAME/$cfname.pid"
 	if [[ -e $AUTOSSH_PIDFILE ]]; then
 		feedback "host PID"  "forbidden"  "PID already exists, stop service or remove $(_value "$AUTOSSH_PIDFILE")."
-		return 1
+		return $abort_status
 	fi
 
 	printf "Starting %s %s: " "$NAME" "$cfname"
@@ -227,7 +229,7 @@ stop() {
 		if [[ ! -f "$pidfile" ]]
 		then
 			printf "%s %s: %s missing\n" "$NAME" "$cfname" "$pidfile" 1>&2 | _log-to "$cfname"
-			return 1
+			return $abort_status
 		else
 			printf "Stopping %s %s\n" "$(_info "$NAME")" "$(_value "$cfname")"
 			killproc -p "/var/run/$NAME/$cfname.pid" "$NAME $cfname"
