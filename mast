@@ -250,29 +250,29 @@ start() {
 
 stop() {
 	config="$1"
+	cfname="$(basename "$config")"
+	pidfile="/var/run/$NAME/$cfname.pid"
+	autossh_pid=$(cat "$pidfile")
+
 	# if no config names (on the command-line), stop all autossh processes
 	if [[ -z "$config" ]]; then
 		printf "Stopping all %s: " "$(_info "$NAME")"
-		killproc "$autossh"
+		kill "$autossh_pid"
 		RETVAL=$?
 		echo
-		if [[ $RETVAL -eq 0 ]]; then
-			rm -f /var/lock/$NAME/"$cfname"
-			rm -f /var/run/$NAME/*.pid
+		if (( RETVAL == 0 )); then
+			rm -f /var/lock/"$NAME"/*
+			rm -f /var/run/"$NAME"/*.pid
 		fi
 	else
-		cfname="$(basename "$config")"
-		pidfile="/var/run/$NAME/$cfname.pid"
-		if [[ ! -f "$pidfile" ]]
-		then
+		if [[ ! -f "$pidfile" ]]; then
 			printf "%s %s: %s missing\n" "$NAME" "$cfname" "$pidfile" 1>&2 | _log-to "$cfname"
 			return $abort_status
 		else
 			printf "Stopping %s %s\n" "$(_info "$NAME")" "$(_value "$cfname")"
-			killproc -p "/var/run/$NAME/$cfname.pid" "$NAME $cfname"
+			kill "$autossh_pid"
 			RETVAL=$?
-			echo
-			[ $RETVAL -eq 0 ] && rm -f "/var/run/$NAME/$cfname.pid"
+			(( RETVAL == 0 )) && rm -f "$pidfile"
 		fi
 	fi
 	return $RETVAL
