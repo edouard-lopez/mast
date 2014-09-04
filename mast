@@ -269,12 +269,13 @@ stop() {
 			return $abort_status
 		else
 			printf "Stopping %s %s\n" "$(_info "$NAME")" "$(_value "$cfname")"
-			kill "$autossh_pid"
-			RETVAL=$?
-			(( RETVAL == 0 )) && rm -f "$pidfile"
+			if [[ -s "$pidfile" ]]; then
+				kill "$autossh_pid"  # kill if size > 0
+			fi
+			rm -f "$pidfile"
 		fi
 	fi
-	return $RETVAL
+	return ${RETVAL:-0}
 }
 
 
