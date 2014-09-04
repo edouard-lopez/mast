@@ -186,9 +186,10 @@ check_ssh_forward_rules() {
 
 # 	check if pidfile already exists -- don't start another instance if pidfile exists
 # @inherit:	{string} 	$cfname	configuration filename.
+# @inherit:	{string} 	$pidfile		PID file for host.
 check_no_pid_exists() {
 	# Define the pidfile variable for autossh (created by autossh)
-	export AUTOSSH_PIDFILE="/var/run/$NAME/$cfname.pid"
+	export AUTOSSH_PIDFILE="$pidfile"
 	if [[ -e $AUTOSSH_PIDFILE ]]; then
 		feedback "host PID"  "forbidden"  "PID already exists, stop service or remove $(_value "$AUTOSSH_PIDFILE")."
 		return $abort_status
@@ -215,6 +216,7 @@ create_pid() {
 start() {
 	config="$1"
 	cfname="$(basename "$config")"
+	pidfile="/var/run/$NAME/$cfname.pid"
 	forward_list=""
 
 	# abort start if one of the following fail
