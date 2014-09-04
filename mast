@@ -229,22 +229,19 @@ start() {
 
 	printf "Starting %s %s\n" "$(_info "$NAME")" "$(_value "$cfname")"
 
-	export AUTOSSH_PIDFILE=$AUTOSSH_PIDFILE;
-	export AUTOSSH_PORT=0;
-	export AUTOSSH_LOGFILE="$LOG_DIR/$NAME-$cfname.log";
 	# start autossh as the user defined in the config file
-	# the pidfile must be re-defined in the new environment
-	su - "$LocalUser" bash -c "
+	# the pid file must be re-defined in the new environment
+	su - "$LocalUser" -c "
+		export AUTOSSH_PIDFILE=$AUTOSSH_PIDFILE; \
+		export AUTOSSH_PORT=0; \
+		export AUTOSSH_LOGFILE="$LOG_DIR/$NAME-$cfname.log"; \
 		$autossh -q -N -p $RemotePort \
 			-i $IdentityFile \
 			-v \
 			-o ServerAliveInterval=$ServerAliveInterval \
 			-o ServerAliveCountMax=$ServerAliveCountMax \
 			-o StrictHostKeyChecking=$StrictHostKeyChecking \
-			$forward_list $RemoteUser@$RemoteHost -f \
-		&& echo 'run' \
-		|| (echo 'fail'; rm -f"$AUTOSSH_LOGFILE") \
-		"
+			$forward_list $RemoteUser@$RemoteHost &"
 
 	touch /var/lock/"$NAME/$cfname"
 }
