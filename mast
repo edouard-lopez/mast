@@ -235,7 +235,7 @@ start() {
 		export AUTOSSH_PIDFILE=$AUTOSSH_PIDFILE; \
 		export AUTOSSH_PORT=0; \
 		export AUTOSSH_LOGFILE="$LOG_DIR/$NAME-$cfname.log"; \
-		$autossh -q -N -p $RemotePort \
+		$autossh -q -f -N -p $RemotePort \
 			-i $IdentityFile \
 			-v \
 			-o ServerAliveInterval=$ServerAliveInterval \
