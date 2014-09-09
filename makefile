@@ -413,7 +413,7 @@ deploy-key:
 
 
 # Create keys pair on infra
-#@alias: create-ssh-key:
+#@alias: create-ssh-key
 ${SSH_KEYFILE}:
 	@printf "Creating…\t%s\n" $$'$(call VALUE,SSH keys)'
 		@[[ ! -d ${SSH_DIR} ]] && mkdir "${SSH_DIR}" || true
@@ -421,6 +421,7 @@ ${SSH_KEYFILE}:
 		@rm -f ${SSH_KEYFILE}{,.pub} \
 			&& printf "%s\n" $$'$(call SUCCESS,done)' \
 			||    printf "%s\n" $$'$(call ERROR,failed)'
+	@chown mast -R "${SSH_DIR}"
 	@printf "\t%-50s%s" $$'$(call INFO,generating key)'
 		@su - ${APP} -c 'ssh-keygen -q \
 			-t rsa \
@@ -432,7 +433,6 @@ ${SSH_KEYFILE}:
 			&& printf "%s\n" $$'$(call SUCCESS,done)' \
 			||    printf "%s\n" $$'$(call ERROR,failed)'
 	@chmod u=rwx,go= -R "${SSH_DIR}"
-	@chown mast -R "${SSH_DIR}"
 
 # Install packages required on the Coaxis' INFRAstructure
 install-infra:
