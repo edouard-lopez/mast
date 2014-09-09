@@ -272,6 +272,8 @@ stop() {
 			if [[ -s "$pidfile" ]]; then
 				rm -f "$pidfile"
 				kill "$autossh_pid"  # kill if size > 0
+			else
+				rm -f "$pidfile"  # in case pidfile is empty
 			fi
 		fi
 	fi
