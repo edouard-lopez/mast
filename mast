@@ -270,7 +270,7 @@ stop() {
 		else
 			printf "Stopping %s %s\n" "$(_info "$NAME")" "$(_value "$cfname")"
 			if [[ -s "$pidfile" ]]; then
-				rm -f "$pidfile"
+				rm -f "$pidfile"  # always remove pid
 				kill "$autossh_pid"  # kill if size > 0
 			else
 				rm -f "$pidfile"  # in case pidfile is empty
