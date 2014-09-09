@@ -14,8 +14,8 @@ RemotePort=22
 
 # Check connection every 10 seconds, and after 3 tries (30 seconds), drop and
 # let autossh re-connect.
-ServerAliveInterval=10
-ServerAliveCountMax=3
+ServerAliveInterval=3
+ServerAliveCountMax=2
 StrictHostKeyChecking="no"
 
 LocalUser="mast"
