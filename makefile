@@ -208,8 +208,8 @@ remove-channel:
 
 # Adding a new host configuration require to provide it's NAME and REMOTE_HOST
 # @require: {string} NAME configuration name
-add-host:
 # @require: {string} REMOTE_HOST  IP address or FQDN
+add-host: deploy-key
 	@printf "Adding host…\n"
 	@if [[ "${NAME}" == "none" || -z "${NAME}" || "${REMOTE_HOST}" == "none" || -z "${REMOTE_HOST}" ]]; then \
 		printf "\t%s or %s.\n" $$'$(call ERROR,missing REMOTE_HOST)' $$'$(call ERROR,NAME)' 1>&2; \
