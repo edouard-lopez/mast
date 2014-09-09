@@ -27,6 +27,8 @@ cd mast-$branch
 ```
 ![tar xvzf](docs/screenshots/installation-01-extract.png)
 
+**N.B.:**: a one-liner equivalent would be `branch=dev; wget --output-document="mast.tar.gz" https://github.com/edouard-lopez/mast/archive/$branch.tar.gz && tar xvzf mast.tar.gz && cd mast-$branch`
+
 ## Installing
 
 We will use the makefile script to install the service and related components:
