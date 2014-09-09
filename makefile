@@ -3,7 +3,7 @@
 #	Project utility to install client/server, deploy, etc.
 #
 # USAGE
-#	sudo make REMOTE_SRV=255.255.255.255 deploy-key
+#	sudo make REMOTE_HOST=255.255.255.255 deploy-key
 #
 # AUTHOR
 #	Édouard Lopez <dev+mast@edouard-lopez.com>
@@ -28,10 +28,9 @@ APP:=mast
 SHELL := /bin/bash
 
 # default remote hostname
-REMOTE_SRV:=none
+REMOTE_HOST:=none
 # Current customer's name config and host/ip to work with (add/delete)
 NAME:=none
-HOST:=none
 PRINTER:=none
 # channel description (default: empty).
 DESC:=
@@ -207,17 +206,17 @@ remove-channel:
 		fi;\
 	fi
 
-# Adding a new host configuration require to provide it's NAME and HOST
+# Adding a new host configuration require to provide it's NAME and REMOTE_HOST
 # @require: {string} NAME configuration name
-# @require: {string} HOST  IP address or FQDN
 add-host:
+# @require: {string} REMOTE_HOST  IP address or FQDN
 	@printf "Adding host…\n"
-	@if [[ "${NAME}" == "none" || -z "${NAME}" || "${HOST}" == "none" || -z "${HOST}" ]]; then \
-		printf "\t%s or %s.\n" $$'$(call ERROR,missing HOST)' $$'$(call ERROR,NAME)' 1>&2; \
+	@if [[ "${NAME}" == "none" || -z "${NAME}" || "${REMOTE_HOST}" == "none" || -z "${REMOTE_HOST}" ]]; then \
+		printf "\t%s or %s.\n" $$'$(call ERROR,missing REMOTE_HOST)' $$'$(call ERROR,NAME)' 1>&2; \
 		exit 0; \
 	elif [[ "${NAME}" != "none" ]]; then \
 		cp ${CONFIG_DIR}/{template,${NAME}}; \
-		sed -i 's/{{HOST}}/${HOST}/g' ${CONFIG_DIR}/${NAME}; \
+		sed -i 's/{{REMOTE_HOST}}/${REMOTE_HOST}/g' ${CONFIG_DIR}/${NAME}; \
 		while true; do \
 			read -p "$(shell printf "\tEditing…\t%s? [y/N]\n" $$'$(call VALUE,${CONFIG_DIR}/${NAME})' )" yn; \
 			case $$yn in \
@@ -325,7 +324,7 @@ deploy-webapp:
 	@# declaring hostname: /etc/hosts
 	@printf "\t%-50s" $$'$(call INFO,declaring hostname)'
 		@if ! grep -iq 'mast' /etc/hosts; then \
-			printf '%s\n' H 1i "127.0.0.1 ${APACHE_HOSTNAME} www.${APACHE_HOSTNAME}" . w | ed -s /etc/hosts; \
+			printf '%s\n' H 1i "127.0.0.1 ${APACHE_REMOTE_HOSTNAME} www.${APACHE_REMOTE_HOSTNAME}" . w | ed -s /etc/hosts; \
 			printf '%s\n' H 1i "# Mast-web" . w | ed -s /etc/hosts; \
 			printf "%s" $$'$(call SUCCESS,done)'; \
 			printf "\t%s\n" $$'$(call DEBUG,/etc/hosts)'; \
@@ -396,19 +395,19 @@ deploy: deploy-service deploy-webapp
 
 config-ssh: deploy-key
 
-# Copy infra public key on customer's node (defined by REMOTE_SRV)
+# Copy infra public key on customer's node (defined by REMOTE_HOST)
 # @optional: {string} 	REMOTE_USER		user on remote
-# @require: {string} 	REMOTE_SRV 		server hostname or IP
+# @require: {string} 	REMOTE_HOST 		server hostname or IP
 # @warning: do NOT read ~/.ssh/config
 deploy-key:
 	@printf "Deploying…\t%s\n" $$'$(call VALUE, Public key)'
-	if [[ "${REMOTE_USER}" == "none" || -z "${REMOTE_USER}" || "${REMOTE_SRV}" == "none" || -z "${REMOTE_SRV}" ]]; then \
-		printf "\t%s or %s.\n" $$'$(call ERROR,missing REMOTE_SRV)' $$'$(call ERROR,REMOTE_USER)' 1>&2; \
+	if [[ "${REMOTE_USER}" == "none" || -z "${REMOTE_USER}" || "${REMOTE_HOST}" == "none" || -z "${REMOTE_HOST}" ]]; then \
+		printf "\t%s or %s.\n" $$'$(call ERROR,missing REMOTE_HOST)' $$'$(call ERROR,REMOTE_USER)' 1>&2; \
 		exit 1; \
 	else \
-		printf "\t%-50s%s\n" $$'$(call INFO,copy public key to)' $$'$(call VALUE, ${REMOTE_USER}@${REMOTE_SRV})'; \
+		printf "\t%-50s%s\n" $$'$(call INFO,copy public key to)' $$'$(call VALUE, ${REMOTE_USER}@${REMOTE_HOST})'; \
 		sshpass -p "${REMOTE_INIT_PWD}" \
-			ssh-copy-id -i "${SSH_KEYFILE}.pub" -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_SRV} >& /dev/null; \
+			ssh-copy-id -i "${SSH_KEYFILE}.pub" -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} >& /dev/null; \
 		printf "\n"; \
 	fi
 
@@ -508,7 +507,7 @@ doc:
 				fn=$$task; \
 				task=$${task%%:*};; \
 			'add-host') height=$$((4*$$lineHeight)); \
-				task=( $$task NAME='host-one' HOST=10.1.9.1 );; \
+				task=( $$task NAME='host-one' REMOTE_HOST=10.1.9.1 );; \
 			'add-channel:fail') height=$$((4*$$lineHeight)); \
 				fn=$$task; \
 				task=$${task%%:*};; \

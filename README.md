@@ -225,7 +225,7 @@ Aliased by [Create SSH Key](#create-ssh-key-alias).
 
 ### Deploy Key
 
-Copy infra public key on customer's node, as defined by `REMOTE_SRV`.
+Copy infra public key on customer's node, as defined by `REMOTE_HOST`.
 
 Once the ssh keys are created we need to copy the public key on the (remote) customer's node, in order to leverage authentication mechanism.
 
@@ -237,10 +237,10 @@ Once the ssh keys are created we need to copy the public key on the (remote) cus
 make deploy-key
 ```
 
-If the customer's node address differ from the default value `REMOTE_SRV` (see in the _makefile_), the new value must be passed **as an argument**, as follow:
+If the customer's node address differ from the default value `REMOTE_HOST` (see in the _makefile_), the new value must be passed **as an argument**, as follow:
 
 ```bash
-make REMOTE_SRV=11.22.33.44 deploy-key
+make REMOTE_HOST=11.22.33.44 deploy-key
 ```
 
 ### Config SSH (alias)
