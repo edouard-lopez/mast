@@ -20,7 +20,7 @@ StrictHostKeyChecking="no"
 
 LocalUser="mast"
 # @see SSH_KEYFILE in 'makefile'
-IdentityFile="/home/$RemoteUser/.ssh/id_rsa.mast.coaxis"
+IdentityFile="/home/$LocalUser/.ssh/id_rsa.mast.coaxis"
 
 
 # Array of ports to be forwarded. Example:
