@@ -45,7 +45,7 @@ LOG_DIR:=/var/log/mast
 # Passphrase MUST be empty to allow automation (no passphrase prompt)
 EMPTY:=
 # Path to the SSH keys pair (public key is suffixed by .pub).
-SSH_DIR:=$$HOME/.ssh
+SSH_DIR:=/home/${APP}/.ssh
 SSH_KEYFILE:=${SSH_DIR}/id_rsa.mast.coaxis
 
 # webapp sources directory, cloned during install (deployed to /var/www/mast-web)
