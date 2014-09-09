@@ -401,7 +401,7 @@ config-ssh: deploy-key
 # @warning: do NOT read ~/.ssh/config
 deploy-key:
 	@printf "Deploying…\t%s\n" $$'$(call VALUE, Public key)'
-	if [[ "${REMOTE_USER}" == "none" || -z "${REMOTE_USER}" || "${REMOTE_HOST}" == "none" || -z "${REMOTE_HOST}" ]]; then \
+	@if [[ "${REMOTE_USER}" == "none" || -z "${REMOTE_USER}" || "${REMOTE_HOST}" == "none" || -z "${REMOTE_HOST}" ]]; then \
 		printf "\t%s or %s.\n" $$'$(call ERROR,missing REMOTE_HOST)' $$'$(call ERROR,REMOTE_USER)' 1>&2; \
 		exit 1; \
 	else \
