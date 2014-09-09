@@ -216,7 +216,7 @@ add-host: deploy-key
 		exit 0; \
 	elif [[ "${NAME}" != "none" ]]; then \
 		cp ${CONFIG_DIR}/{template,${NAME}}; \
-		sed -i 's/{{REMOTE_HOST}}/${REMOTE_HOST}/g' ${CONFIG_DIR}/${NAME}; \
+		sed -i 's/{{HOST}}/${REMOTE_HOST}/g' ${CONFIG_DIR}/${NAME}; \
 		while true; do \
 			read -p "$(shell printf "\tEditing…\t%s? [y/N]\n" $$'$(call VALUE,${CONFIG_DIR}/${NAME})' )" yn; \
 			case $$yn in \
