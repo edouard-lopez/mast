@@ -184,7 +184,7 @@ check_ssh_forward_rules() {
 	done
 }
 
-# 	check if pidfile already exists -- don't start another instance if pidfile exists
+# Check if pidfile already exists -- don't start another instance if pidfile exists
 # @inherit:	{string} 	$cfname	configuration filename.
 # @inherit:	{string} 	$pidfile		PID file for host.
 check_no_pid_exists() {
@@ -222,7 +222,7 @@ start() {
 	# abort start if one of the following fail
 	check_config_file_exists "$config"	&& source "$config"	|| return $abort_status
 	check_tunnel_config 							|| return $abort_status
-	export ForwardPortq
+	export ForwardPort
 	check_ssh_forward_rules		|| return $abort_status
 	check_no_pid_exists							|| return $abort_status
 	create_pid 												|| return $abort_status
