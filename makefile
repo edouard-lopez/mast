@@ -466,7 +466,7 @@ check-privileges:
 	if [[ ! -d $$HOME/.ssh ]]; then \
 		mkdir "$$HOME/.ssh" ; \
 		chown $$SUDO_USER:$$SUDO_USER -R "$$HOME/.ssh" ; \
-		chown u=rwx,go= "$$HOME/.ssh" ; \
+		chmod u=rwx,go= "$$HOME/.ssh" ; \
 	fi
 
 
