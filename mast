@@ -281,6 +281,27 @@ stop() {
 }
 
 
+
+
+status() {
+	config="$1"
+	cfname='undef'
+	pidfile="/var/run/$NAME/$cfname.pid"
+	autossh_pid=$(cat "$pidfile")
+
+	check_config_file_exists "$config" && cfname="$(basename "$config")" || return $abort_status
+
+	if [[ -f $pidfile ]]; then
+		feedback "${config}:autossh"  "querying"  "$(ps --pid "$autossh_pid" -o pid,user,%mem)" # select (AutoSSH) parent process
+		feedback "${config}:ssh"  "querying"  "$(ps --ppid "$autossh_pid")" # select children processes
+	else
+		feedback "host PID"  "missing"  "(no file $pidfile)"
+		RETVAL=1
+	fi
+
+	return ${RETVAL:-0}
+}
+
 # save the action name, and shift the command-line array
 # all remaining command-line arguments *should* be config names
 action="$1"
@@ -327,25 +348,7 @@ status)
 		# only show the status of config files specified on the command-line
 		for cfname in "$@";
 		do
-			config="/etc/$NAME/$cfname"
-			# if the config file is missing, printf an error message
-			if [[ -f $config ]]
-			then
-				cfname="$(basename "$config")"
-				pidfile="/var/run/$NAME/$cfname.pid"
-				# if the pidfile is missing, printf an error message
-				if [[ -f $pidfile ]]
-				then
-					status -p "$pidfile" "$NAME $cfname"
-					RETVAL=$?
-				else
-					printf "%s missing\n" "$pidfile"
-					RETVAL=1
-				fi
-			else
-				printf "%s missing\n" "$config"
-				RETVAL=1
-			fi
+			"$action" "/etc/$NAME/$cfname"
 		done
 	fi
 	;;
