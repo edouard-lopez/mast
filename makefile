@@ -462,6 +462,12 @@ check-privileges:
 		usermod --append --groups ${REMOTE_USER} ${REMOTE_USER}; \
 	fi
 	@usermod --append --groups www-data ${REMOTE_USER}
+	@# ensure that our user has a readable ~/.ssh directory
+	if [[ ! -d $$HOME/.ssh ]]; then \
+		mkdir "$$HOME/.ssh" ; \
+		chown $$SUDO_USER:$$SUDO_USER -R "$$HOME/.ssh" ; \
+		chown u=rwx,go= "$$HOME/.ssh" ; \
+	fi
 
 
 # Check system status for dependencies
