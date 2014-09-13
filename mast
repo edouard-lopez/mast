@@ -289,9 +289,9 @@ function stop() {
 		else
 			printf "Stopping %s %s\n" "$(_info "$NAME")" "$(_value "$cfname")"
 			autossh_pid=$(cat "$pidfile")
-			if [[ -s "$pidfile" ]]; then
+			if [[ -s "$pidfile" ]]; then  # kill if size > 0
 				rm -f "$pidfile"  # always remove pid
-				kill "$autossh_pid"  # kill if size > 0
+				kill "$autossh_pid"
 			else
 				rm -f "$pidfile"  # in case pidfile is empty
 			fi
