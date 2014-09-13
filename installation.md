@@ -55,6 +55,7 @@ To debug the service you will need to export the `DEBUG` variable with a non-emp
  ````bash
  export DEBUG="true"
  sudo -E /etc/init.d/mast status
+ unset DEBUG # restore normal debug mode
  ```
 
  **N.B.:** using `-E` option may have some [security implications](https://stackoverflow.com/questions/8633461/how-to-keep-environment-variables-when-using-sudo#comment10726355_8636711), never use it in production code!
