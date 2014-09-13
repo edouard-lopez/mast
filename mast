@@ -253,7 +253,7 @@ function start() {
 	su - "$LocalUser" -c "
 		export AUTOSSH_PIDFILE=$AUTOSSH_PIDFILE; \
 		export AUTOSSH_PORT=0; \
-		export AUTOSSH_LOGFILE="$LOG_DIR/$NAME-$cfname.log"; \
+		export AUTOSSH_LOGFILE=\"$LOG_DIR/$NAME-$cfname\".log; \
 		$autossh -q -f -N -p $RemotePort \
 			-i $IdentityFile \
 			-v \
