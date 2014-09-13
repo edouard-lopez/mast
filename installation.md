@@ -41,6 +41,24 @@ We can see two errors related to the web UI. If you want to use the web UI, you 
 
 ## Troubleshooting
 
+### Debug mode
+
+To enable debug mode with the makefile, run the command with the `-d` flag:
+
+````bash
+sudo make -d install
+```
+
+To debug the service you will need to export the `DEBUG` variable with a non-empty value and tell `sudo`
+ to preserve environment with `-e` or --preserve-env` option. So it can the exported variable is available to `sudo` context.
+
+ ````bash
+ export DEBUG="true"
+ sudo -E /etc/init.d/mast status
+ ```
+
+ **N.B.:** using `-E` option may have some [security implications](https://stackoverflow.com/questions/8633461/how-to-keep-environment-variables-when-using-sudo#comment10726355_8636711), never use it in production code!
+
 ### _perl: warning: Setting locale failed._
 
 If you got this perl related warning, the actual issue is with SSH and locale forwarding (see below).
