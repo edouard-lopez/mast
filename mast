@@ -337,7 +337,7 @@ function status() {
 function list_config() {
 	config_list=()
 	for config in $CONFIG_DIR/*; do
-		config_list=( "${config_list[@]}" "$(basename $config)" )
+		config_list=( "${config_list[@]}" "$(basename "$config")" )
 	done
 	echo "${config_list[@]}"
 }
