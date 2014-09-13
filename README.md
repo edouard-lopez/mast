@@ -165,16 +165,16 @@ sudo make list-hosts
 
 ### Add Host
 
-Adding a new host configuration. Both `NAME` **and** `HOST` are required.
+Adding a new host configuration. Both `NAME` **and** `REMOTE_HOST` are required.
 
 | Parameter  | Default | Description |
 | ------------- | ------------- | ------------- |
 | `NAME` | **required** | **_string_**. Configuration name. |
-| `HOST` | **required** | **_string_**. Host IP address or FQDN. |
+| `REMOTE_HOST` | **required** | **_string_**. Host IP address or FQDN. |
 
 Example:
 ```bash
-sudo make add-host HOST=1.1.1.1 NAME=nautilus
+sudo make add-host REMOTE_HOST=1.1.1.1 NAME=nautilus
 ```
 ![sudo-make-add-host](docs/screenshots/sudo-make-add-host.png)
 
