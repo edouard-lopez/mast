@@ -78,7 +78,7 @@ _error()			{ printf "${_bold_}${_error_}%s${_reset_}" "$*"; } 	# style text as e
 _value()		{ printf "${_value_}%s${_reset_}" "$*"; } 				# style text as value
 _valid()			{ printf "${_valid_}%s${_reset_}" "$*"; } 				# style text as valid
 # Print message helper
-feedback() {
+function feedback() {
 	what="$1"
 	status="$2"
 	todo="$3"
@@ -98,7 +98,7 @@ feedback() {
 
 # Log file path for given config
 # @param {string} config name
-_log-file() {
+function _log-file() {
 	if [[ -z "$1" ]]; then
 		feedback "configuration name"  "$(_warning "required")"  "no configuration's name provided" 1>&2
 		exit 1
@@ -109,7 +109,7 @@ _log-file() {
 
 # Log piped message to stdout and in given config log file.
 # @param:	{string} 	$1	configuration filename.
-_log-to() {
+function _log-to() {
 	if [[ -z "$1" ]]; then
 		# do NOT refactor or get a fork bomb :D!
 		printf "\t%s\t%s\t%s\n" \
@@ -136,7 +136,7 @@ _log-to() {
 # Make sure we have a config file
 # @param:	{string}	$config	configuration filepath.
 # @inherit:	{string} 	$cfname	configuration filename.
-check_config_file_exists() {
+function check_config_file_exists() {
 	config="$1"
 
 	if [[ ! -f "$config" ]]; then
@@ -148,7 +148,7 @@ check_config_file_exists() {
 
 # Make sure all arguments/variables have been defined in config
 # @inherit:	{string} 	$cfname		configuration filename.
-check_tunnel_config() {
+function check_tunnel_config() {
 	sshArguments=( # list of required variables
 		ServerAliveInterval ServerAliveCountMax StrictHostKeyChecking
 		LocalUser IdentityFile RemoteUser RemoteHost RemotePort
@@ -167,7 +167,7 @@ check_tunnel_config() {
 # We need at least 1 forward rule to be able to start
 # @inherit:	{string} 	$cfname		configuration filename.
 # @inherit:	{array}	$ForwardPort	list of SSH forwarding rules.
-check_ssh_forward_rules() {
+function check_ssh_forward_rules() {
 	# workaround the lack of ${#ForwardPort[@]} support, no logical explaination
 	for f in "${ForwardPort[@]}"; do (( rule_count++)); done
 
@@ -194,7 +194,7 @@ check_ssh_forward_rules() {
 # Check if pidfile already exists -- don't start another instance if pidfile exists
 # @inherit:	{string} 	$cfname	configuration filename.
 # @inherit:	{string} 	$pidfile		PID file for host.
-check_no_pid_exists() {
+function check_no_pid_exists() {
 	# Define the pidfile variable for autossh (created by autossh)
 	export AUTOSSH_PIDFILE="$pidfile"
 	if [[ -e $AUTOSSH_PIDFILE ]]; then
@@ -206,7 +206,7 @@ check_no_pid_exists() {
 
 # Before switching-users, make sure pidfile is created and user has write permission
 # @inherit:	{string} 	$cfname	configuration filename.
-create_pid() {
+function create_pid() {
 	touch "$AUTOSSH_PIDFILE"
 	chown "$LocalUser" "$AUTOSSH_PIDFILE"
 
@@ -224,7 +224,7 @@ create_pid() {
 
 # Start the service
 # @param:	{string}	$config		configuration filepath.
-start() {
+function start() {
 	config="$1"
 	cfname="$(basename "$config")"
 	forward_list=""
@@ -258,7 +258,7 @@ start() {
 }
 
 
-stop() {
+function stop() {
 	config="$1"
 	cfname="$(basename "$config")"
 	autossh_pid=$(cat "$pidfile")
@@ -292,9 +292,9 @@ stop() {
 }
 
 
+function status() {
 
 
-status() {
 	config="$1"
 	cfname='undef'
 	autossh_pid=$(cat "$pidfile")
