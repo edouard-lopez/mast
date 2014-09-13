@@ -317,7 +317,6 @@ function status() {
 		feedback "${config}:ssh"  "querying"  "$(ps --ppid "$autossh_pid")"
 	else
 		feedback "host PID"  "missing"  "(no file $pidfile)"
-		RETVAL=1
 	fi
 
 	return ${RETVAL:-0}
