@@ -324,8 +324,8 @@ deploy-webapp:
 	@# declaring hostname: /etc/hosts
 	@printf "\t%-50s" $$'$(call INFO,declaring hostname)'
 		@if ! grep -iq 'mast' /etc/hosts; then \
-			printf '%s\n' H 1i "127.0.0.1 ${APACHE_REMOTE_HOSTNAME} www.${APACHE_REMOTE_HOSTNAME}" . w | ed -s /etc/hosts; \
-			printf '%s\n' H 1i "# Mast-web" . w | ed -s /etc/hosts; \
+			sed -i "1i 127.0.0.1 ${APACHE_REMOTE_HOSTNAME} www.${APACHE_REMOTE_HOSTNAME}" /etc/hosts; \
+			sed -i "1i # Mast-web" /etc/hosts; \
 			printf "%s" $$'$(call SUCCESS,done)'; \
 			printf "\t%s\n" $$'$(call DEBUG,/etc/hosts)'; \
 		else \
