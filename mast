@@ -77,6 +77,7 @@ _warning()		{ printf "${_warning_}%s${_reset_}" "$*"; } 			# style text as warni
 _error()			{ printf "${_bold_}${_error_}%s${_reset_}" "$*"; } 	# style text as error
 _value()		{ printf "${_value_}%s${_reset_}" "$*"; } 				# style text as value
 _valid()			{ printf "${_valid_}%s${_reset_}" "$*"; } 				# style text as valid
+
 # Print message helper
 function feedback() {
 	what="$1"
@@ -107,6 +108,7 @@ function _log-file() {
 	fi
 }
 
+
 # Log piped message to stdout and in given config log file.
 # @param:	{string} 	$1	configuration filename.
 function _log-to() {
@@ -132,6 +134,7 @@ function _log-to() {
 	chown www-data "$(_log-file  "$cfname")"
 	chmod u=rwx,g=rwx "$(_log-file  "$cfname")"
 }
+
 
 # Make sure we have a config file
 # @param:	{string}	$config	configuration filepath.
@@ -191,6 +194,7 @@ function check_ssh_forward_rules() {
 	done
 }
 
+
 # Check if pidfile already exists -- don't start another instance if pidfile exists
 # @inherit:	{string} 	$cfname	configuration filename.
 # @inherit:	{string} 	$pidfile		PID file for host.
@@ -198,7 +202,8 @@ function check_no_pid_exists() {
 	# Define the pidfile variable for autossh (created by autossh)
 	export AUTOSSH_PIDFILE="$pidfile"
 	if [[ -e $AUTOSSH_PIDFILE ]]; then
-		feedback "host PID"  "forbidden"  "PID already exists, stop service or remove $(_value "$AUTOSSH_PIDFILE")."
+		pidfile="$(_value "$AUTOSSH_PIDFILE")"
+		feedback "host PID"  "forbidden"  "PID already exists, stop service or remove $pidfile."
 		return $abort_status
 	fi
 }
@@ -231,12 +236,12 @@ function start() {
 	local forward_list=""
 
 	# abort start if one of the following fail
-	check_config_file_exists "$config"	&& source "$config"	|| return $abort_status
-	check_tunnel_config 							|| return $abort_status
+	check_config_file_exists "$cfname" && source "$config"    || return $abort_status
+	check_tunnel_config                                                        || return $abort_status
 	export ForwardPort
-	check_ssh_forward_rules		|| return $abort_status
-	check_no_pid_exists							|| return $abort_status
-	create_pid 												|| return $abort_status
+	check_ssh_forward_rules                                                || return $abort_status
+	check_no_pid_exists                                                       || return $abort_status
+	create_pid                                                                     || return $abort_status
 
 	printf "Starting %s %s\n" "$(_info "$NAME")" "$(_value "$cfname")"
 
@@ -295,16 +300,16 @@ function stop() {
 function status() {
 	local cfname="${1:-undef}"
 	local config="$CONFIG_DIR/$cfname"
-
-
 	autossh_pid=$(cat "$pidfile")
 	local pidfile="$PID_DIR/$cfname.pid"
 
 	check_config_file_exists "$config" && cfname="$(basename "$config")" || return $abort_status
 
 	if [[ -f $pidfile ]]; then
-		feedback "${config}:autossh"  "querying"  "$(ps --pid "$autossh_pid" -o pid,user,%mem)" # select (AutoSSH) parent process
-		feedback "${config}:ssh"  "querying"  "$(ps --ppid "$autossh_pid")" # select children processes
+		# select (AutoSSH) parent process
+		feedback "${config}:autossh"  "querying"  "$(ps --pid "$autossh_pid" -o pid,user,%mem)"
+		# select children processes
+		feedback "${config}:ssh"  "querying"  "$(ps --ppid "$autossh_pid")"
 	else
 		feedback "host PID"  "missing"  "(no file $pidfile)"
 		RETVAL=1
