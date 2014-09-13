@@ -261,7 +261,6 @@ function start() {
 			-o ServerAliveCountMax=$ServerAliveCountMax \
 			-o StrictHostKeyChecking=$StrictHostKeyChecking \
 			$forward_list $RemoteUser@$RemoteHost &"
-
 	if [[ -s $pidfile ]]; then
 		touch /var/lock/"$NAME/$cfname"
 		feedback "$cfname"  "$(_valid started)"  "pid $(cat "$AUTOSSH_PIDFILE")"
@@ -311,18 +310,21 @@ function status() {
 	local cfname="${1:-undef}"
 	local config="$CONFIG_DIR/$cfname"
 	local pidfile="$PID_DIR/$cfname.pid"
-	local autossh_pid='undef'
+	local autossh_pid='undef' # see below
 
-	check_config_file_exists "$config" && cfname="$(basename "$config")" || return $abort_status
+	check_config_file_exists "$cfname" || return $abort_status
 
-	if [[ -f $pidfile ]]; then
+	if [[ -s $pidfile ]]; then
 		autossh_pid=$(cat "$pidfile")
 		# select (AutoSSH) parent process
-		feedback "${config}:autossh"  "querying"  "$(ps --pid "$autossh_pid" -o pid,user,%mem)"
+		autossh_info="$(ps --pid "$autossh_pid" -o pid,user,%mem)"
 		# select children processes
-		feedback "${config}:ssh"  "querying"  "$(ps --ppid "$autossh_pid")"
+		ssh_info="$(ps --ppid "$autossh_pid")"
+
+		feedback "${config}:autossh" 	"querying"  "$autossh_info"
+		feedback "${config}:ssh"  		"querying"  "$ssh_info"
 	else
-		feedback "host PID"  "missing"  "(no file $pidfile)"
+		feedback "$cfname"  "off"  "service has not been started yet"
 	fi
 
 	return ${RETVAL:-0}
