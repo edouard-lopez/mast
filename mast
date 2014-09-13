@@ -49,6 +49,10 @@ CONFIG_DIR="/etc/$NAME"
 # Constants
 abort_status=1 # used in 'return'
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#                                                    STDOUT FORMATTING
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 # Styling function
 # formatting
 _underline_="$(tput sgr 0 1)"	# Underline
@@ -87,7 +91,9 @@ feedback() {
 }
 
 
-
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#                                                        UTILITIES
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 # Log file path for given config
 # @param {string} config name
@@ -211,6 +217,10 @@ create_pid() {
 }
 
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#                                              START | STOP | RESTART | STATUS
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 # Start the service
 # @param:	{string}	$config		configuration filepath.
 start() {
@@ -301,6 +311,11 @@ status() {
 
 	return ${RETVAL:-0}
 }
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#                                                    COMMAND & CONTROL
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 # save the action name, and shift the command-line array
 # all remaining command-line arguments *should* be config names
