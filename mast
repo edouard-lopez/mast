@@ -262,7 +262,13 @@ function start() {
 			-o StrictHostKeyChecking=$StrictHostKeyChecking \
 			$forward_list $RemoteUser@$RemoteHost &"
 
-	touch /var/lock/"$NAME/$cfname"
+	if [[ -s $pidfile ]]; then
+		touch /var/lock/"$NAME/$cfname"
+		feedback "$cfname"  "$(_valid started)"  "pid $(cat "$AUTOSSH_PIDFILE")"
+	else
+		feedback "$cfname"  "failed"  "empty pid $pidfile"
+		rm -f "$AUTOSSH_PIDFILE" "$pidfile"
+	fi
 }
 
 
