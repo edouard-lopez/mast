@@ -41,9 +41,10 @@ autossh="$(which autossh)"
 LOG_DIR="/var/log/$NAME"
 # SSH tunnel configuration directory (a file per host)
 CONFIG_DIR="/etc/$NAME"
+PID_DIR="/var/run/$NAME"
 
 # Create PID directory missing
-[[ ! -d /var/run/$NAME ]] && mkdir -p /var/run/"$NAME"
+[[ ! -d $PID_DIR ]] && mkdir -p /var/run/"$NAME"
 [[ ! -d /var/lock/"$NAME" ]] && mkdir -p /var/lock/"$NAME"
 
 # Constants
@@ -226,8 +227,8 @@ create_pid() {
 start() {
 	config="$1"
 	cfname="$(basename "$config")"
-	pidfile="/var/run/$NAME/$cfname.pid"
 	forward_list=""
+	local pidfile="$PID_DIR/$cfname.pid"
 
 	# abort start if one of the following fail
 	check_config_file_exists "$config"	&& source "$config"	|| return $abort_status
@@ -260,8 +261,8 @@ start() {
 stop() {
 	config="$1"
 	cfname="$(basename "$config")"
-	pidfile="/var/run/$NAME/$cfname.pid"
 	autossh_pid=$(cat "$pidfile")
+	local pidfile="$PID_DIR/$cfname.pid"
 
 	# if no config names (on the command-line), stop all autossh processes
 	if [[ -z "$config" ]]; then
@@ -271,7 +272,7 @@ stop() {
 		echo
 		if (( RETVAL == 0 )); then
 			rm -f /var/lock/"$NAME"/*
-			rm -f /var/run/"$NAME"/*.pid
+			rm -f "$PID_DIR"/*.pid
 		fi
 	else
 		if [[ ! -f "$pidfile" ]]; then
@@ -296,8 +297,8 @@ stop() {
 status() {
 	config="$1"
 	cfname='undef'
-	pidfile="/var/run/$NAME/$cfname.pid"
 	autossh_pid=$(cat "$pidfile")
+	local pidfile="$PID_DIR/$cfname.pid"
 
 	check_config_file_exists "$config" && cfname="$(basename "$config")" || return $abort_status
 
