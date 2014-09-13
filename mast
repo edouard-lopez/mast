@@ -119,7 +119,7 @@ function _log-to() {
 		1>&2
 		exit 1
 	fi
-	cfname="$1"
+	local cfname="$1"
 	shift; read msg
 
 	# print to stdout
@@ -227,8 +227,8 @@ function create_pid() {
 function start() {
 	local cfname="${1:-undef}"
 	local config="$CONFIG_DIR/$cfname"
-	forward_list=""
 	local pidfile="$PID_DIR/$cfname.pid"
+	local forward_list=""
 
 	# abort start if one of the following fail
 	check_config_file_exists "$config"	&& source "$config"	|| return $abort_status
