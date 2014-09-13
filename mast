@@ -269,8 +269,8 @@ function start() {
 function stop() {
 	local cfname="${1:-undef}"
 	local config="$CONFIG_DIR/$cfname"
-	autossh_pid=$(cat "$pidfile")
 	local pidfile="$PID_DIR/$cfname.pid"
+	local autossh_pid='undef' # see below
 
 	# if no config names (on the command-line), stop all autossh processes
 	if [[ -z "$config" ]]; then
@@ -288,6 +288,7 @@ function stop() {
 			return $abort_status
 		else
 			printf "Stopping %s %s\n" "$(_info "$NAME")" "$(_value "$cfname")"
+			autossh_pid=$(cat "$pidfile")
 			if [[ -s "$pidfile" ]]; then
 				rm -f "$pidfile"  # always remove pid
 				kill "$autossh_pid"  # kill if size > 0
@@ -303,12 +304,13 @@ function stop() {
 function status() {
 	local cfname="${1:-undef}"
 	local config="$CONFIG_DIR/$cfname"
-	autossh_pid=$(cat "$pidfile")
 	local pidfile="$PID_DIR/$cfname.pid"
+	local autossh_pid='undef'
 
 	check_config_file_exists "$config" && cfname="$(basename "$config")" || return $abort_status
 
 	if [[ -f $pidfile ]]; then
+		autossh_pid=$(cat "$pidfile")
 		# select (AutoSSH) parent process
 		feedback "${config}:autossh"  "querying"  "$(ps --pid "$autossh_pid" -o pid,user,%mem)"
 		# select children processes
