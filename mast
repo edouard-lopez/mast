@@ -140,8 +140,8 @@ function _log-to() {
 
 
 # Make sure we have a config file
-# @param:	{string}	$config	configuration filepath.
-# @inherit:	{string} 	$cfname	configuration filename.
+# @param:	{string}	$config		configuration filepath.
+# @inherit:		{string} 	$cfname	configuration filename.
 function check_config_file_exists() {
 	local config="$CONFIG_DIR/$1"
 
