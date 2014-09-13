@@ -179,7 +179,7 @@ function check_ssh_forward_rules() {
 
 	# if (( ${#ForwardPort[@]} == 0 )); then
 	if (( rule_count == 0 )); then
-		feedback "ForwardPort array"  "empty"  "no value in $CONFIG_DIR/$cfname."
+		feedback "ForwardPort array"  "empty"  "no value in $CONFIG_DIR/$cfname"
 		return $abort_status
 	fi
 
@@ -190,7 +190,7 @@ function check_ssh_forward_rules() {
 				forward_list+="-$fwd "
 			;;
 			*)
-				feedback "$cfname"  "mal-formed"  "format $(_value "$fwd") isn't correct."
+				feedback "$cfname"  "mal-formed"  "format $(_value "$fwd") isn't correct"
 				return $abort_status
 			;;
 		esac
@@ -206,7 +206,7 @@ function check_no_pid_exists() {
 	export AUTOSSH_PIDFILE="$pidfile"
 	if [[ -e $AUTOSSH_PIDFILE ]]; then
 		pidfile="$(_value "$AUTOSSH_PIDFILE")"
-		feedback "host PID"  "forbidden"  "PID already exists, stop service or remove $pidfile."
+		feedback "$cfname"  "forbidden"  "service already started (PID's file exists)"
 		return $abort_status
 	fi
 }
