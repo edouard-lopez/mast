@@ -134,8 +134,8 @@ _log-to() {
 }
 
 # Make sure we have a config file
-# @param:	{string}	$config		configuration filepath.
-# @inherit:		{string} 	$cfname	configuration filename.
+# @param:	{string}	$config	configuration filepath.
+# @inherit:	{string} 	$cfname	configuration filename.
 check_config_file_exists() {
 	config="$1"
 
@@ -147,7 +147,7 @@ check_config_file_exists() {
 
 
 # Make sure all arguments/variables have been defined in config
-# @inherit:		{string} 	$cfname		configuration filename.
+# @inherit:	{string} 	$cfname		configuration filename.
 check_tunnel_config() {
 	sshArguments=( # list of required variables
 		ServerAliveInterval ServerAliveCountMax StrictHostKeyChecking
@@ -165,8 +165,8 @@ check_tunnel_config() {
 
 
 # We need at least 1 forward rule to be able to start
-# @inherit:		{string} 	$cfname		configuration filename.
-# @inherit:		{array}	$ForwardPort	list of SSH forwarding rules.
+# @inherit:	{string} 	$cfname		configuration filename.
+# @inherit:	{array}	$ForwardPort	list of SSH forwarding rules.
 check_ssh_forward_rules() {
 	# workaround the lack of ${#ForwardPort[@]} support, no logical explaination
 	for f in "${ForwardPort[@]}"; do (( rule_count++)); done
