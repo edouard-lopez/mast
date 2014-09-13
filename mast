@@ -137,7 +137,7 @@ function _log-to() {
 # @param:	{string}	$config	configuration filepath.
 # @inherit:	{string} 	$cfname	configuration filename.
 function check_config_file_exists() {
-	config="$1"
+	local config="$CONFIG_DIR/$1"
 
 	if [[ ! -f "$config" ]]; then
 		feedback "$cfname"  "missing"  "no configuration file in $CONFIG_DIR"
@@ -225,8 +225,8 @@ function create_pid() {
 # Start the service
 # @param:	{string}	$config		configuration filepath.
 function start() {
-	config="$1"
-	cfname="$(basename "$config")"
+	local cfname="${1:-undef}"
+	local config="$CONFIG_DIR/$cfname"
 	forward_list=""
 	local pidfile="$PID_DIR/$cfname.pid"
 
@@ -259,8 +259,8 @@ function start() {
 
 
 function stop() {
-	config="$1"
-	cfname="$(basename "$config")"
+	local cfname="${1:-undef}"
+	local config="$CONFIG_DIR/$cfname"
 	autossh_pid=$(cat "$pidfile")
 	local pidfile="$PID_DIR/$cfname.pid"
 
@@ -293,10 +293,10 @@ function stop() {
 
 
 function status() {
+	local cfname="${1:-undef}"
+	local config="$CONFIG_DIR/$cfname"
 
 
-	config="$1"
-	cfname='undef'
 	autossh_pid=$(cat "$pidfile")
 	local pidfile="$PID_DIR/$cfname.pid"
 
@@ -318,6 +318,29 @@ function status() {
 #                                                    COMMAND & CONTROL
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+#  List available configuration in $CONFIG_DIR
+function list_config() {
+	config_list=()
+	for config in $CONFIG_DIR/*; do
+		config_list=( "${config_list[@]}" "$(basename $config)" )
+	done
+	echo "${config_list[@]}"
+}
+
+
+# Execute action on given configurations
+# @param:	{array}	$@		list of configuration names
+function iter_action_on_config() {
+	local action="$1"; shift
+	local cfname_list=( "$@" )
+
+	for cfname in "${cfname_list[@]}"; do
+		[[ $cfname == *template || -d "$CONFIG_DIR/$cfname" || ! -f "$CONFIG_DIR/$cfname" ]] && continue
+		"$action" "$cfname";
+	done
+}
+
+
 # save the action name, and shift the command-line array
 # all remaining command-line arguments *should* be config names
 action="$1"
@@ -325,47 +348,33 @@ shift
 
 case "$action" in
 start)
+	# if no config is provided run all exisiting configs, otherwise only the specified
 	if [[ -z "$1" ]]; then
-		# if no config names on the command-line, start all /etc/autossh/ configs found
-		# for config in $(echo /etc/$NAME/${cfname:='*'}); do
-		for config in /etc/$NAME/${cfname:='*'}; do
-			[[ $config == *template || -d "$config" || ! -f "$config" ]] && continue
-			"$action" "$config";
-		done
+		iter_action_on_config "$action" $(list_config)
 	else
-		# start only the config files specified on the command-line
-		for cfname in "$@"; do
-			"$action" "/etc/$NAME/$cfname";
-		done
+		iter_action_on_config "$action" "$@"
 	fi
 	;;
 stop)
+	# if no config is provided run all exisiting configs, otherwise only the specified
 	if [[ -z "$1" ]]; then
-		# if no config names on the command-line, stop all autossh processes
-		"$action"
+		iter_action_on_config "$action" $(list_config)
 	else
-		# stop only the config files specified on the command-line
-		for cfname in "$@"; do
-			"$action" "/etc/$NAME/$cfname";
-		done
+		iter_action_on_config "$action" "$@"
 	fi
 	;;
 restart)
-	# re-execute this script, with the stop and start action names instead
-	"$0" stop "$@"
-	"$0" start "$@"
+	# if no config is provided run all exisiting configs, otherwise only the specified
+	iter_action_on_config "stop" "$@"
+	iter_action_on_config "start" "$@"
 	;;
 status)
+	# if no config is provided run all exisiting configs, otherwise only the specified
 	if [[ -z "$1" ]]; then
-		# if no config names on the command-line, show all autossh pids
-		status "$autossh"
+		iter_action_on_config "$action" $(list_config)
 		RETVAL=$?
 	else
-		# only show the status of config files specified on the command-line
-		for cfname in "$@";
-		do
-			"$action" "/etc/$NAME/$cfname"
-		done
+		iter_action_on_config "$action" "$@"
 	fi
 	;;
 *)
