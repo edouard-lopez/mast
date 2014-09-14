@@ -325,10 +325,11 @@ function status() {
 
 	if [[ -s $pidfile ]]; then
 		autossh_pid=$(cat "$pidfile")
+		no_header=( -o pid= -o comm= )
 		# select (AutoSSH) parent process
-		autossh_info="$(ps --pid "$autossh_pid" -o pid,user,%mem)"
+		autossh_info="$(ps ${no_header[@]} --pid "$autossh_pid" -o pid,user,%mem)"
 		# select children processes
-		ssh_info="$(ps --ppid "$autossh_pid")"
+		ssh_info="$(ps ${no_header[@]} --ppid "$autossh_pid")"
 
 		feedback "${config}:autossh" 	"querying"  "$autossh_info"
 		feedback "${config}:ssh"  		"querying"  "$ssh_info"
