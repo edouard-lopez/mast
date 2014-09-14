@@ -216,7 +216,7 @@ function check_no_pid_exists() {
 	export AUTOSSH_PIDFILE="$pidfile"
 	if [[ -e $AUTOSSH_PIDFILE ]]; then
 		pidfile="$(_value "$AUTOSSH_PIDFILE")"
-		feedback "$cfname"  "forbidden"  "service already started (PID's file exists)"
+		feedback "${action}ing tunnel"  "forbidden"  "service already started (PID's file exists)"
 		return $ABORT_STATUS
 	fi
 
@@ -260,7 +260,7 @@ function start() {
 	check_no_pid_exists                                                       || return $ABORT_STATUS
 	create_pid                                                                     || return $ABORT_STATUS
 
-	printf "Starting %s %s" "$(_info "$NAME")" "$(_value "$cfname")"
+	printf "Starting %s %s\n" "$(_info "$NAME")" "$(_value "$cfname")"
 
 	# start autossh as the user defined in the config file
 	# the pid file must be re-defined in the new environment
@@ -280,15 +280,16 @@ function start() {
 
 	# fixme: We can't get a exit status so we wait ~15s before considering start failed
 	max_latency=15;
-	feedback "latency" "$(_warning processing)" "wait a maximum of ${max_latency}s before failing"
+	feedback "latency" "$(_warning waiting)" "wait a maximum of ${max_latency}s before failing"
 	i=0;
 	while [[ ! -s $pidfile ]]; do sleep 1s; printf "."; (( i > max_latency)) && break; (( i++)); done;
 
 	if [[ -s $pidfile ]]; then
 		touch /var/lock/"$NAME/$cfname"
-		feedback "$cfname"  "$(_valid started)"  "pid $(cat "$AUTOSSH_PIDFILE")"
+		autossh_pid=$(cat "$pidfile")
+		feedback "${action}ing tunnel"  "$(_valid done)"  "pid $autossh_pid"
 	else
-		feedback "$cfname"  "failed"  "empty pid $pidfile"
+		feedback "${action}ing tunnel"  "failed"  "empty pid $pidfile"
 		rm -f "$AUTOSSH_PIDFILE" "$pidfile"
 		return $ABORT_STATUS
 	fi
@@ -301,6 +302,8 @@ function stop() {
 	local config="$CONFIG_DIR/$cfname"
 	local pidfile="$PID_DIR/$cfname.pid"
 	local autossh_pid='undef' # see below
+
+	printf "Starting %s %s\n" "$(_info "$NAME")" "$(_value "$cfname")"
 
 	# if no config names (on the command-line), stop all autossh processes
 	if [[ -z "$config" ]]; then
@@ -345,14 +348,14 @@ function status() {
 		autossh_pid=$(cat "$pidfile")
 		no_header=( -o pid= -o comm= )
 		# select (AutoSSH) parent process
-		autossh_info="$(ps ${no_header[@]} --pid "$autossh_pid" -o pid,user,%mem)"
+		autossh_info="$(ps "${no_header[@]}" --pid "$autossh_pid" -o pid,user,%mem)"
 		# select children processes
-		ssh_info="$(ps ${no_header[@]} --ppid "$autossh_pid")"
+		ssh_info="$(ps "${no_header[@]}" --ppid "$autossh_pid")"
 
-		feedback "${config}:autossh" 	"querying"  "$autossh_info"
-		feedback "${config}:ssh"  		"querying"  "$ssh_info"
+		feedback "${action}ing tunnel:autossh" 	"querying"  "$autossh_info"
+		feedback "${action}ing tunnel:ssh"  		"querying"  "$ssh_info"
 	else
-		feedback "$cfname"  "off"  "service has not been started yet"
+		feedback "${action}ing tunnel"  "off"  "service has not been started yet"
 	fi
 
 	return $SUCCESS_STATUS
