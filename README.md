@@ -338,8 +338,8 @@ Below is a list of available parameters and their roles:
 | `ServerAliveInterval` | `10` | **_integer_**. Sets a timeout interval in seconds[^manpage-ssh-config] after which if no data has been received from the server, `ssh` will send a message through the encrypted channel to request a response from the server.. |
 | `ServerAliveCountMax` | `3` | **_integer_**. Sets the number of server alive messages which may be sent without `ssh` receiving any messages back from the server.[^manpage-ssh-config]. |
 | `StrictHostKeyChecking` | _no_ | **_string_**. If this flag is set to _no_, `ssh` will automatically add new host keys to the user known hosts files.[^manpage-ssh-config]. |
-| `LocalUser` | _root_ | **_string_**. The user on the local machine that will be used to create the tunnel.[^js-morisset]. |
-| `IdentityFile` | _/home/$RemoteUser/.ssh/id_rsa.mast.coaxis_ | **_string_**. Path to local SSH public key, so we can connect automatically to customer's node.. |
+| `LocalUser` | _mast_ | **_string_**. The user on the local machine that will be used to create the tunnel.[^js-morisset]. |
+| `IdentityFile` | _/home/$LocalUser/.ssh/<br/>id_rsa.mast.coaxis.pub_ | **_string_**. Path to local SSH public key, so we can connect automatically to customer's node.. |
 | `ForwardPort` | `"L *:9100:imp1:9100"``"L *:9101:imp2:9100"` | **_array_**.`L [bind_address:]port:host:hostport` Specifies that the given port on the local (client) host is to be forwarded to the given host and port on the remote side.`R [bind_address:]port:host:hostport` Specifies that the given port on the remote (server) host is to be forwarded to the given host and port on the local side.. |
 | `BandwidthLimitation` | `true` | **_boolean_**. Flag to toggle  traffic limitation.`true`: enable limitation or `false`: disable.. |
 | `UploadLimit` | `1000` | **_integer_**. Upper limit for _upload_ traffic (customer's node is the source of traffic).. |
