@@ -108,52 +108,98 @@ Aliases to [Usage](#usage).
 sudo make
 ```
 
-## Channels management
+## Modules Deployment
 
-### List Channels
-List channels for given host. if none is given, iterate over all hosts.
+### Deploy
 
-| Parameter  | Default | Description |
-| ------------- | ------------- | ------------- |
-| `NAME` | _optional_ | **_string_**. Configuration name. |
+This is a meta-task that will run the following dependencies:
+
+* depends of [Deploy Service](#deploy-service) ;
+* depends of [Deploy Webapp](#deploy-webapp).
+
+### Deploy Service
+
+This task copy project file to their adequate location (_i.e._ `/etc/init.d/`, `/usr/sbin/`)
+```bash
+sudo make deploy-service
+```
+![sudo-make-deploy-service](docs/screenshots/sudo-make-deploy-service.png)
+
+### Deploy Webapp
+Deploy the webapp, configure and reloading apache, configure _/etc/hosts_
 
 ```bash
-sudo make list-channels
-# or
-sudo make list-channels NAME=nautilus
+sudo make deploy-webapp
 ```
+![sudo-make-deploy-webapp](docs/screenshots/sudo-make-deploy-webapp.png)
 
-### Add Channel
+### Install
 
-Add a new channel for the given printer.
+This is a meta-task that will run the following dependencies:
 
-| Parameter  | Default | Description |
-| ------------- | ------------- | ------------- |
-| `NAME` | **required** | **_string_**. Configuration name. |
-| `PRINTER` | **required** | **_string_**. Printer's hostname or ip. |
-| `DESC` | _optional_ | **_string_**. Description/comment of the channel. |
+* [Install project dependencies](#install-infra) ;
+* [Check system](#check-system) and [privileges](](#check-privileges)) ;
+* [Deploy the service](#deploy-service) ;
+* [Create a SSH key pair](#create-ssh-key) if necessary ;
+* and [deploy the webapp](#deploy-webapp).
 
-Example:
 ```bash
-make add-channel NAME=nautilus PRINTER=1.1.1.1 DESC="Comment blabla"
+sudo make install
 ```
-![sudo-make-add-channel](docs/screenshots/sudo-make-add-channel.png)
+![sudo-make-install](docs/screenshots/installation-02-make-install.png)
 
-### Remove Channel
+### Install Infra
 
-Remove a channel using its index position from a given host.
+Install required packages (`autossh`, `trickle`, `openssh-client`, ...) on the infrastructure.
 
-| Parameter  | Default | Description |
-| ------------- | ------------- | ------------- |
-| `ID` | **required** | **_integer_**. channel index as given by `sudo make list-channels` (cf. [List Channels](#list-channels). |
-| `NAME` | **required** | **_string_**. Configuration name. |
-
-
-For instance, to remove the _second_ channel from the client _nautilus_
 ```bash
-sudo make remove-channel ID=2 NAME=nautilus
+sudo make setup-infra
 ```
-![sudo-make-remove-channel](docs/screenshots/sudo-make-remove-channel.png)
+![sudo-make-install-infra](docs/screenshots/sudo-make-install-infra.png)
+
+### Setup Infra (alias)
+
+Aliases to [Install Infra](#instal-infra).
+
+## SSH Key
+### Create SSH Key (alias)
+
+Aliases to [${SSH_KEYFILE}](#ssh_keyfile).
+
+Create SSH keys pair on infrastructure to allow friction-less connection to the customer's node.
+
+```bash
+make create-ssh-key
+```
+![sudo-make-create-ssh-key](docs/screenshots/sudo-make-create-ssh-key.png)
+
+### `${SSH_KEYFILE}`
+
+Aliased by [Create SSH Key](#create-ssh-key-alias).
+
+### Deploy Key
+
+Copy infra public key on customer's node, as defined by `REMOTE_HOST`.
+
+Once the ssh keys are created we need to copy the public key on the (remote) customer's node, in order to leverage authentication mechanism.
+
+**Warning:** must be **run as normal user** to prevent permissions issues.
+
+![make-deploy-key](docs/screenshots/sudo-make-deploy-key.png)
+
+```bash
+make deploy-key
+```
+
+If the customer's node address differ from the default value `REMOTE_HOST` (see in the _makefile_), the new value must be passed **as an argument**, as follow:
+
+```bash
+make REMOTE_HOST=11.22.33.44 deploy-key
+```
+
+### Config SSH (alias)
+
+Aliases to [Deploy Key](#deploy-key).
 
 ## Hosts management
 ### List Hosts
@@ -207,98 +253,52 @@ make check-system
 Once the system is ready for the service, you should get the following output:
 ![dependencies.(docs/screenshots/sudo-make-check-system](docs/screenshots/sudo-make-check-system.png)
 
-## SSH Key
-### Create SSH Key (alias)
+## Channels management
 
-Aliases to [${SSH_KEYFILE}](#ssh_keyfile).
+### List Channels
+List channels for given host. if none is given, iterate over all hosts.
 
-Create SSH keys pair on infrastructure to allow friction-less connection to the customer's node.
-
-```bash
-make create-ssh-key
-```
-![sudo-make-create-ssh-key](docs/screenshots/sudo-make-create-ssh-key.png)
-
-### `${SSH_KEYFILE}`
-
-Aliased by [Create SSH Key](#create-ssh-key-alias).
-
-### Deploy Key
-
-Copy infra public key on customer's node, as defined by `REMOTE_HOST`.
-
-Once the ssh keys are created we need to copy the public key on the (remote) customer's node, in order to leverage authentication mechanism.
-
-**Warning:** must be **run as normal user** to prevent permissions issues.
-
-![make-deploy-key](docs/screenshots/sudo-make-deploy-key.png)
+| Parameter  | Default | Description |
+| ------------- | ------------- | ------------- |
+| `NAME` | _optional_ | **_string_**. Configuration name. |
 
 ```bash
-make deploy-key
+sudo make list-channels
+# or
+sudo make list-channels NAME=nautilus
 ```
 
-If the customer's node address differ from the default value `REMOTE_HOST` (see in the _makefile_), the new value must be passed **as an argument**, as follow:
+### Add Channel
 
+Add a new channel for the given printer.
+
+| Parameter  | Default | Description |
+| ------------- | ------------- | ------------- |
+| `NAME` | **required** | **_string_**. Configuration name. |
+| `PRINTER` | **required** | **_string_**. Printer's hostname or ip. |
+| `DESC` | _optional_ | **_string_**. Description/comment of the channel. |
+
+Example:
 ```bash
-make REMOTE_HOST=11.22.33.44 deploy-key
+make add-channel NAME=nautilus PRINTER=1.1.1.1 DESC="Comment blabla"
 ```
+![sudo-make-add-channel](docs/screenshots/sudo-make-add-channel.png)
 
-### Config SSH (alias)
+### Remove Channel
 
-Aliases to [Deploy Key](#deploy-key).
+Remove a channel using its index position from a given host.
 
-## Modules Deployment
+| Parameter  | Default | Description |
+| ------------- | ------------- | ------------- |
+| `ID` | **required** | **_integer_**. channel index as given by `sudo make list-channels` (cf. [List Channels](#list-channels). |
+| `NAME` | **required** | **_string_**. Configuration name. |
 
-### Deploy
 
-This is a meta-task that will run the following dependencies:
-
-* depends of [Deploy Service](#deploy-service) ;
-* depends of [Deploy Webapp](#deploy-webapp).
-
-### Deploy Service
-
-This task copy project file to their adequate location (_i.e._ `/etc/init.d/`, `/usr/sbin/`)
+For instance, to remove the _second_ channel from the client _nautilus_
 ```bash
-sudo make deploy-service
+sudo make remove-channel ID=2 NAME=nautilus
 ```
-![sudo-make-deploy-service](docs/screenshots/sudo-make-deploy-service.png)
-
-### Deploy Webapp
-Deploy the webapp, configure and reloading apache, configure _/etc/hosts_
-
-```bash
-sudo make deploy-webapp
-```
-![sudo-make-deploy-webapp](docs/screenshots/sudo-make-deploy-webapp.png)
-
-### Install
-
-This is a meta-task that will run the following dependencies:
-
-* [Install project dependencies](#install-infra) ;
-* [Check system](#check-system) and [privileges](](#check-privileges)) ;
-* [Deploy the service](#deploy-service) ;
-* [Create a SSH key pair](#create-ssh-key) if necessary ;
-* and [deploy the webapp](#deploy-webapp).
-
-```bash
-sudo make install
-```
-![sudo-make-install](docs/screenshots/installation-02-make-install.png)
-
-### Install Infra
-
-Install required packages (`autossh`, `trickle`, `openssh-client`, ...) on the infrastructure.
-
-```bash
-sudo make setup-infra
-```
-![sudo-make-install-infra](docs/screenshots/sudo-make-install-infra.png)
-
-### Setup Infra (alias)
-
-Aliases to [Install Infra](#instal-infra).
+![sudo-make-remove-channel](docs/screenshots/sudo-make-remove-channel.png)
 
 ## Helper
 ### Usage
