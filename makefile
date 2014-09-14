@@ -464,7 +464,7 @@ check-privileges:
 	fi
 	@usermod --append --groups www-data ${REMOTE_USER}
 	@# ensure that our user has a readable ~/.ssh directory
-	if [[ ! -d $$HOME/.ssh ]]; then \
+	@if [[ ! -d $$HOME/.ssh ]]; then \
 		mkdir "$$HOME/.ssh" ; \
 		chown $$SUDO_USER:$$SUDO_USER -R "$$HOME/.ssh" ; \
 		chmod u=rwx,go= "$$HOME/.ssh" ; \
