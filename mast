@@ -313,11 +313,11 @@ function stop() {
 	elif [[ -s $pidfile ]]; then
 		autossh_pid=$(cat "$pidfile")
 
-		if kill "$autossh_pid" &> /dev/null; then
-			rm -f /var/lock/"$NAME"/*
-			rm -f "$pidfile" # in case pidfile is empty
-			kill -9 9100 &> /dev/null # some time kill -15 isn't enough
-		fi
+		kill "$autossh_pid" &> /dev/null
+		rm -f /var/lock/"$NAME"/*
+		rm -f "$pidfile" # in case pidfile is empty
+		kill -9 "$autossh_pid" &> /dev/null # some time kill -15 isn't enough
+
 		feedback "${action}ing tunnel"  "$(_valid done)"  "pid $autossh_pid"
 	else
 		feedback "${action}ing tunnel"  "failed"  "empty pid $pidfile"
