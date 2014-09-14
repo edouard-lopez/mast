@@ -250,17 +250,19 @@ function start() {
 
 	# start autossh as the user defined in the config file
 	# the pid file must be re-defined in the new environment
-	su - "$LocalUser" -c "
-		export AUTOSSH_PIDFILE=$AUTOSSH_PIDFILE; \
+	su - "$LocalUser" -c "\
+		export AUTOSSH_LOGLEVEL=7; \
+		export AUTOSSH_DEBUG=true; \
+		export AUTOSSH_PIDFILE=\"$AUTOSSH_PIDFILE\"; \
 		export AUTOSSH_PORT=0; \
-		export AUTOSSH_LOGFILE=\"$LOG_DIR/$NAME-$cfname\".log; \
+		export AUTOSSH_LOGFILE=\"$LOG_DIR/$NAME-$cfname.log\"; \
 		$autossh -q -f -N -p $RemotePort \
 			-i $IdentityFile \
 			-v \
 			-o ServerAliveInterval=$ServerAliveInterval \
 			-o ServerAliveCountMax=$ServerAliveCountMax \
 			-o StrictHostKeyChecking=$StrictHostKeyChecking \
-			$forward_list $RemoteUser@$RemoteHost &"
+			$forward_list $RemoteUser@$RemoteHost"
 	if [[ -s $pidfile ]]; then
 		touch /var/lock/"$NAME/$cfname"
 		feedback "$cfname"  "$(_valid started)"  "pid $(cat "$AUTOSSH_PIDFILE")"
