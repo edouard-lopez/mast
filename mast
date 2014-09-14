@@ -268,7 +268,7 @@ function start() {
 	max_latency=15;
 	feedback "latency" "$(_warning processing)" "wait a maximum of ${max_latency}s before failing"
 	i=0;
-	while [[ ! -f $pidfile ]]; do printf "."; (( i > max_latency)) && break; (( i++)); done;
+	while [[ ! -s $pidfile ]]; do sleep 1s; printf "."; (( i > max_latency)) && break; (( i++)); done;
 
 	if [[ -s $pidfile ]]; then
 		touch /var/lock/"$NAME/$cfname"
