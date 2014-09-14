@@ -342,15 +342,15 @@ function status() {
 	if [[ -s $pidfile ]]; then
 		autossh_pid=$(cat "$pidfile")
 		# select (AutoSSH) parent process
-		autossh_info="$(ps --no-headers --pid "$autossh_pid" -o pid,user,etime,args)"
+		autossh_info=( $(ps --no-headers --pid "$autossh_pid" -o pid,etime) )
 		channel_ports="$(ps --no-headers --pid "$autossh_pid" -o args | grep -z -oE -- ':[[:digit:]]+:' | tr -s ':\n' ',' | sed -e 's/^,//' -e 's/,$//')"
 		# select children processes
-		ssh_info="$(ps --no-headers --ppid "$autossh_pid")"
+		ssh_info="$(ps --no-headers --ppid "$autossh_pid" -o pid,args | grep -z -oE -- ':[[:digit:]]+:' | tr -s ':\n' ',' | sed -e 's/^,//' -e 's/,$//')"
 
-		feedback "${action}ing tunnel:autossh" 	"gave"  "$autossh_info"
-		feedback "${action}ing tunnel:ssh"  		"gave"  "$ssh_info"
+		feedback "$cfname:autossh" 	"$(_valid "on")"  "pid: ${autossh_info[0]}, uptime: ${autossh_info[1]}"
+		feedback "${cfname//?/ } ssh"  		"$(_valid "on")"  "port: ${ssh_info:-?}"
 	else
-		feedback "${action}ing tunnel"  "off"  "service has not been started yet"
+		feedback "$cfname"  "off"  "service has not been started yet"
 	fi
 
 	return $SUCCESS_STATUS
