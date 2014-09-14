@@ -244,7 +244,7 @@ function create_pid() {
 #                                              START | STOP | RESTART | STATUS
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-# Start the service
+# START given configuration
 # @param:	{string}	$config		configuration filepath.
 function start() {
 	local cfname="${1:-undef}"
@@ -297,6 +297,8 @@ function start() {
 	return $SUCCESS_STATUS
 }
 
+# STOP given configuration
+# @param:	{string}	$config		configuration filepath.
 function stop() {
 	local cfname="${1:-undef}"
 	local config="$CONFIG_DIR/$cfname"
@@ -326,6 +328,8 @@ function stop() {
 }
 
 
+# Get STATUS for given configuration
+# @param:	{string}	$config		configuration filepath.
 function status() {
 	local cfname="${1:-undef}"
 	local config="$CONFIG_DIR/$cfname"
