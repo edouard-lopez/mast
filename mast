@@ -375,8 +375,10 @@ function iter_action_on_config() {
 	local cfname_list=( "$@" )
 
 	for cfname in "${cfname_list[@]}"; do
-		[[ $cfname == *template || -d "$CONFIG_DIR/$cfname" || ! -f "$CONFIG_DIR/$cfname" ]] && continue
-		"$action" "$cfname";
+		config="$CONFIG_DIR/$cfname"
+		[[ $cfname == *template || -d $config || ! -f $config ]] && continue
+		check_config_file_exists "$cfname" || continue
+		"$action" "$cfname"
 	done
 
 	return $SUCCESS_STATUS
