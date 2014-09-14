@@ -34,7 +34,6 @@
 # Import function library
 source /lib/lsb/init-functions
 
-RETVAL=0 # default return value
 NAME=mast
 autossh="$(which autossh)"
 # template name for log file
@@ -48,7 +47,8 @@ PID_DIR="/var/run/$NAME"
 [[ ! -d /var/lock/"$NAME" ]] && mkdir -p /var/lock/"$NAME"
 
 # Constants
-abort_status=1 # used in 'return'
+SUCCESS_STATUS=0 # used in 'return'
+ABORT_STATUS=1 # used in 'return'
 
 # debug mode (need to `export DEBUG='true'` and run as `sudo -E`, see installation.md)
 [[ -n $DEBUG ]] && set -x
@@ -109,6 +109,8 @@ function _log-file() {
 	else
 		echo "$LOG_DIR/$NAME-$1.log"
 	fi
+
+	return $SUCCESS_STATUS
 }
 
 
@@ -136,6 +138,8 @@ function _log-to() {
 	# open privileges to www-data
 	chown www-data "$(_log-file  "$cfname")"
 	chmod u=rwx,g=rwx "$(_log-file  "$cfname")"
+
+	return $SUCCESS_STATUS
 }
 
 
@@ -147,8 +151,10 @@ function check_config_file_exists() {
 
 	if [[ ! -f "$config" ]]; then
 		feedback "$cfname"  "missing"  "no configuration file in $CONFIG_DIR"
-		return $abort_status
+		return $ABORT_STATUS
 	fi
+
+	return $SUCCESS_STATUS
 }
 
 
@@ -164,9 +170,11 @@ function check_tunnel_config() {
 	for var in "${sshArguments[@]}"; do
 		if [[ -z ${!var} ]]; then # test if each config's variable is empty (e.g. $ServerAliveInterval content)
 			feedback "$var"  "undefined"  "no value in $CONFIG_DIR/$cfname"
-			return $abort_status
+			return $ABORT_STATUS
 		fi
 	done
+
+	return $SUCCESS_STATUS
 }
 
 
@@ -180,7 +188,7 @@ function check_ssh_forward_rules() {
 	# if (( ${#ForwardPort[@]} == 0 )); then
 	if (( rule_count == 0 )); then
 		feedback "ForwardPort array"  "empty"  "no value in $CONFIG_DIR/$cfname"
-		return $abort_status
+		return $ABORT_STATUS
 	fi
 
 	for fwd in "${ForwardPort[@]}"; do
@@ -191,10 +199,12 @@ function check_ssh_forward_rules() {
 			;;
 			*)
 				feedback "$cfname"  "mal-formed"  "format $(_value "$fwd") isn't correct"
-				return $abort_status
+				return $ABORT_STATUS
 			;;
 		esac
 	done
+
+	return $SUCCESS_STATUS
 }
 
 
@@ -207,8 +217,10 @@ function check_no_pid_exists() {
 	if [[ -e $AUTOSSH_PIDFILE ]]; then
 		pidfile="$(_value "$AUTOSSH_PIDFILE")"
 		feedback "$cfname"  "forbidden"  "service already started (PID's file exists)"
-		return $abort_status
+		return $ABORT_STATUS
 	fi
+
+	return $SUCCESS_STATUS
 }
 
 
@@ -221,8 +233,10 @@ function create_pid() {
 	# check to make sure pidfile was created
 	if [[ ! -f $AUTOSSH_PIDFILE ]]; then
 		feedback "$cfname's PID creation"  "aborted"  ""
-		return $abort_status
+		return $ABORT_STATUS
 	fi
+
+	return $SUCCESS_STATUS
 }
 
 
@@ -239,12 +253,12 @@ function start() {
 	local forward_list=""
 
 	# abort start if one of the following fail
-	check_config_file_exists "$cfname" && source "$config"    || return $abort_status
-	check_tunnel_config                                                        || return $abort_status
+	check_config_file_exists "$cfname" && source "$config"    || return $ABORT_STATUS
+	check_tunnel_config                                                        || return $ABORT_STATUS
 	export ForwardPort
-	check_ssh_forward_rules                                                || return $abort_status
-	check_no_pid_exists                                                       || return $abort_status
-	create_pid                                                                     || return $abort_status
+	check_ssh_forward_rules                                                || return $ABORT_STATUS
+	check_no_pid_exists                                                       || return $ABORT_STATUS
+	create_pid                                                                     || return $ABORT_STATUS
 
 	printf "Starting %s %s" "$(_info "$NAME")" "$(_value "$cfname")"
 
@@ -276,9 +290,11 @@ function start() {
 	else
 		feedback "$cfname"  "failed"  "empty pid $pidfile"
 		rm -f "$AUTOSSH_PIDFILE" "$pidfile"
+		return $ABORT_STATUS
 	fi
-}
 
+	return $SUCCESS_STATUS
+}
 
 function stop() {
 	local cfname="${1:-undef}"
@@ -310,8 +326,10 @@ function stop() {
 				rm -f "$pidfile"  # in case pidfile is empty
 			fi
 		fi
+		return $ABORT_STATUS
 	fi
-	return ${RETVAL:-0}
+
+	return $SUCCESS_STATUS
 }
 
 
@@ -321,7 +339,7 @@ function status() {
 	local pidfile="$PID_DIR/$cfname.pid"
 	local autossh_pid='undef' # see below
 
-	check_config_file_exists "$cfname" || return $abort_status
+	check_config_file_exists "$cfname" || return $ABORT_STATUS
 
 	if [[ -s $pidfile ]]; then
 		autossh_pid=$(cat "$pidfile")
@@ -337,7 +355,7 @@ function status() {
 		feedback "$cfname"  "off"  "service has not been started yet"
 	fi
 
-	return ${RETVAL:-0}
+	return $SUCCESS_STATUS
 }
 
 
@@ -352,6 +370,8 @@ function list_config() {
 		config_list=( "${config_list[@]}" "$(basename "$config")" )
 	done
 	echo "${config_list[@]}"
+
+	return $SUCCESS_STATUS
 }
 
 
@@ -365,6 +385,8 @@ function iter_action_on_config() {
 		[[ $cfname == *template || -d "$CONFIG_DIR/$cfname" || ! -f "$CONFIG_DIR/$cfname" ]] && continue
 		"$action" "$cfname";
 	done
+
+	return $SUCCESS_STATUS
 }
 
 
@@ -399,14 +421,11 @@ status)
 	# if no config is provided run all exisiting configs, otherwise only the specified
 	if [[ -z "$1" ]]; then
 		iter_action_on_config "$action" $(list_config)
-		RETVAL=$?
 	else
 		iter_action_on_config "$action" "$@"
 	fi
 	;;
 *)
 	printf "Usage: %s {start|stop|restart|status} {config names...}\n" "$0"
-	RETVAL=1
 	;;
 esac
-exit $RETVAL
