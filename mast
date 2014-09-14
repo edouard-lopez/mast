@@ -306,29 +306,19 @@ function stop() {
 	printf "Starting %s %s\n" "$(_info "$NAME")" "$(_value "$cfname")"
 
 	# if no config names (on the command-line), stop all autossh processes
-	if [[ -z "$config" ]]; then
-		printf "Stopping all %s: " "$(_info "$NAME")"
-		kill "$autossh_pid"
-		RETVAL=$?
-		echo
-		if (( RETVAL == 0 )); then
+	if [[ ! -f $pidfile ]]; then
+		feedback "${action}ing tunnel"  "$(_warning skipped)"  "already stopped"
+	elif [[ -s $pidfile ]]; then
+		autossh_pid=$(cat "$pidfile")
+
+		if kill -9 "$autossh_pid"; then
 			rm -f /var/lock/"$NAME"/*
-			rm -f "$PID_DIR"/*.pid
+			rm -f "$pidfile" # in case pidfile is empty
 		fi
+		feedback "${action}ing tunnel"  "$(_valid done)"  "pid $autossh_pid"
 	else
-		if [[ ! -f "$pidfile" ]]; then
-			printf "%s %s: %s missing\n" "$NAME" "$cfname" "$pidfile" 1>&2 | _log-to "$cfname"
-			return $abort_status
-		else
-			printf "Stopping %s %s\n" "$(_info "$NAME")" "$(_value "$cfname")"
-			autossh_pid=$(cat "$pidfile")
-			if [[ -s "$pidfile" ]]; then  # kill if size > 0
-				rm -f "$pidfile"  # always remove pid
-				kill "$autossh_pid"
-			else
-				rm -f "$pidfile"  # in case pidfile is empty
-			fi
-		fi
+		feedback "${action}ing tunnel"  "failed"  "empty pid $pidfile"
+		rm -f "$AUTOSSH_PIDFILE" "$pidfile"
 		return $ABORT_STATUS
 	fi
 
