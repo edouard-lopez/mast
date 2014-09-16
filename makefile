@@ -178,7 +178,7 @@ add-channel:
 								"# See /etc/mast/template for more informations" \
 								"# - - - - - - - - - - - - - - - - - - - - - - - - - - " \
 		> "${CONFIG_DIR}/.${NAME}"; \
-	declare -p RemoteHost RemoteUser RemotePort ServerAliveInterval ServerAliveCountMax StrictHostKeyChecking LocalUser IdentityFile ForwardPort BandwidthLimitation UploadLimit DownloadLimit >> "${CONFIG_DIR}/.${NAME}" \
+	declare -p Compression RemoteHost RemoteUser RemotePort ServerAliveInterval ServerAliveCountMax StrictHostKeyChecking LocalUser IdentityFile ForwardPort BandwidthLimitation UploadLimit DownloadLimit >> "${CONFIG_DIR}/.${NAME}" \
 		&& mv "${CONFIG_DIR}"/{.,}"${NAME}" \
 		&& printf "\t%-50s\t%s\n" $$'$(call VALUE,'"$$newRule"$$')' $$'$(call SUCCESS,added)' \
 		||    printf "\t%-50s\t%s\n" $$'$(call VALUE,'"$$newRule"$$')' $$'$(call ERROR,failed)'

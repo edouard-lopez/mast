@@ -162,6 +162,7 @@ function check_config_file_exists() {
 # @inherit:	{string} 	$cfname		configuration filename.
 function check_tunnel_config() {
 	sshArguments=( # list of required variables
+           Compression
 		ServerAliveInterval ServerAliveCountMax StrictHostKeyChecking
 		LocalUser IdentityFile RemoteUser RemoteHost RemotePort
 		BandwidthLimitation UploadLimit DownloadLimit
@@ -273,6 +274,7 @@ function start() {
 		$autossh -q -f -N -p $RemotePort \
 			-i $IdentityFile \
 			-v \
+			-o Compression=$Compression \
 			-o ServerAliveInterval=$ServerAliveInterval \
 			-o ServerAliveCountMax=$ServerAliveCountMax \
 			-o StrictHostKeyChecking=$StrictHostKeyChecking \
