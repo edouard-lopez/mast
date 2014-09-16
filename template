@@ -12,6 +12,9 @@ RemoteHost="{{HOST}}"
 RemoteUser="coaxis"
 RemotePort=22
 
+# compression level isn't available in SSH2 (cf. http://serverfault.com/q/388658)
+Compression="yes"
+
 # Check connection every 10 seconds, and after 3 tries (30 seconds), drop and
 # let autossh re-connect.
 ServerAliveInterval=3
