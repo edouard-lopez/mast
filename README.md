@@ -63,6 +63,8 @@ Build on top of both the service and the utility toolbox
 
 ## Installation
 
+This is a short procedure, if you want **more details refer to the [step by step installation](INSTALLATION.md)**.
+
 First, be sure to have _make_ installed on your system:
 ```bash
 apt-get install -y make
@@ -70,8 +72,9 @@ apt-get install -y make
 
 Then, you must get the project on both the customer's node and your infrastructure:
 ```bash
-wget --output-document="mast.tar.gz" https://github.com/edouard-lopez/mast/archive/master.tar.gz
-tar xvzf ./mast.tar.gz && cd mast-master
+branch=master;
+wget --output-document="mast.tar.gz" https://github.com/edouard-lopez/mast/archive/$branch.tar.gz
+tar xvzf mast.tar.gz && cd mast-$branch
 ```
 Finally, you can type:
 ```bash
