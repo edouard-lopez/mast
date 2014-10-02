@@ -387,8 +387,8 @@ deploy-service:
 		elif [[ -d "${LOG_DIR}" ]]; then \
 			printf "%s\t%s\n" $$'$(call WARNING,skipped)' $$'$(call VALUE, ${LOG_DIR}/)'; \
 		fi
-		@chown ${APP}:www-data -R "${LOG_DIR}"
-		@chmod u=rwx,g=rwx "${LOG_DIR}"
+		@chown ${APP}:www-data -R "${LOG_DIR}" "${CONFIG_DIR}"
+		@chmod u=rwx,g=rwx -R "${LOG_DIR}" "${CONFIG_DIR}"
 
 
 
