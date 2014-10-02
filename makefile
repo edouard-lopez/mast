@@ -333,6 +333,11 @@ deploy-webapp:
 			printf "%s\n" $$'$(call DEBUG,/etc/hosts already existing)'; \
 		fi
 
+	@# check for ServerName variable
+	@if ! grep -iq ServerName /etc/apache2/apache2.conf; then \
+		echo "ServerName localhost" >> /etc/apache2/apache2.conf; \
+	fi
+
 	@# reloading Apache
 	@printf "\t%-50s" $$'$(call INFO,reloading Apache)'
 		@if apache2ctl configtest &> /dev/null; then \
