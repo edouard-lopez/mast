@@ -235,8 +235,8 @@ add-host: deploy-key
 	else \
 		printf "Missing customer name…\t%s\n" "${NAME}"; \
 	fi
-	@chmod g=rwx "${CONFIG_DIR}/${NAME}"
-	@chgrp www-data "${CONFIG_DIR}/${NAME}"
+	@chmod u=rwx,g=rwx,o= "${CONFIG_DIR}/${NAME}"
+	@chgrp ${APP}:www-data "${CONFIG_DIR}/${NAME}"
 
 
 # Remove host using its configuration name
@@ -388,7 +388,7 @@ deploy-service:
 			printf "%s\t%s\n" $$'$(call WARNING,skipped)' $$'$(call VALUE, ${LOG_DIR}/)'; \
 		fi
 	@chown ${APP}:www-data -R "${LOG_DIR}" "${CONFIG_DIR}"
-	@chmod u=rwx,g=rwx -R "${LOG_DIR}" "${CONFIG_DIR}"
+	@chmod u=rwx,g=rwx,o= -R "${LOG_DIR}" "${CONFIG_DIR}"
 
 
 
@@ -447,8 +447,12 @@ check-privileges:
 	@printf "Checking…\t%s\n" $$'$(call VALUE,Privileges)'
 	@[[ ! -d ${LOG_DIR} ]] && mkdir "${LOG_DIR}" || true
 	@chown ${APP}:www-data -R "${LOG_DIR}"
+	@chmod u=rwx,g=rwx,o= -R "${LOG_DIR}"
+
 	@[[ ! -d ${CONFIG_DIR} ]] && mkdir "${CONFIG_DIR}" || true
 	@chown ${APP}:www-data -R "${CONFIG_DIR}"
+	@chmod u=rwx,g=rwx,o= -R "${CONFIG_DIR}"
+
 	@# open privileges to www-data
 	@printf "\t%-50s\t" $$'$(call INFO,service\'s user)'
 	@if ! getent passwd ${APP} > /dev/null; then \
