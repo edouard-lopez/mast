@@ -443,7 +443,10 @@ ${SSH_KEYFILE}:
 # Install packages required on the Coaxis' INFRAstructure
 install-infra:
 	@printf "Installing…\t%s\n" $$'$(call VALUE, Infrastructure\'s node)'
-	apt-get update
+	@aptUpdateExpiration=86400; \
+	lastAptUpdate=$$(stat -c '%Z' /var/cache/apt/pkgcache.bin); \
+	now=$$(date +%s); \
+	(( now - lastAptUpdate > aptUpdateExpiration )) && apt-get update || true
 	apt-get -y -q install ${DEPS_CORE_INFRA} ${DEPS_UTILS}
 
 
