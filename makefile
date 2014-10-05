@@ -23,6 +23,8 @@ REMOTE_INIT_PWD:=C1i3ntRmSid3
 # Seriously, otherwise you VOID THE SUPPORT AND WARRANTY contract.
 
 APP:=mast
+# group holding web server (default is Apache2f)
+WEB_SERVER:=www-data
 
 # force use of Bash
 SHELL := /bin/bash
@@ -303,7 +305,7 @@ deploy-webapp:
 			printf "%s (already existing)\n" $$'$(call WARNING,skipped)' 1>&2; \
 		fi; \
 		chmod u=rwx,g=rwx,o= -R "${WEBAPP}/"; \
-		chown $${SUDO_USER}:www-data -R "${WEBAPP}/"
+		chown $${SUDO_USER}:${WEB_SERVER} -R "${WEBAPP}/"
 	@printf "\t%s\n" $$'$(call DEBUG,${WEBAPP_REPO})'
 
 	@# deploying webapp: /var/www/mast
@@ -358,7 +360,7 @@ deploy-service:
 		&& cp mast /etc/init.d/ \
 		&& printf "$(call SUCCESS,done)\n" \
 		||    printf "$(call ERROR,error)\n" 1>&2
-		@chown www-data /etc/init.d/mast
+		@chown ${WEB_SERVER} /etc/init.d/mast
 		@update-rc.d mast defaults > /dev/null
 
 	@printf "\t%-50s" $$'$(call INFO,utils)'
@@ -366,7 +368,7 @@ deploy-service:
 		&& cp makefile /usr/sbin/mast-utils \
 		&& printf "$(call SUCCESS,done)\n" \
 		||    printf "$(call ERROR,error)\n" 1>&2
-		@chown www-data /usr/sbin/mast-utils; \
+		@chown ${WEB_SERVER} /usr/sbin/mast-utils; \
 
 	@printf "\t%-50s" $$'$(call INFO,config directory)'
 		@if [[ ! -d "${CONFIG_DIR}" ]]; then \
@@ -392,7 +394,7 @@ deploy-service:
 		elif [[ -d "${LOG_DIR}" ]]; then \
 			printf "%s\t%s\n" $$'$(call WARNING,skipped)' $$'$(call VALUE, ${LOG_DIR}/)'; \
 		fi
-	@chown ${APP}:www-data -R "${LOG_DIR}" "${CONFIG_DIR}"
+	@chown ${APP}:${WEB_SERVER} -R "${LOG_DIR}" "${CONFIG_DIR}"
 	@chmod u=rwx,g=rwx,o= -R "${LOG_DIR}" "${CONFIG_DIR}"
 
 
@@ -452,11 +454,11 @@ install-infra:
 
 # Check files permission
 check-privileges:
-	@# open privileges to www-data
+	@# open privileges to ${WEB_SERVER}
 	@printf "\t%-50s\t" $$'$(call INFO,service\'s user)'
 	@if ! getent passwd ${APP} > /dev/null; then \
 		useradd \
-			--gid www-data \
+			--gid ${WEB_SERVER} \
 			--groups ${REMOTE_USER} \
 			--password "$$(mkpasswd "${REMOTE_INIT_PWD}")" \
 			--create-home \
@@ -468,7 +470,7 @@ check-privileges:
 		printf "%s" $$'$(call WARNING,modified)\n'; \
 		usermod --append --groups ${REMOTE_USER} ${REMOTE_USER}; \
 	fi
-	@usermod --append --groups www-data ${REMOTE_USER}
+	@usermod --append --groups ${WEB_SERVER} ${REMOTE_USER}
 	@# ensure that our user has a readable ~/.ssh directory
 	@if [[ ! -d $$HOME/.ssh ]]; then \
 		mkdir "$$HOME/.ssh" ; \
@@ -477,11 +479,11 @@ check-privileges:
 	fi
 	@printf "Checking…\t%s\n" $$'$(call VALUE,Privileges)'
 	@[[ ! -d ${LOG_DIR} ]] && mkdir "${LOG_DIR}" || true
-	@chown ${APP}:www-data -R "${LOG_DIR}"
+	@chown ${APP}:${WEB_SERVER} -R "${LOG_DIR}"
 	@chmod u=rwx,g=rwx,o= -R "${LOG_DIR}"
 
 	@[[ ! -d ${CONFIG_DIR} ]] && mkdir "${CONFIG_DIR}" || true
-	@chown ${APP}:www-data -R "${CONFIG_DIR}"
+	@chown ${APP}:${WEB_SERVER} -R "${CONFIG_DIR}"
 	@chmod u=rwx,g=rwx,o= -R "${CONFIG_DIR}"
 
 
