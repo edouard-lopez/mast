@@ -237,8 +237,6 @@ add-host: deploy-key
 	else \
 		printf "Missing customer name…\t%s\n" "${NAME}"; \
 	fi
-	@chmod u=rwx,g=rwx,o= "${CONFIG_DIR}/${NAME}"
-	@chgrp ${APP}:www-data "${CONFIG_DIR}/${NAME}"
 
 
 # Remove host using its configuration name
@@ -385,6 +383,7 @@ deploy-service:
 			&& cp {.,${CONFIG_DIR}}/template \
 				&& printf "%s\t%s\n" $$'$(call SUCCESS,done)' $$'$(call VALUE, ${CONFIG_DIR}/template)' \
 				||    printf "$(call ERROR,error)\n" 1>&2
+			@chown ${APP}:${WEB_SERVER} ${CONFIG_DIR}/template
 
 	@printf "\t%-50s" $$'$(call INFO,log directory)'
 		@if [[ ! -d "${LOG_DIR}" ]]; then \
@@ -457,6 +456,7 @@ check-privileges:
 	@# open privileges to ${WEB_SERVER}
 	@printf "\t%-50s\t" $$'$(call INFO,service\'s user)'
 	@if ! getent passwd ${APP} > /dev/null; then \
+		groupadd -r ${APP}; \
 		useradd \
 			--gid ${WEB_SERVER} \
 			--groups ${REMOTE_USER} \
@@ -471,6 +471,8 @@ check-privileges:
 		usermod --append --groups ${REMOTE_USER} ${REMOTE_USER}; \
 	fi
 	@usermod --append --groups ${WEB_SERVER} ${REMOTE_USER}
+	@usermod --append --groups ${APP} ${WEB_SERVER}
+	@newgrp - ${WEB_SERVER} &
 	@# ensure that our user has a readable ~/.ssh directory
 	@if [[ ! -d $$HOME/.ssh ]]; then \
 		mkdir "$$HOME/.ssh" ; \

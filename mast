@@ -135,10 +135,6 @@ function _log-to() {
 	# print to log file
 	printf "[%s] %s\n" "$(_info "${FUNCNAME[1]}")" "$msg" >> "$(_log-file  "$cfname")"
 
-	# open privileges to www-data
-	chown www-data "$(_log-file  "$cfname")"
-	chmod u=rwx,g=rwx "$(_log-file  "$cfname")"
-
 	return $SUCCESS_STATUS
 }
 
