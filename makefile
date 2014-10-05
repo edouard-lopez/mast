@@ -449,15 +449,6 @@ install-infra:
 
 # Check files permission
 check-privileges:
-	@printf "Checking…\t%s\n" $$'$(call VALUE,Privileges)'
-	@[[ ! -d ${LOG_DIR} ]] && mkdir "${LOG_DIR}" || true
-	@chown ${APP}:www-data -R "${LOG_DIR}"
-	@chmod u=rwx,g=rwx,o= -R "${LOG_DIR}"
-
-	@[[ ! -d ${CONFIG_DIR} ]] && mkdir "${CONFIG_DIR}" || true
-	@chown ${APP}:www-data -R "${CONFIG_DIR}"
-	@chmod u=rwx,g=rwx,o= -R "${CONFIG_DIR}"
-
 	@# open privileges to www-data
 	@printf "\t%-50s\t" $$'$(call INFO,service\'s user)'
 	@if ! getent passwd ${APP} > /dev/null; then \
@@ -481,6 +472,14 @@ check-privileges:
 		chown $$SUDO_USER:$$SUDO_USER -R "$$HOME/.ssh" ; \
 		chmod u=rwx,go= "$$HOME/.ssh" ; \
 	fi
+	@printf "Checking…\t%s\n" $$'$(call VALUE,Privileges)'
+	@[[ ! -d ${LOG_DIR} ]] && mkdir "${LOG_DIR}" || true
+	@chown ${APP}:www-data -R "${LOG_DIR}"
+	@chmod u=rwx,g=rwx,o= -R "${LOG_DIR}"
+
+	@[[ ! -d ${CONFIG_DIR} ]] && mkdir "${CONFIG_DIR}" || true
+	@chown ${APP}:www-data -R "${CONFIG_DIR}"
+	@chmod u=rwx,g=rwx,o= -R "${CONFIG_DIR}"
 
 
 # Check system status for dependencies
