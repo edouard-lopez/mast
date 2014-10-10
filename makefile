@@ -217,13 +217,13 @@ add-host: deploy-key
 		printf "\t%s or %s.\n" $$'$(call ERROR,missing REMOTE_HOST)' $$'$(call ERROR,NAME)' 1>&2; \
 		exit 0; \
 	elif [[ "${NAME}" != "none" ]]; then \
-		cp ${CONFIG_DIR}/{template,${NAME}}; \
-		sed -i 's/{{HOST}}/${REMOTE_HOST}/g' ${CONFIG_DIR}/${NAME}; \
+		cp ${CONFIG_DIR}/{template,"${NAME}"}; \
+		sed -i 's/{{HOST}}/${REMOTE_HOST}/g' "${CONFIG_DIR}/${NAME}"; \
 		while true; do \
 			read -p "$(shell printf "\tEditing…\t%s? [y/N]\n" $$'$(call VALUE,${CONFIG_DIR}/${NAME})' )" yn; \
 			case $$yn in \
 				[Yy]* ) \
-					editor ${CONFIG_DIR}/${NAME}; \
+					editor "${CONFIG_DIR}/${NAME}"; \
 					printf "\nYou must %s the tunnel with:\n\t%s %s\n" $$'$(call WARNING,start –manually–)' $$'$(call INFO,sudo /etc/init.d/mast start ${NAME})' 1>&2; \
 					break;; \
 				'') ;& \
