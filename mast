@@ -43,8 +43,7 @@ CONFIG_DIR="/etc/$NAME"
 PID_DIR="/var/run/$NAME"
 
 # Create PID directory missing
-[[ ! -d $PID_DIR ]] && mkdir -p /var/run/"$NAME"
-[[ ! -d /var/lock/"$NAME" ]] && mkdir -p /var/lock/"$NAME"
+# /var/run/"$NAME" and /var/lock/"$NAME" are created by the makefile
 
 # Constants
 SUCCESS_STATUS=0 # used in 'return'

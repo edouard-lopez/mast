@@ -43,6 +43,10 @@ ID:=-1
 CONFIG_DIR:=/etc/mast
 # Log files directory
 LOG_DIR:=/var/log/mast
+# Pid files directory for the service
+PID_DIR=/var/run/${APP}
+# Lock files directory for the service
+LOCK_DIR=/var/lock/${APP}
 
 # Passphrase MUST be empty to allow automation (no passphrase prompt)
 EMPTY:=
@@ -265,9 +269,11 @@ uninstall:
 		/usr/sbin/mast-utils \
 		"${CONFIG_DIR}"/* \
 		"${CONFIG_DIR}" \
-		/etc/apache2/sites-enabled/${WEBAPP}.conf \
-		${LOG_DIR} \
-		${WEBAPP_DEST_DIR}/mast-web \
+		/etc/apache2/sites-enabled/"${WEBAPP}".conf \
+		"${LOG_DIR}" \
+		"${PID_DIR}" \
+		"${LOCK_DIR}" \
+		"${WEBAPP_DEST_DIR}"/mast-web \
 		mast-web \
 	); for fn in "$${filesList[@]}"; do \
 		[[ -f $$fn || -d $$fn ]] || continue; \
@@ -393,8 +399,27 @@ deploy-service:
 		elif [[ -d "${LOG_DIR}" ]]; then \
 			printf "%s\t%s\n" $$'$(call WARNING,skipped)' $$'$(call VALUE, ${LOG_DIR}/)'; \
 		fi
-	@chown ${APP}:${WEB_SERVER} -R "${LOG_DIR}" "${CONFIG_DIR}"
-	@chmod u=rwx,g=rwx,o= -R "${LOG_DIR}" "${CONFIG_DIR}"
+
+	@printf "\t%-50s" $$'$(call INFO,pid directory)'
+		@if [[ ! -d "${PID_DIR}" ]]; then \
+			mkdir "${PID_DIR}" \
+				&& printf "%s\t%s\n" $$'$(call SUCCESS,done)' $$'$(call VALUE, ${PID_DIR}/)' \
+				||    printf "$(call ERROR,error)\n" 1>&2; \
+		elif [[ -d "${PID_DIR}" ]]; then \
+			printf "%s\t%s\n" $$'$(call WARNING,skipped)' $$'$(call VALUE, ${PID_DIR}/)'; \
+		fi
+
+	@printf "\t%-50s" $$'$(call INFO,lock directory)'
+		@if [[ ! -d "${LOCK_DIR}" ]]; then \
+			mkdir "${LOCK_DIR}" \
+				&& printf "%s\t%s\n" $$'$(call SUCCESS,done)' $$'$(call VALUE, ${LOCK_DIR}/)' \
+				||    printf "$(call ERROR,error)\n" 1>&2; \
+		elif [[ -d "${LOCK_DIR}" ]]; then \
+			printf "%s\t%s\n" $$'$(call WARNING,skipped)' $$'$(call VALUE, ${LOCK_DIR}/)'; \
+		fi
+
+	@chown ${APP}:${WEB_SERVER} -R "${LOG_DIR}" "${CONFIG_DIR}" "${PID_DIR}" "${LOCK_DIR}"
+	@chmod u=rwx,g=rwx,o= -R "${LOG_DIR}" "${CONFIG_DIR}" "${PID_DIR}" "${LOCK_DIR}"
 
 
 
