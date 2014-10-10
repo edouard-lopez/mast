@@ -200,7 +200,7 @@ remove-channel:
 			printf "\t%-50s\t%s\t%s\n" "rule "$$'$(call VALUE,#${ID})' $$'$(call WARNING,skipped)' $$'$(call INFO,(doesn\'t exists))' ; \
 		else \
 			unset 'ForwardPort[${ID}]'; \
-			declare -p RemoteHost RemoteUser RemotePort ServerAliveInterval ServerAliveCountMax StrictHostKeyChecking LocalUser IdentityFile ForwardPort BandwidthLimitation UploadLimit DownloadLimit \
+			declare -p Compression RemoteHost RemoteUser RemotePort ServerAliveInterval ServerAliveCountMax StrictHostKeyChecking LocalUser IdentityFile ForwardPort BandwidthLimitation UploadLimit DownloadLimit \
 			>> "${CONFIG_DIR}/.${NAME}" \
 			&& mv "${CONFIG_DIR}"/{.,}"${NAME}" \
 			&& printf "\t%-50s\t%s\n" $$'$(call VALUE,'"$$removedRule"$$')' $$'$(call SUCCESS,removed)' \
