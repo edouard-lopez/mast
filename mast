@@ -374,6 +374,15 @@ function status() {
 }
 
 
+# RESTART given configuration
+# @param:	{string}	$config	configuration filepath.
+# @inherit:	{string} 	$cfname	configuration filename.
+function start() {
+	local cfname="${1:-undef}"
+	stop "$cfname"
+	start "$cfname"
+}
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #                                                    COMMAND & CONTROL
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -431,8 +440,7 @@ stop)
 	;;
 restart)
 	# if no config is provided run all exisiting configs, otherwise only the specified
-	iter_action_on_config "stop" "$@"
-	iter_action_on_config "start" "$@"
+	iter_action_on_config "restart" "$@"
 	;;
 status)
 	# if no config is provided run all exisiting configs, otherwise only the specified
