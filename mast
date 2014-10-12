@@ -308,8 +308,8 @@ function start() {
 		autossh_pid=$(cat "$pidfile")
 		feedback "${action}ing tunnel"  "$(_valid done)"  "pid $autossh_pid"
 	else
+		kill_and_clean "$NAME" "$pidfile"
 		feedback "${action}ing tunnel"  "failed"  "empty pid $pidfile"
-		rm -f "$AUTOSSH_PIDFILE" "$pidfile"
 		return $ABORT_STATUS
 	fi
 
@@ -333,8 +333,8 @@ function stop() {
 		kill_and_clean "$NAME" "$pidfile"
 		feedback "${action}ing tunnel"  "$(_valid done)"  "pid $autossh_pid"
 	else
+		kill_and_clean "$NAME" "$pidfile"
 		feedback "${action}ing tunnel"  "failed"  "empty pid $pidfile"
-		rm -f "$AUTOSSH_PIDFILE" "$pidfile"
 		return $ABORT_STATUS
 	fi
 
