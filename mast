@@ -239,16 +239,16 @@ function create_pid() {
 
 
 # Kill process and clean related file
-# @param:	{string}	$NAME		configuration name.
+# @param:	{string}	$name		configuration name.
 # @param:	{string}	$pidfile	process pid filepath.
 function kill_and_clean() {
-	NAME="$1"
+	name="$1"
 	pidfile="$2"
 
 	autossh_pid=$(cat "$pidfile")
 
 	kill "$autossh_pid" &> /dev/null
-	rm -f /var/lock/"$NAME"/*
+	rm -f /var/lock/"$name"/*
 	rm -f "$pidfile" # in case pidfile is empty
 	kill -9 "$autossh_pid" &> /dev/null # some time kill -15 isn't enough
 }
