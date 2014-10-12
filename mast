@@ -307,7 +307,7 @@ function start() {
 	if [[ -s $pidfile ]]; then
 		touch /var/lock/"$NAME/$cfname"
 		autossh_pid=$(cat "$pidfile")
-		feedback "${action}ing tunnel"  "$(_valid done)"  "pid $autossh_pid"
+		feedback "${action}ing tunnel"  "$(_valid 'done')"  "pid $autossh_pid"
 	else
 		kill_and_clean "$NAME" "$pidfile"
 		feedback "${action}ing tunnel"  "failed"  "empty pid $pidfile"
@@ -334,7 +334,7 @@ function stop() {
 		feedback "${action}ing tunnel"  "$(_warning skipped)"  "already stopped"
 	elif [[ -s $pidfile ]]; then
 		kill_and_clean "$NAME" "$pidfile"
-		feedback "${action}ing tunnel"  "$(_valid done)"  "pid $autossh_pid"
+		feedback "${action}ing tunnel"  "$(_valid 'done')"  "pid $autossh_pid"
 	else
 		kill_and_clean "$NAME" "$pidfile"
 		feedback "${action}ing tunnel"  "failed"  "empty pid $pidfile"
