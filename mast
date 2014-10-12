@@ -224,7 +224,6 @@ function check_no_pid_exists() {
 # @inherit:	{string} 	$cfname	configuration filename.
 function create_pid() {
 	touch "$AUTOSSH_PIDFILE"
-	chown "$LocalUser" "$AUTOSSH_PIDFILE"
 
 	# check to make sure pidfile was created
 	if [[ ! -f $AUTOSSH_PIDFILE ]]; then
@@ -260,20 +259,26 @@ function start() {
 
 	# start autossh as the user defined in the config file
 	# the pid file must be re-defined in the new environment
-	su - "$LocalUser" -c "\
-		export AUTOSSH_LOGLEVEL=7; \
-		export AUTOSSH_DEBUG=true; \
-		export AUTOSSH_PIDFILE=\"$AUTOSSH_PIDFILE\"; \
-		export AUTOSSH_PORT=0; \
-		export AUTOSSH_LOGFILE=\"$LOG_DIR/$NAME-$cfname.log\"; \
+	export AUTOSSH_LOGLEVEL=7;
+	export AUTOSSH_DEBUG=true;
+	export AUTOSSH_PIDFILE="$AUTOSSH_PIDFILE";
+	export AUTOSSH_PORT=0;
+	export AUTOSSH_LOGFILE="$LOG_DIR/$NAME-$cfname.log";
+	channel=(
 		$autossh -q -f -N -p $RemotePort \
-			-i $IdentityFile \
+			-i "$IdentityFile" \
 			-v \
-			-o Compression=$Compression \
-			-o ServerAliveInterval=$ServerAliveInterval \
-			-o ServerAliveCountMax=$ServerAliveCountMax \
-			-o StrictHostKeyChecking=$StrictHostKeyChecking \
-			$forward_list $RemoteUser@$RemoteHost"
+			-o Compression="$Compression" \
+			-o ServerAliveInterval="$ServerAliveInterval" \
+			-o ServerAliveCountMax="$ServerAliveCountMax" \
+			-o StrictHostKeyChecking="$StrictHostKeyChecking" \
+		$forward_list "$RemoteUser@$RemoteHost"
+      )
+	if (( $(id -u) == 0 )); then
+		su - "$LocalUser" -c "${channel[*]}"
+	else
+		"${channel[@]}"
+	fi
 
 	# fixme: We can't get a exit status so we wait ~15s before considering start failed
 	max_latency=15;
