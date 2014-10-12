@@ -238,6 +238,22 @@ function create_pid() {
 }
 
 
+# Kill process and clean related file
+# @param:	{string}	$NAME		configuration name.
+# @param:	{string}	$pidfile	process pid filepath.
+function kill_and_clean() {
+	NAME="$1"
+	pidfile="$2"
+
+	autossh_pid=$(cat "$pidfile")
+
+	kill "$autossh_pid" &> /dev/null
+	rm -f /var/lock/"$NAME"/*
+	rm -f "$pidfile" # in case pidfile is empty
+	kill -9 "$autossh_pid" &> /dev/null # some time kill -15 isn't enough
+}
+
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #                                              START | STOP | RESTART | STATUS
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -314,13 +330,7 @@ function stop() {
 	if [[ ! -f $pidfile ]]; then
 		feedback "${action}ing tunnel"  "$(_warning skipped)"  "already stopped"
 	elif [[ -s $pidfile ]]; then
-		autossh_pid=$(cat "$pidfile")
-
-		kill "$autossh_pid" &> /dev/null
-		rm -f /var/lock/"$NAME"/*
-		rm -f "$pidfile" # in case pidfile is empty
-		kill -9 "$autossh_pid" &> /dev/null # some time kill -15 isn't enough
-
+		kill_and_clean "$NAME" "$pidfile"
 		feedback "${action}ing tunnel"  "$(_valid done)"  "pid $autossh_pid"
 	else
 		feedback "${action}ing tunnel"  "failed"  "empty pid $pidfile"
