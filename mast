@@ -42,6 +42,9 @@ LOG_DIR="/var/log/$NAME"
 CONFIG_DIR="/etc/$NAME"
 PID_DIR="/var/run/$NAME"
 
+# fixme: We can't get a exit status so we wait ~5s before considering start failed
+MAX_LATENCY=5;
+
 # Create PID directory missing
 # /var/run/"$NAME" and /var/lock/"$NAME" are created by the makefile
 
@@ -280,11 +283,9 @@ function start() {
 		"${channel[@]}"
 	fi
 
-	# fixme: We can't get a exit status so we wait ~15s before considering start failed
-	max_latency=15;
-	feedback "latency" "$(_warning waiting)" "wait a maximum of ${max_latency}s before failing"
+	feedback "latency" "$(_warning waiting)" "wait a maximum of ${MAX_LATENCY}s before failing"
 	i=0;
-	while [[ ! -s $pidfile ]]; do sleep 1s; printf "."; (( i > max_latency)) && break; (( i++)); done;
+	while [[ ! -s $pidfile ]]; do sleep 1s; printf "."; (( i > MAX_LATENCY)) && break; (( i++)); done;
 
 	if [[ -s $pidfile ]]; then
 		touch /var/lock/"$NAME/$cfname"
