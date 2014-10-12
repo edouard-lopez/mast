@@ -377,7 +377,7 @@ function status() {
 # RESTART given configuration
 # @param:	{string}	$config	configuration filepath.
 # @inherit:	{string} 	$cfname	configuration filename.
-function start() {
+function restart() {
 	local cfname="${1:-undef}"
 	stop "$cfname"
 	start "$cfname"
