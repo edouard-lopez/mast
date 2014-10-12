@@ -260,6 +260,7 @@ function kill_and_clean() {
 
 # START given configuration
 # @param:	{string}	$config		configuration filepath.
+# @inherit:	{string} 	$cfname	configuration filename.
 function start() {
 	local cfname="${1:-undef}"
 	local config="$CONFIG_DIR/$cfname"
@@ -316,8 +317,10 @@ function start() {
 	return $SUCCESS_STATUS
 }
 
+
 # STOP given configuration
 # @param:	{string}	$config		configuration filepath.
+# @inherit:	{string} 	$cfname	configuration filename.
 function stop() {
 	local cfname="${1:-undef}"
 	local config="$CONFIG_DIR/$cfname"
@@ -343,7 +346,8 @@ function stop() {
 
 
 # Get STATUS for given configuration
-# @param:	{string}	$config		configuration filepath.
+# @param:	{string}	$config	configuration filepath.
+# @inherit:	{string} 	$cfname	configuration filename.
 function status() {
 	local cfname="${1:-undef}"
 	local config="$CONFIG_DIR/$cfname"
