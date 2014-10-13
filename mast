@@ -44,6 +44,8 @@ PID_DIR="/var/run/$NAME"
 
 # fixme: We can't get a exit status so we wait ~5s before considering start failed
 declare -i MAX_LATENCY=5;
+# Default is to set a transfert limit of 10^9 Kilo/s ~ 10 Tera/s
+declare -i NO_TRANSFERT_LIMIT=10**9
 
 # Create PID directory missing
 # /var/run/"$NAME" and /var/lock/"$NAME" are created by the makefile
@@ -254,6 +256,23 @@ function kill_and_clean() {
 }
 
 
+# Set-up transfert limitation command
+# @inherit: 	{boolean}	$BandwidthLimitation
+# @inherit: 	{integer}		$UploadLimit
+# @inherit: 	{integer}		$DownloadLimit
+function throttle() {
+	throttle=()
+	if [[ $BandwidthLimitation == true ]]; then
+		throttle=(
+			trickle
+			-s
+			-u ${UploadLimit:=$NO_TRANSFERT_LIMIT}
+			-d ${DownloadLimit:=$NO_TRANSFERT_LIMIT}
+           )
+	fi
+	echo "${throttle[@]}"
+}
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #                                              START | STOP | RESTART | STATUS
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -295,9 +314,9 @@ function start() {
 		$forward_list "$RemoteUser@$RemoteHost"
       )
 	if (( $(id -u) == 0 )); then
-		su - "$LocalUser" -c "${channel[*]}"
+		su - "$LocalUser" -c "$(throttle) ${channel[*]}; echo [$PPID]}"
 	else
-		"${channel[@]}"
+		"$(throttle) ${channel[*]}"
 	fi
 
 	feedback "latency" "$(_warning waiting)" "wait a maximum of ${MAX_LATENCY}s before failing"
