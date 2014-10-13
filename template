@@ -6,6 +6,8 @@
 # For information, please read the README.md file
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #
+# Integer variables
+declare -i RemotePort ServerAliveInterval ServerAliveCountMax UploadLimit DownloadLimit
 # This value will be automatically replaced if you use 'make add-host'
 RemoteHost="{{HOST}}"
 # This should not be changed without confirmation from upper authority
