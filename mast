@@ -314,9 +314,9 @@ function start() {
 		$forward_list "$RemoteUser@$RemoteHost"
       )
 	if (( $(id -u) == 0 )); then
-		su - "$LocalUser" -c "$(throttle) ${channel[*]}; echo [$PPID]}"
+		su - "$LocalUser" -c $(throttle) "${channel[*]}" # /!\ quoting 'throttle' provoke a "No such file or directory" error
 	else
-		"$(throttle) ${channel[*]}"
+		$(throttle) "${channel[@]}" # /!\ quoting 'throttle' provoke a "No such file or directory" error
 	fi
 
 	feedback "latency" "$(_warning waiting)" "wait a maximum of ${MAX_LATENCY}s before failing"
