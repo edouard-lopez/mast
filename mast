@@ -346,7 +346,7 @@ function stop() {
 	local pidfile="$PID_DIR/$cfname.pid"
 	local autossh_pid='undef' # see below
 
-	printf "Starting %s %s\n" "$(_info "$NAME")" "$(_value "$cfname")"
+	printf "Stopping %s %s\n" "$(_info "$NAME")" "$(_value "$cfname")"
 
 	# if no config names (on the command-line), stop all autossh processes
 	if [[ ! -f $pidfile ]]; then
