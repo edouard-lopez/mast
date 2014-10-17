@@ -478,6 +478,19 @@ install-infra:
 
 # Check files permission
 check-privileges:
+	@printf "\t%-50s\t" $$'$(call INFO,edit sudoers)'
+	@if ! grep -iq 'mast' /etc/sudoers; then \
+		echo "${APP} ALL= (ALL:ALL) NOPASSWD: /etc/init.d/mast,/usr/sbin/mast-utils" \
+			>> /etc/sudoers \
+		&& \
+		echo "${WEB_SERVER} ALL= (ALL:ALL) NOPASSWD: /etc/init.d/mast,/usr/sbin/mast-utils" \
+			>> /etc/sudoers \
+		&& printf "$(call SUCCESS,done)\n" \
+		||    printf "$(call ERROR,error)\n" 1>&2; \
+	else \
+		printf "%s (already existing)\n" $$'$(call WARNING,skipped)' 1>&2; \
+	fi
+
 	@# open privileges to ${WEB_SERVER}
 	@printf "\t%-50s\t" $$'$(call INFO,service\'s user)'
 	@if ! getent passwd ${APP} > /dev/null; then \
