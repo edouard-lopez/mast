@@ -241,6 +241,8 @@ add-host: deploy-key
 	else \
 		printf "Missing customer name…\t%s\n" "${NAME}"; \
 	fi
+	@chmod g=rwx "${CONFIG_DIR}/${NAME}"
+	@chgrp www-data "${CONFIG_DIR}/${NAME}"
 
 
 # Remove host using its configuration name
