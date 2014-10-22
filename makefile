@@ -484,6 +484,8 @@ requirements:
 
 # Check files permission
 check-privileges:
+	@printf "Checking…\t%s\n" $$'$(call VALUE,Privileges)'
+
 	@printf "\t%-50s\t" $$'$(call INFO,edit sudoers)'
 	@if ! grep -iq 'mast' /etc/sudoers; then \
 		echo "${APP} ALL= (ALL:ALL) NOPASSWD: /etc/init.d/mast,/usr/sbin/mast-utils" \
@@ -524,7 +526,8 @@ check-privileges:
 		chown -R $$SUDO_USER:$$SUDO_USER "$$HOME/.ssh" ; \
 		chmod u=rwx,go= "$$HOME/.ssh" ; \
 	fi
-	@printf "Checking…\t%s\n" $$'$(call VALUE,Privileges)'
+
+	@printf "\t%-50s\t" $$'$(call INFO,update permissions)'
 	@[[ ! -d ${LOG_DIR} ]] && mkdir "${LOG_DIR}" || true
 	@chown -R ${APP}:${WEB_SERVER} "${LOG_DIR}"
 	@chmod -R u=rwx,g=rwx,o= "${LOG_DIR}"
