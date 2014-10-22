@@ -188,6 +188,9 @@ add-channel:
 		&& mv "${CONFIG_DIR}"/{.,}"${NAME}" \
 		&& printf "\t%-50s\t%s\n" $$'$(call VALUE,'"$$newRule"$$')' $$'$(call SUCCESS,added)' \
 		||    printf "\t%-50s\t%s\n" $$'$(call VALUE,'"$$newRule"$$')' $$'$(call ERROR,failed)'
+	@chown -R ${APP}:${WEB_SERVER} "${CONFIG_DIR}"
+	@chmod -R u=rwx,g=rwx,o= "${CONFIG_DIR}"
+
 
 # Remove channel using its index
 # @require: 	{string} 	NAME 		configuration name
