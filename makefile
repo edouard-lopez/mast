@@ -366,7 +366,7 @@ deploy-service:
 		&& cp mast /etc/init.d/ \
 		&& printf "$(call SUCCESS,done)\n" \
 		||    printf "$(call ERROR,error)\n" 1>&2
-		@chown ${WEB_SERVER} /etc/init.d/mast
+		@chown ${APP}:${WEB_SERVER} /etc/init.d/mast
 		@update-rc.d mast defaults > /dev/null
 
 	@printf "\t%-50s" $$'$(call INFO,utils)'
@@ -374,7 +374,7 @@ deploy-service:
 		&& cp makefile /usr/sbin/mast-utils \
 		&& printf "$(call SUCCESS,done)\n" \
 		||    printf "$(call ERROR,error)\n" 1>&2
-		@chown ${WEB_SERVER} /usr/sbin/mast-utils; \
+		@chown ${APP}:${WEB_SERVER} /usr/sbin/mast-utils; \
 
 	@printf "\t%-50s" $$'$(call INFO,config directory)'
 		@if [[ ! -d "${CONFIG_DIR}" ]]; then \
