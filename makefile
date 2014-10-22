@@ -14,6 +14,7 @@ endif
 
 
 # default remote user
+#  /!\ It is assumed ${REMOTE_USER} already exist on system
 REMOTE_USER:=coaxis
 REMOTE_INIT_PWD:=C1i3ntRmSid3
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -494,6 +495,7 @@ check-privileges:
 	fi
 
 	@# open privileges to ${WEB_SERVER} and ${APP} group.
+	@# /!\ It is assumed ${REMOTE_USER} already exist on system
 	@printf "\t%-50s\t" $$'$(call INFO,service\'s user)'
 	@if ! getent passwd ${APP} > /dev/null; then \
 		groupadd -r ${APP}; \

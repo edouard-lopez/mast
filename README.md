@@ -38,14 +38,17 @@ Dans un second temps il nous faudrait une interface web en 4 pages web:
 * **channel**: a port forwarding configuration from _infrastructure_ to _host_ through a _tunnel_.
 ## Requirements
 
-* **Debian-based** OS: we are expecting a Debian `6.0+` or Ubuntu-server `12.04+` ;
-* GNU `make`: task manager used to install client/server, deploy add others stuff.
+The first requirement is to have a **Debian-based** system, other distribution are not targeted by this solution. Second you must **create a user called `coaxis`** (as defined by the variable `REMOTE_USER` in the _makefile_).
+Others required packages are _automatically installed_ by the `make requirements` command. For reference, here is a list of the main requirements:
+
+* Debian `6.0+` or Ubuntu-server `12.04+` ;
+* **GNU `make`**: task manager used to install client/server, deploy add others stuff ;
 * `bash` `≥4.x`: the shell interpreter used for the service ;
 * `autoSSH`: to start and monitor ssh tunnels ;
 	* `openssh-client`: this is an obvious dependency ;
-* `trickle`: user-space bandwidth shaper ;
+* `trickle`: user-space bandwidth shaper.
 
-Except for _make_, all this dependecies can be [checked](#checking-your-system) and [installed](#installing-on-infra) using the makefile, as described below.
+Except for _make_, all this dependencies can be [checked](#check-system) and [installed](#install-requirements) using the makefile, as described below.
 
 ## Architecture design: Separation of Concerns
 
