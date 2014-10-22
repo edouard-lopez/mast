@@ -298,11 +298,13 @@ function start() {
 
 	# start autossh as the user defined in the config file
 	# the pid file must be re-defined in the new environment
-	export AUTOSSH_LOGLEVEL=7;
-	export AUTOSSH_DEBUG=true;
-	export AUTOSSH_PIDFILE="$AUTOSSH_PIDFILE";
-	export AUTOSSH_PORT=0;
-	export AUTOSSH_LOGFILE="$LOG_DIR/$NAME-$cfname.log";
+	autossh_env=(
+		AUTOSSH_LOGFILE="$LOG_DIR/$NAME-$cfname.log"
+		AUTOSSH_LOGLEVEL=7
+		AUTOSSH_DEBUG=true
+		AUTOSSH_PIDFILE="$AUTOSSH_PIDFILE"
+		AUTOSSH_PORT=0
+	)
 	channel=(
 		$autossh -q -f -N -p $RemotePort \
 			-i "$IdentityFile" \
@@ -314,9 +316,9 @@ function start() {
 		$forward_list "$RemoteUser@$RemoteHost"
       )
 	if (( $(id -u) == 0 )); then
-		sudo -u "$LocalUser" $(throttle) "${channel[@]}" # /!\ quoting 'throttle' provoke a "No such file or directory" error
+		sudo -u "$LocalUser" "${autossh_env[@]}" $(throttle) "${channel[@]}" # /!\ quoting 'throttle' provoke a "No such file or directory" error
 	else
-		$(throttle) "${channel[@]}" # /!\ quoting 'throttle' provoke a "No such file or directory" error
+		 "${autossh_env[@]}" $(throttle) "${channel[@]}" # /!\ quoting 'throttle' provoke a "No such file or directory" error
 	fi
 
 	feedback "latency" "$(_warning waiting)" "wait a maximum of ${MAX_LATENCY}s before failing"
