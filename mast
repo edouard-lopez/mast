@@ -314,7 +314,7 @@ function start() {
 		$forward_list "$RemoteUser@$RemoteHost"
       )
 	if (( $(id -u) == 0 )); then
-		su - "$LocalUser" -c $(throttle) "${channel[*]}" # /!\ quoting 'throttle' provoke a "No such file or directory" error
+		sudo -u "$LocalUser" $(throttle) "${channel[@]}" # /!\ quoting 'throttle' provoke a "No such file or directory" error
 	else
 		$(throttle) "${channel[@]}" # /!\ quoting 'throttle' provoke a "No such file or directory" error
 	fi
