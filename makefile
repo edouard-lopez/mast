@@ -493,13 +493,13 @@ check-privileges:
 		printf "%s (already existing)\n" $$'$(call WARNING,skipped)' 1>&2; \
 	fi
 
-	@# open privileges to ${WEB_SERVER}
+	@# open privileges to ${WEB_SERVER} and ${APP} group.
 	@printf "\t%-50s\t" $$'$(call INFO,service\'s user)'
 	@if ! getent passwd ${APP} > /dev/null; then \
 		groupadd -r ${APP}; \
 		useradd \
 			--gid ${WEB_SERVER} \
-			--groups ${REMOTE_USER} \
+			--groups ${APP} \
 			--password "$$(mkpasswd "${REMOTE_INIT_PWD}")" \
 			--create-home \
 			--system ${APP} \
@@ -508,7 +508,7 @@ check-privileges:
 			||    printf "%s" $$'$(call ERROR,failed)\n'; \
 	else \
 		printf "%s" $$'$(call WARNING,modified)\n'; \
-		usermod --append --groups ${REMOTE_USER} ${REMOTE_USER}; \
+		usermod --append --groups ${APP} ${REMOTE_USER}; \
 	fi
 	@usermod --append --groups ${WEB_SERVER} ${REMOTE_USER}
 	@usermod --append --groups ${APP} ${WEB_SERVER}
