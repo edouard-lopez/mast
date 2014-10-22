@@ -36,6 +36,7 @@ Dans un second temps il nous faudrait une interface web en 4 pages web:
 * **host**: a machine accessible through Internet by its IP address or FQDN. Can have one or more _tunnels_ ;
 * **tunnel**: an SSH's tunnel between our infrastructure and the host's machine. Can have one or more channels (each for a different printer);
 * **channel**: a port forwarding configuration from _infrastructure_ to _host_ through a _tunnel_.
+
 ## Requirements
 
 The first requirement is to have a **Debian-based** system, other distribution are not targeted by this solution. Second you must **create a user called `coaxis`** (as defined by the variable `REMOTE_USER` in the _makefile_).
@@ -66,7 +67,7 @@ Build on top of both the service and the utility toolbox
 
 ## Installation
 
-This is a short procedure, if you want **more details refer to the [step by step installation](INSTALLATION.md)**.
+This is a short procedure, if you want **more details refer to the [step by step installation](INSTALATION.md)**.
 
 First, be sure to have _make_ installed on your system:
 ```bash
@@ -93,9 +94,9 @@ make install
 
 ## Toolbox's Tasks
 
-A _makefile_ define so-called _tasks_, that allow admin to easily run a complex sequence of commands in a single call. For instance, `make install` might run commands to ① [check the system state](#checking-your-system), ② [install the requirements](#installing-on-infra), ③ [configure everything](#deploying), etc.
+A _makefile_ define so-called _tasks_, that allow admin to easily run a complex sequence of commands in a single call. For instance, `make install` might run commands to ① [check the system state](#check-system), ② [install the requirements](#install-requirements), ③ [configure everything](#deploying), etc.
 
-It is useful to know that a `make` command can take a series of tasks to accomplish, the previous `make install` task could have been run as `make check-system install-infra deploy`, which is more explicit but a bit longer.
+It is useful to know that a `make` command can take a series of tasks to accomplish, the previous `make install` task could have been run as `make check-system requirements deploy`, which is more explicit but a bit longer.
 
 ### Tips and Tricks
 
@@ -143,7 +144,7 @@ sudo make deploy-webapp
 
 This is a meta-task that will run the following dependencies:
 
-* [Install project dependencies](#install-infra) ;
+* [Install project dependencies](#install-requirements) ;
 * [Check system](#check-system) and [privileges](](#check-privileges)) ;
 * [Deploy the service](#deploy-service) ;
 * [Create a SSH key pair](#create-ssh-key) if necessary ;
@@ -154,18 +155,14 @@ sudo make install
 ```
 ![sudo-make-install](docs/screenshots/installation-02-make-install.png)
 
-### Install Infra
+### Install Requirements
 
 Install required packages (`autossh`, `trickle`, `openssh-client`, ...) on the infrastructure.
 
 ```bash
 sudo make setup-infra
 ```
-![sudo-make-install-infra](docs/screenshots/sudo-make-install-infra.png)
-
-### Setup Infra (alias)
-
-Aliases to [Install Infra](#instal-infra).
+![sudo-make-requirements](docs/screenshots/sudo-make-requirements.png)
 
 ## SSH Key
 ### Create SSH Key (alias)
