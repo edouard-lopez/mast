@@ -315,11 +315,10 @@ function start() {
 			-o StrictHostKeyChecking="$StrictHostKeyChecking" \
 		$forward_list "$RemoteUser@$RemoteHost"
       )
-	if (( $(id -u) == 0 )); then
-		sudo -u "$LocalUser" "${autossh_env[@]}" $(throttle) "${channel[@]}" # /!\ quoting 'throttle' provoke a "No such file or directory" error
-	else
-		 "${autossh_env[@]}" $(throttle) "${channel[@]}" # /!\ quoting 'throttle' provoke a "No such file or directory" error
-	fi
+
+	touch "$AUTOSSH_PIDFILE" "$AUTOSSH_LOGFILE"
+	chown "$LocalUser":www-data "$AUTOSSH_PIDFILE"  "$AUTOSSH_LOGFILE"
+	sudo -u "$LocalUser" "${autossh_env[@]}" $(throttle) "${channel[@]}" # /!\ quoting 'throttle' provoke a "No such file or directory" error
 
 	feedback "latency" "$(_warning waiting)" "wait a maximum of ${MAX_LATENCY}s before failing"
 	i=0;
@@ -436,6 +435,11 @@ function iter_action_on_config() {
 	return $SUCCESS_STATUS
 }
 
+
+if (( $(id -u) != 0 )); then
+	printf "%s %s\n" "$(_error "Require")" "$(_info "sudo privileges")"
+	exit 1
+fi
 
 # save the action name, and shift the command-line array
 # all remaining command-line arguments *should* be config names
