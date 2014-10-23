@@ -442,9 +442,11 @@ deploy-key:
 		printf "\t%s or %s.\n" $$'$(call ERROR,missing REMOTE_HOST)' $$'$(call ERROR,REMOTE_USER)' 1>&2; \
 		exit 1; \
 	else \
-		printf "\t%-50s%s\n" $$'$(call INFO,copy public key to)' $$'$(call VALUE, ${REMOTE_USER}@${REMOTE_HOST})'; \
+		printf "\t%s%-32s" $$'$(call INFO,copy public key to)' $$'$(call VALUE, ${REMOTE_USER}@${REMOTE_HOST})'; \
 		sshpass -p "${REMOTE_INIT_PWD}" \
-			ssh-copy-id -i "${SSH_KEYFILE}.pub" -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} >& /dev/null; \
+			ssh-copy-id -i "${SSH_KEYFILE}.pub" -o StrictHostKeyChecking=no -o ConnectTimeout=5 ${REMOTE_USER}@${REMOTE_HOST} &> /dev/null \
+			&& printf "%s\n" $$'$(call SUCCESS,done)' \
+			|| { printf "%s\n" $$'$(call ERROR,failed)'; exit 1; }; \
 		printf "\n"; \
 	fi
 
