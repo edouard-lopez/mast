@@ -287,13 +287,12 @@ function start() {
 	local autossh_logfile="$LOG_DIR/$NAME-$cfname.log"
 
 	# abort start if one of the following fail
-	check_config_file_exists "$cfname" && source "$config"    || return $ABORT_STATUS
+	check_config_file_exists "$cfname" && source "$config" || return $ABORT_STATUS
 	check_tunnel_config                                                        || return $ABORT_STATUS
-	export ForwardPort
-	check_ssh_forward_rules                                                || return $ABORT_STATUS
-	check_no_pid_exists                                                       || return $ABORT_STATUS
-	create_pid                                                                     || return $ABORT_STATUS
 	export ForwardPort                                                          # loaded by check_config_file_exists(), required by check_ssh_forward_rules()
+	check_ssh_forward_rules                                                 || return $ABORT_STATUS
+	check_no_pid_exists                                                        || return $ABORT_STATUS
+	create_pid                                                                       || return $ABORT_STATUS
 
 	printf "Starting %s %s\n" "$(_info "$NAME")" "$(_value "$cfname")"
 
