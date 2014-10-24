@@ -439,11 +439,13 @@ function iter_action_on_config() {
 function require_superuser() {
 	if (( $(id -u) != 0 )); then
 		printf "%s %s\n" "$(_error "Require")" "$(_info "sudo privileges")"
-		exit 1
+		return $ABORT_STATUS
 	fi
+
+	return $SUCCESS_STATUS
 }
 
-require_superuser
+require_superuser  || exit $?
 
 # save the action name, and shift the command-line array
 # all remaining command-line arguments *should* be config names
