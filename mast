@@ -293,6 +293,7 @@ function start() {
 	check_ssh_forward_rules                                                || return $ABORT_STATUS
 	check_no_pid_exists                                                       || return $ABORT_STATUS
 	create_pid                                                                     || return $ABORT_STATUS
+	export ForwardPort                                                          # loaded by check_config_file_exists(), required by check_ssh_forward_rules()
 
 	printf "Starting %s %s\n" "$(_info "$NAME")" "$(_value "$cfname")"
 
