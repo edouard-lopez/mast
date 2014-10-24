@@ -445,7 +445,16 @@ function require_superuser() {
 	return $SUCCESS_STATUS
 }
 
+function require_directories() {
+	required_dirs=( "$LOG_DIR" "$CONFIG_DIR" "$PID_DIR" )
+	for dir in ${required_dirs}; do
+		[[ ! -d "$dir" ]] && mkdir -p "$dir"
+	done
+}
+
 require_superuser  || exit $?
+require_directories
+
 
 # save the action name, and shift the command-line array
 # all remaining command-line arguments *should* be config names
