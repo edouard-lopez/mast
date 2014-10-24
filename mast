@@ -214,9 +214,8 @@ function check_ssh_forward_rules() {
 # @inherit:	{string} 	$pidfile		PID file for host.
 function check_no_pid_exists() {
 	# Define the pidfile variable for autossh (created by autossh)
-	export AUTOSSH_PIDFILE="$pidfile"
-	if [[ -e $AUTOSSH_PIDFILE ]]; then
-		pidfile="$(_value "$AUTOSSH_PIDFILE")"
+	if [[ -e $pidfile ]]; then
+		pidfile="$(_value "$pidfile")"
 		feedback "${action}ing tunnel"  "forbidden"  "service already started (PID's file exists)"
 		return $ABORT_STATUS
 	fi
@@ -228,10 +227,10 @@ function check_no_pid_exists() {
 # Before switching-users, make sure pidfile is created and user has write permission
 # @inherit:	{string} 	$cfname	configuration filename.
 function create_pid() {
-	touch "$AUTOSSH_PIDFILE"
+	touch "$pidfile"
 
 	# check to make sure pidfile was created
-	if [[ ! -f $AUTOSSH_PIDFILE ]]; then
+	if [[ ! -f $pidfile ]]; then
 		feedback "$cfname's PID creation"  "aborted"  ""
 		return $ABORT_STATUS
 	fi
@@ -285,6 +284,7 @@ function start() {
 	local config="$CONFIG_DIR/$cfname"
 	local pidfile="$PID_DIR/$cfname.pid"
 	local forward_list=""
+	local autossh_logfile="$LOG_DIR/$NAME-$cfname.log"
 
 	# abort start if one of the following fail
 	check_config_file_exists "$cfname" && source "$config"    || return $ABORT_STATUS
@@ -299,10 +299,10 @@ function start() {
 	# start autossh as the user defined in the config file
 	# the pid file must be re-defined in the new environment
 	autossh_env=(
-		AUTOSSH_LOGFILE="$LOG_DIR/$NAME-$cfname.log"
+		AUTOSSH_LOGFILE="$autossh_logfile"
 		AUTOSSH_LOGLEVEL=7
 		AUTOSSH_DEBUG=true
-		AUTOSSH_PIDFILE="$AUTOSSH_PIDFILE"
+		AUTOSSH_PIDFILE="$pidfile"
 		AUTOSSH_PORT=0
 	)
 	channel=(
@@ -316,8 +316,8 @@ function start() {
 		$forward_list "$RemoteUser@$RemoteHost"
       )
 
-	touch "$AUTOSSH_PIDFILE" "$AUTOSSH_LOGFILE"
-	chown "$LocalUser":www-data "$AUTOSSH_PIDFILE"  "$AUTOSSH_LOGFILE"
+	touch "$pidfile" "$autossh_logfile"
+	chown "$LocalUser":www-data "$pidfile"  "$autossh_logfile"
 	sudo -u "$LocalUser" "${autossh_env[@]}" $(throttle) "${channel[@]}" # /!\ quoting 'throttle' provoke a "No such file or directory" error
 
 	feedback "latency" "$(_warning waiting)" "wait a maximum of ${MAX_LATENCY}s before failing"
