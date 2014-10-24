@@ -1,3 +1,6 @@
 [submodule "mast-web"]
 	path = mast-web
 	url = ssh://git@git.edouard-lopez.com:822/root/mast-web.git
+[submodule "tests/shebang_unit"]
+	path = tests/shebang_unit
+	url = git@github.com:arpinum/shebang_unit.git
