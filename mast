@@ -455,42 +455,48 @@ function require_directories() {
 require_superuser  || exit $?
 require_directories
 
+# Execute script only when in standalone so we can include script for testing
+# @param:	{array}	$@		command line argument
+function run() {
+	# save the action name, and shift the command-line array
+	# all remaining command-line arguments *should* be config names
+	action="$1"
+	shift
 
-# save the action name, and shift the command-line array
-# all remaining command-line arguments *should* be config names
-action="$1"
-shift
+	case "$action" in
+	start)
+		# if no config is provided run all exisiting configs, otherwise only the specified
+		if [[ -z "$1" ]]; then
+			iter_action_on_config "$action" $(list_config)  # don't quote, we need word splitting
+		else
+			iter_action_on_config "$action" "$@"
+		fi
+		;;
+	stop)
+		# if no config is provided run all exisiting configs, otherwise only the specified
+		if [[ -z "$1" ]]; then
+			iter_action_on_config "$action" $(list_config)  # don't quote, we need word splitting
+		else
+			iter_action_on_config "$action" "$@"
+		fi
+		;;
+	restart)
+		# if no config is provided run all exisiting configs, otherwise only the specified
+		iter_action_on_config "restart" "$@"
+		;;
+	status)
+		# if no config is provided run all exisiting configs, otherwise only the specified
+		if [[ -z "$1" ]]; then
+			iter_action_on_config "$action" $(list_config)  # don't quote, we need word splitting
+		else
+			iter_action_on_config "$action" "$@"
+		fi
+		;;
+	*)
+		printf "Usage: %s {start|stop|restart|status} {config names...}\n" "$0"
+		;;
+	esac
+}
 
-case "$action" in
-start)
-	# if no config is provided run all exisiting configs, otherwise only the specified
-	if [[ -z "$1" ]]; then
-		iter_action_on_config "$action" $(list_config)  # don't quote, we need word splitting
-	else
-		iter_action_on_config "$action" "$@"
-	fi
-	;;
-stop)
-	# if no config is provided run all exisiting configs, otherwise only the specified
-	if [[ -z "$1" ]]; then
-		iter_action_on_config "$action" $(list_config)  # don't quote, we need word splitting
-	else
-		iter_action_on_config "$action" "$@"
-	fi
-	;;
-restart)
-	# if no config is provided run all exisiting configs, otherwise only the specified
-	iter_action_on_config "restart" "$@"
-	;;
-status)
-	# if no config is provided run all exisiting configs, otherwise only the specified
-	if [[ -z "$1" ]]; then
-		iter_action_on_config "$action" $(list_config)  # don't quote, we need word splitting
-	else
-		iter_action_on_config "$action" "$@"
-	fi
-	;;
-*)
-	printf "Usage: %s {start|stop|restart|status} {config names...}\n" "$0"
-	;;
-esac
+# When False, don't execute as the file is included for testing
+[[ ! $TEST_MODE ]] && run "$@"
