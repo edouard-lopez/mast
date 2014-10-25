@@ -57,6 +57,7 @@ ABORT_STATUS=1 # used in 'return'
 # debug mode (need to `export DEBUG='true'` and run as `sudo -E`, see installation.md)
 [[ -n $DEBUG ]] && set -x
 
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #                                                    STDOUT FORMATTING
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -436,6 +437,7 @@ function iter_action_on_config() {
 }
 
 
+# Require superuser privileges to execute the service
 function require_superuser() {
 	if (( $(id -u) != 0 )); then
 		printf "%s %s\n" "$(_error "Require")" "$(_info "sudo privileges")"
@@ -445,6 +447,7 @@ function require_superuser() {
 	return $SUCCESS_STATUS
 }
 
+# Create required directories before running any action
 function require_directories() {
 	required_dirs=( "$LOG_DIR" "$CONFIG_DIR" "$PID_DIR" )
 	for dir in "${required_dirs[@]}"; do
@@ -452,12 +455,12 @@ function require_directories() {
 	done
 }
 
-require_superuser  || exit $?
-require_directories
-
 # Execute script only when in standalone so we can include script for testing
 # @param:	{array}	$@		command line argument
 function run() {
+	require_superuser  || exit $?
+	require_directories
+
 	# save the action name, and shift the command-line array
 	# all remaining command-line arguments *should* be config names
 	action="$1"
