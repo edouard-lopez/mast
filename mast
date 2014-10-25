@@ -447,7 +447,7 @@ function require_superuser() {
 
 function require_directories() {
 	required_dirs=( "$LOG_DIR" "$CONFIG_DIR" "$PID_DIR" )
-	for dir in ${required_dirs}; do
+	for dir in "${required_dirs[@]}"; do
 		[[ ! -d "$dir" ]] && mkdir -p "$dir"
 	done
 }
