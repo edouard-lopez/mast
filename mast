@@ -465,7 +465,7 @@ case "$action" in
 start)
 	# if no config is provided run all exisiting configs, otherwise only the specified
 	if [[ -z "$1" ]]; then
-		iter_action_on_config "$action" $(list_config)
+		iter_action_on_config "$action" $(list_config)  # don't quote, we need word splitting
 	else
 		iter_action_on_config "$action" "$@"
 	fi
@@ -473,7 +473,7 @@ start)
 stop)
 	# if no config is provided run all exisiting configs, otherwise only the specified
 	if [[ -z "$1" ]]; then
-		iter_action_on_config "$action" $(list_config)
+		iter_action_on_config "$action" $(list_config)  # don't quote, we need word splitting
 	else
 		iter_action_on_config "$action" "$@"
 	fi
@@ -485,7 +485,7 @@ restart)
 status)
 	# if no config is provided run all exisiting configs, otherwise only the specified
 	if [[ -z "$1" ]]; then
-		iter_action_on_config "$action" $(list_config)
+		iter_action_on_config "$action" $(list_config)  # don't quote, we need word splitting
 	else
 		iter_action_on_config "$action" "$@"
 	fi
