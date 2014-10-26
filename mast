@@ -39,6 +39,8 @@ NAME=mast
 autossh="$(which autossh)"
 # template name for log file
 LOG_DIR="/var/log/$NAME"
+# Required at boot
+LOCK_DIR="/var/lock/$NAME"
 # SSH tunnel configuration directory (a file per host)
 CONFIG_DIR="/etc/$NAME"
 PID_DIR="/var/run/$NAME"
@@ -450,7 +452,7 @@ function require_superuser() {
 
 # Create required directories before running any action
 function require_directories() {
-	required_dirs=( "$LOG_DIR" "$CONFIG_DIR" "$PID_DIR" )
+	required_dirs=( "$LOG_DIR" "$CONFIG_DIR" "$PID_DIR" "$LOCK_DIR" )
 	for dir in "${required_dirs[@]}"; do
 		[[ ! -d "$dir" ]] && mkdir -p "$dir"
 	done
