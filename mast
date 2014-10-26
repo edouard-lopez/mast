@@ -45,7 +45,7 @@ PID_DIR="/var/run/$NAME"
 # fixme: We can't get a exit status so we wait ~5s before considering start failed
 declare -i MAX_LATENCY=5;
 # Default is to set a transfert limit of 10^9 Kilo/s ~ 10 Tera/s
-declare -i NO_TRANSFERT_LIMIT=10**9
+declare -i NO_TRANSFERT_LIMIT=$((10**9))
 
 # Create PID directory missing
 # /var/run/"$NAME" and /var/lock/"$NAME" are created by the makefile
