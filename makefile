@@ -291,31 +291,30 @@ deploy-webapp:
 	@printf "Deploying…\t%s\n" $$'$(call VALUE,webapp)'
 
 	@# cloning repository
-	@if [[ ! -f ${WEBAPP}/index.php && ! -d ${WEBAPP}/.git ]]; \
-		then \
-			if type git &> /dev/null; then \
-				printf "\t%-50s" $$'$(call INFO,cloning repository)'; \
-				git clone --depth 1 --quiet ${WEBAPP_REPO} > /dev/null; \
-			else \
-				printf "\t%-50s" $$'$(call INFO,fetching)'; \
-				[[ -d "${WEBAPP}" ]] && rm -rf ${WEBAPP} || true; \
-				wget --quiet --output-document="${WEBAPP}.tar.gz" ${WEBAPP_ARCHIVE}; \
-				tar xzf "${WEBAPP}.tar.gz"; \
-				mv ${WEBAPP}{-${BRANCH},}; \
-			fi; \
-		elif [[ ! -f ${WEBAPP}/index.php && -d ${WEBAPP}/.git ]]; then \
-			printf "\t%-50s" $$'$(call INFO,updating repository)'; \
-			pushd "${WEBAPP}" \
-				&& git pull ${WEBAPP_REPO} > /dev/null; \
-			popd; \
-				git checkout --quiet ${WEBAPP_BRANCH} > /dev/null \
-					&& printf "$(call SUCCESS,done)"; \
+	@if [[ ! -f ${WEBAPP}/index.php && ! -d ${WEBAPP}/.git ]]; then \
+		if type git &> /dev/null; then \
+			printf "\t%-50s" $$'$(call INFO,cloning repository)'; \
+			git clone --depth 1 --quiet ${WEBAPP_REPO} > /dev/null; \
 		else \
-			[[ -f ${WEBAPP}/index.php ]] && printf "\t%-50s" $$'$(call INFO,fetching repository)' || true; \
-			printf "%s (already existing)\n" $$'$(call WARNING,skipped)' 1>&2; \
+			printf "\t%-50s" $$'$(call INFO,fetching)'; \
+			[[ -d "${WEBAPP}" ]] && rm -rf ${WEBAPP} || true; \
+			wget --quiet --output-document="${WEBAPP}.tar.gz" ${WEBAPP_ARCHIVE}; \
+			tar xzf "${WEBAPP}.tar.gz"; \
+			mv ${WEBAPP}{-${BRANCH},}; \
 		fi; \
-		chmod -R u=rwx,g=rwx,o= "${WEBAPP}/"; \
-		chown -R $${SUDO_USER}:${WEB_SERVER} "${WEBAPP}/"
+	elif [[ ! -f ${WEBAPP}/index.php && -d ${WEBAPP}/.git ]]; then \
+		printf "\t%-50s" $$'$(call INFO,updating repository)'; \
+		pushd "${WEBAPP}" \
+			&& git pull ${WEBAPP_REPO} > /dev/null; \
+		popd; \
+			git checkout --quiet ${WEBAPP_BRANCH} > /dev/null \
+				&& printf "$(call SUCCESS,done)"; \
+	else \
+		[[ -f ${WEBAPP}/index.php ]] && printf "\t%-50s" $$'$(call INFO,fetching repository)' || true; \
+		printf "%s (already existing)\n" $$'$(call WARNING,skipped)' 1>&2; \
+	fi; \
+	chmod -R u=rwx,g=rwx,o= "${WEBAPP}/"; \
+	chown -R $${SUDO_USER}:${WEB_SERVER} "${WEBAPP}/"
 	@printf "\t%s\n" $$'$(call DEBUG,${WEBAPP_REPO})'
 
 	@# deploying webapp: /var/www/mast
