@@ -259,6 +259,8 @@ remove-host:
 	elif [[ ! -f "${CONFIG_DIR}/${NAME}" ]]; then \
 		printf "%s host\'s file.\n" $$'$(call WARNING,invalid)' 1>&2; \
 	else \
+		source "${CONFIG_DIR}/${NAME}"; \
+		ssh-keygen -q -R "$$RemoteHost" 2> /dev/null; \
 		rm -f "${CONFIG_DIR}/${NAME}" && printf "%s\n" $$'$(call SUCCESS,done)' ||    printf "%s\n" $$'$(call ERROR,error)' 1>&2; \
 	fi
 
