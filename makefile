@@ -291,7 +291,7 @@ deploy-webapp:
 	@printf "Deploying…\t%s\n" $$'$(call VALUE,webapp)'
 
 	@# cloning repository
-	@if [[ ! -f ${WEBAPP}/.git && ! -d ${WEBAPP}/.git ]]; \
+	@if [[ ! -f ${WEBAPP}/index.php && ! -d ${WEBAPP}/.git ]]; \
 		then \
 			if type git &> /dev/null; then \
 				printf "\t%-50s" $$'$(call INFO,cloning repository)'; \
@@ -302,15 +302,16 @@ deploy-webapp:
 				wget --quiet --output-document="${WEBAPP}.tar.gz" ${WEBAPP_ARCHIVE}; \
 				tar xzf "${WEBAPP}.tar.gz"; \
 				mv ${WEBAPP}{-${BRANCH},}; \
-			fi \
-		elif [[ -f ${WEBAPP}/.git || -d ${WEBAPP}/.git ]]; then \
+			fi; \
+		elif [[ ! -f ${WEBAPP}/index.php && -d ${WEBAPP}/.git ]]; then \
 			printf "\t%-50s" $$'$(call INFO,updating repository)'; \
 			pushd "${WEBAPP}" \
 				&& git pull ${WEBAPP_REPO} > /dev/null; \
 			popd; \
 				git checkout --quiet ${WEBAPP_BRANCH} > /dev/null \
-					&& printf "$(call SUCCESS,done)" \
+					&& printf "$(call SUCCESS,done)"; \
 		else \
+			[[ -f ${WEBAPP}/index.php ]] && printf "\t%-50s" $$'$(call INFO,fetching repository)' || true; \
 			printf "%s (already existing)\n" $$'$(call WARNING,skipped)' 1>&2; \
 		fi; \
 		chmod -R u=rwx,g=rwx,o= "${WEBAPP}/"; \
@@ -425,7 +426,6 @@ deploy-service:
 
 	@chown -R ${APP}:${WEB_SERVER} "${LOG_DIR}" "${CONFIG_DIR}" "${PID_DIR}" "${LOCK_DIR}"
 	@chmod -R u=rwx,g=rwx,o= "${LOG_DIR}" "${CONFIG_DIR}" "${PID_DIR}" "${LOCK_DIR}"
-
 
 
 deploy: deploy-service deploy-webapp
