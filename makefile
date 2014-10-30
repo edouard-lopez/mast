@@ -267,6 +267,12 @@ remove-host:
 # Install application network may not be setup, so don't deploy (ssh's key) on remote devices
 install: requirements check-system check-privileges deploy-service create-ssh-key deploy-webapp
 
+purge: uninstall
+	@printf "Purging…\n"
+	rm -rf "${CONFIG_DIR}" \
+		&& printf "\t%-50s%s\n" $$'$(call VALUE,'$$fn$$')' $$'$(call SUCCESS,done)' \
+		|| printf "%s\n" $$'$(call ERROR,error)' 1>&2; \
+
 uninstall:
 	@printf "Uninstalling…\n"
 	@filesList=( \
@@ -274,8 +280,6 @@ uninstall:
 		/etc/init.d/mast \
 		/usr/sbin/mastd \
 		/usr/sbin/mast-utils \
-		"${CONFIG_DIR}"/* \
-		"${CONFIG_DIR}" \
 		/etc/apache2/sites-enabled/"${WEBAPP}".conf \
 		"${LOG_DIR}" \
 		"${PID_DIR}" \
@@ -284,7 +288,9 @@ uninstall:
 		mast-web \
 	); for fn in "$${filesList[@]}"; do \
 		[[ -f $$fn || -d $$fn ]] || continue; \
-		rm -rf "$$fn" && printf "\t%-50s%s\n" $$'$(call VALUE,'$$fn$$')' $$'$(call SUCCESS,done)'; \
+		rm -rf "$$fn" \
+			&& printf "\t%-50s%s\n" $$'$(call VALUE,'$$fn$$')' $$'$(call SUCCESS,done)' \
+			|| printf "%s\n" $$'$(call ERROR,error)' 1>&2; \
 	done
 	@update-rc.d -f mast remove > /dev/null
 
