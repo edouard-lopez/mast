@@ -61,7 +61,7 @@ WEBAPP=mast-web
 WEBAPP_DEST_DIR=/var/www/
 
 # Project dependencies
-DEPS_CORE_INFRA:=autossh openssh-client trickle apache2 libapache2-mod-php5 sudo aha sshpass whois
+DEPS_CORE_INFRA:=autossh openssh-client trickle apache2 libapache2-mod-php5 sudo aha sshpass whois iconv
 DEPS_UTILS:=bmon iftop htop
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -228,14 +228,15 @@ add-host: deploy-key
 			printf "\t%-50s%s\t%s\n" $$'$(call VALUE,${NAME})' $$'$(call ERROR,failed)' $$'$(call INFO, (already exists))' 1>&2; \
 			exit 0; \
 		fi; \
-		cp ${CONFIG_DIR}/{template,"${NAME}"}; \
-		sed -i 's/{{HOST}}/${REMOTE_HOST}/g' "${CONFIG_DIR}/${NAME}"; \
+		safe_name="$$(echo "${NAME}" | iconv -t ASCII//TRANSLIT | sed -e 's/[^A-Za-z0-9._-]/-/g')"; \
+		cp ${CONFIG_DIR}/{template,"$${safe_name}"}; \
+		sed -i 's/{{HOST}}/${REMOTE_HOST}/g' "${CONFIG_DIR}/$${safe_name}"; \
 		while true; do \
-			read -p "$(shell printf "\tEditing…\t%s? [y/N]\n" $$'$(call VALUE,${CONFIG_DIR}/${NAME})' )" yn; \
+			read -p "$(shell printf "\tEditing…\t%s? [y/N]\n" $$'$(call VALUE,${CONFIG_DIR}/$${safe_name})' )" yn; \
 			case $$yn in \
 				[Yy]* ) \
-					editor "${CONFIG_DIR}/${NAME}"; \
-					printf "\nYou must %s the tunnel with:\n\t%s %s\n" $$'$(call WARNING,start –manually–)' $$'$(call INFO,sudo /etc/init.d/mast start ${NAME})' 1>&2; \
+					editor "${CONFIG_DIR}/$${safe_name}"; \
+					printf "\nYou must %s the tunnel with:\n\t%s %s\n" $$'$(call WARNING,start –manually–)' $$'$(call INFO,sudo /etc/init.d/mast start $${safe_name})' 1>&2; \
 					break;; \
 				'') ;& \
 				[Nn]*) \
