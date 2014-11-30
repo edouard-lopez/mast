@@ -224,6 +224,10 @@ add-host: deploy-key
 		printf "\t%s or %s.\n" $$'$(call ERROR,missing REMOTE_HOST)' $$'$(call ERROR,NAME)' 1>&2; \
 		exit 0; \
 	elif [[ "${NAME}" != "none" ]]; then \
+		if [[ -f "${CONFIG_DIR}/${NAME}" ]]; then \
+			printf "\t%-50s%s\t%s\n" $$'$(call VALUE,${NAME})' $$'$(call ERROR,failed)' $$'$(call INFO, (already exists))' 1>&2; \
+			exit 0; \
+		fi; \
 		cp ${CONFIG_DIR}/{template,"${NAME}"}; \
 		sed -i 's/{{HOST}}/${REMOTE_HOST}/g' "${CONFIG_DIR}/${NAME}"; \
 		while true; do \
